@@ -10,12 +10,20 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
     return (
         <Tab.Navigator
-            tabBarOptions={{
-                activeTintColor: 'tomato',
-                inactiveTintColor: 'gray',
-            }}
+            // tabBarOptions={{
+            //     activeTintColor: '#6A0DAD',
+            //     inactiveTintColor: '#43464B',
+
+            // }}
             screenOptions={{
-                tabBarShowLabel: false,
+                "tabBarActiveTintColor": "#6A0DAD",
+                "tabBarInactiveTintColor": "#43464B",
+                "tabBarStyle": [
+                    {
+                        "display": "flex"
+                    },
+                    null
+                ]
             }}
         >
             <Tab.Screen name="Контакты" component={Contacts} options={{

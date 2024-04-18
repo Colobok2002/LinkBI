@@ -1,46 +1,73 @@
-import { StyleSheet, ScrollView, Text, View } from 'react-native'
+import { StyleSheet, ScrollView, Text, View, TextInput, RefreshControl } from 'react-native'
 import IconUser from '../Ui/IconUser'
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useEffect, useState } from 'react';
+import SerchFiled from '../Ui/SerchFiled';
 
 
 export default function Contacts() {
-    // 
+
+    const [constacts, setContacts] = useState([
+        {
+            id: 1,
+            userName: 'John',
+            userSoName: 'Brown',
+            lastVizit: 'Был(a) недавно',
+        },
+        {
+            id: 2,
+            userName: 'John',
+            userSoName: 'Brown',
+            lastVizit: 'Был(a) недавно',
+        },
+        {
+            id: 3,
+            userName: 'John',
+            userSoName: 'Brown',
+            lastVizit: 'Был(a) недавно',
+        }
+    ])
+
+    const [isRefreshing, setRefreshing] = useState(false);
+    const [isSearchVisible, setSearchVisible] = useState(false);
+
+    const onRefresh = () => {
+        setSearchVisible(true);
+    };
+
+
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.userItem}>
-                <IconUser />
-                <View style={styles.userItemSubContent}>
-                    <View style={styles.usetTitleContaner}>
-                        <Text>Username UserSoName</Text>
-                        <View style={styles.userCheckAndTimeContaner}>
-                            <Ionicons name="checkmark-done" size={15} color={"#C0C0C0"}></Ionicons>
-                            <Text>12:31</Text>
+        <>
+            {isSearchVisible && (
+                <SerchFiled></SerchFiled>
+            )}
+            <ScrollView
+                style={styles.container}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                        progressViewOffset={1}
+                        tintColor="transparent"
+                        progressBackgroundColor="transparent"
+                    />
+                }
+                scrollEventThrottle={16}
+            >
+                {constacts.map(contact => (
+                    <View key={contact.id} style={styles.userItem}>
+                        <IconUser />
+                        <View style={styles.userItemSubContent}>
+                            <View style={styles.usetTitleContaner}>
+                                <Text>{contact.userName} {contact.userSoName}</Text>
+                            </View>
+                            <View style={styles.lastVizit}>
+                                <Text>{contact.lastVizit}</Text>
+                            </View>
                         </View>
                     </View>
-                    <Text>И за статью</Text>
-                </View>
-            </View>
-            <View style={styles.userItem}>
-                <IconUser />
-                <View style={styles.userItemSubContent}>
-                    <View style={styles.usetTitleContaner}>
-                        <Text>Username UserSoName</Text>
-                        <View style={styles.userCheckAndTimeContaner}>
-                            <Ionicons name="checkmark-done" size={15} color={"#6A0DAD"}></Ionicons>
-                            <Text>12:31</Text>
-                        </View>
-                    </View>
-                    <View style={styles.userLastMsgContaner}>
-                        <View style={styles.userLastMsg}>
-                            <Text numberOfLines={2} ellipsizeMode="tail">И за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статью</Text>
-                        </View>
-                        <View style={styles.userCountMsg}>
-                            <Text>30</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        </ScrollView>
+                ))}
+            </ScrollView >
+        </>
     )
 }
 
@@ -52,42 +79,22 @@ const styles = StyleSheet.create({
     userItem: {
         display: "flex",
         flexDirection: "row",
+        alignItems: "center",
         gap: 10,
         padding: 10,
     },
     userItemSubContent: {
         flex: 1,
         gap: 5,
-    },
-    usetTitleContaner: {
+        height: 60,
+        paddingVertical: 5,
         display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: 10,
+        flexDirection: "column",
+        justifyContent: "space-around",
+        borderBottomColor: "#C0C0C0",
+        borderBottomWidth: 1,
     },
-    userCheckAndTimeContaner: {
-        display: "flex",
-        flexDirection: "row",
-        gap: 5,
-    },
-    userLastMsgContaner: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
-        gap: 5,
-    },
-    userLastMsg: {
-        maxWidth: "80%",
-        fontSize: 12,
-        padding: 5,
-        flexDirection: "row",
-        backgroundColor: "#C0C0C0",
-        borderRadius: 5
-    },
-    userCountMsg: {
-        padding: 5,
-        backgroundColor: "#6A0DAD",
-        borderRadius: 5
+    userlastVizit: {
+        color: "red",
     }
 });
