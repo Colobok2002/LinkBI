@@ -1,6 +1,6 @@
 import { StyleSheet, ScrollView, Text, View, TextInput, RefreshControl } from 'react-native'
 import IconUser from '../Ui/IconUser'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SerchFiled from '../Ui/SerchFiled';
 
 

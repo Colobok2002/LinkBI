@@ -10,11 +10,6 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
     return (
         <Tab.Navigator
-            // tabBarOptions={{
-            //     activeTintColor: '#6A0DAD',
-            //     inactiveTintColor: '#43464B',
-
-            // }}
             screenOptions={{
                 "tabBarActiveTintColor": "#6A0DAD",
                 "tabBarInactiveTintColor": "#43464B",
@@ -22,7 +17,6 @@ function MyTabs() {
                     {
                         "display": "flex"
                     },
-                    null
                 ]
             }}
         >
