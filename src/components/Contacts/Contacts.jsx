@@ -31,7 +31,9 @@ export default function Contacts() {
     const [isSearchVisible, setSearchVisible] = useState(false);
 
     const onRefresh = () => {
+        setRefreshing(true)
         setSearchVisible(true);
+        setRefreshing(false)
     };
 
 

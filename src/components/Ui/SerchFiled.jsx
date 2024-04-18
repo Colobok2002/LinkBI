@@ -1,5 +1,4 @@
 import { View, StyleSheet, TextInput } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 export default function SerchFiled() {
