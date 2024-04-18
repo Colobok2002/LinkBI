@@ -1,7 +1,5 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { Text, View } from 'react-native'
 import Contacts from '../Contacts/Contacts';
 import Messages from '../Messages/Messages';
 import Icon from 'react-native-vector-icons/MaterialIcons';
