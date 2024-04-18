@@ -12,8 +12,12 @@ export default function IconUser() {
 const styles = StyleSheet.create({
     userIcon: {
         display: "flex",
+        alignItems:"center",
+        justifyContent: "center",
         backgroundColor: "#C0C0C0",
         padding: 10,
-        borderRadius: "100%"
+        borderRadius: "100%",
+        height : 60,
+        width : 60,
     },
 });

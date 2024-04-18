@@ -31,8 +31,12 @@ export default function Contacts() {
                         </View>
                     </View>
                     <View style={styles.userLastMsgContaner}>
-                        <Text style={styles.userLastMsg} numberOfLines={2} ellipsizeMode="tail">И за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статью</Text>
-                        <Text style={{}}>30</Text>
+                        <View style={styles.userLastMsg}>
+                            <Text numberOfLines={2} ellipsizeMode="tail">И за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статьюИ за статью</Text>
+                        </View>
+                        <View style={styles.userCountMsg}>
+                            <Text>30</Text>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -75,9 +79,15 @@ const styles = StyleSheet.create({
     },
     userLastMsg: {
         maxWidth: "80%",
-        fontSize : 12,
-        paddingVertical: 5,
+        fontSize: 12,
+        padding: 5,
         flexDirection: "row",
-
+        backgroundColor: "#C0C0C0",
+        borderRadius: 5
+    },
+    userCountMsg: {
+        padding: 5,
+        backgroundColor: "#6A0DAD",
+        borderRadius: 5
     }
 });
