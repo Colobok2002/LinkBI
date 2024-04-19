@@ -1,18 +1,17 @@
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
+import { MenuProvider, Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Modalize from '../../Ui/Modalize';
+import MessageSubMenu from '../../Ui/MessageSubMenu';
 
 export default function ChatScreen() {
-
     const theme = useSelector(state => state.theme.styles);
-    const { styles } = ChatScreenStyles()
+    const { styles } = ChatScreenStyles();
     const navigation = useNavigation();
 
     const [messages, setMessages] = useState([]);
@@ -33,8 +32,34 @@ export default function ChatScreen() {
         }
     };
 
+    const MessageItem = ({ item }) => {
+
+        const [showSubMenu, setShowSubMenu] = useState(false);
+
+        const handleLongPress = () => {
+            setShowSubMenu(!showSubMenu);
+        };
+
+        return (
+            <>
+                <TouchableOpacity
+                    onLongPress={handleLongPress}
+                    style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}
+                >
+                    <Text style={{ color: 'black' }}>{item.text}</Text>
+                    <Text style={styles.time}>{item.time}</Text>
+                </TouchableOpacity>
+                {showSubMenu && (
+                    <MessageSubMenu></MessageSubMenu>
+                )}
+            </>
+        );
+    }
+
+
+
     return (
-        <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
+        <MenuProvider style={{ flex: 1 }}>
             <SafeAreaView style={styles.container}>
                 <View style={styles.title}>
                     <TouchableOpacity onPress={() => navigation.navigate('Main')}>
@@ -54,12 +79,9 @@ export default function ChatScreen() {
                 </View>
                 <FlatList
                     data={messages}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <View style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}>
-                            <Text style={{ color: theme.activeItems }}>{item.text}</Text>
-                            <Text style={styles.time}>{item.time}</Text>
-                        </View>
+                        <MessageItem item={item} />
                     )}
                 />
                 <View style={styles.inputContainer}>
@@ -72,6 +94,6 @@ export default function ChatScreen() {
                     <Button title="Отправить" onPress={sendMessage} />
                 </View>
             </SafeAreaView>
-        </Modalize>
+        </MenuProvider >
     );
 }
