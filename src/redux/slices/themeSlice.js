@@ -15,7 +15,7 @@ const themes = {
         tabBarInactiveTintColor: "#FFFFFF",
         tabBarBackgroundColor: "#43464B",
         textColor: '#ffffff',
-        backgroundColor: '#333333',
+        backgroundColor: '#43464B',
         buttonColor: '#555555',
         headerColor: '#222222'
     }

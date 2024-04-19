@@ -1,10 +1,13 @@
-import { StyleSheet, ScrollView, Text, View, TextInput, RefreshControl } from 'react-native'
+import { ScrollView, Text, View, TextInput, RefreshControl } from 'react-native'
 import IconUser from '../Ui/IconUser'
 import { useState } from 'react';
 import SerchFiled from '../Ui/SerchFiled';
+import ContactsStyles from './ContactsStyles';
 
 
 export default function Contacts() {
+
+    const { styles } = ContactsStyles()
 
     const [constacts, setContacts] = useState([
         {
@@ -73,30 +76,3 @@ export default function Contacts() {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        display: "flex",
-        gap: 10,
-    },
-    userItem: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        padding: 10,
-    },
-    userItemSubContent: {
-        flex: 1,
-        gap: 5,
-        height: 60,
-        paddingVertical: 5,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-around",
-        borderBottomColor: "#C0C0C0",
-        borderBottomWidth: 1,
-    },
-    userlastVizit: {
-        color: "red",
-    }
-});
