@@ -1,5 +1,5 @@
+import { toggleTheme } from '../../redux/slices/themeSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleTheme } from '../../redux/store';
 import { Text, View, Button } from 'react-native';
 
 
