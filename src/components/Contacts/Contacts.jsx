@@ -3,11 +3,13 @@ import IconUser from '../Ui/IconUser'
 import { useState } from 'react';
 import SerchFiled from '../Ui/SerchFiled';
 import ContactsStyles from './ContactsStyles';
+import { useSelector } from 'react-redux';
 
 
 export default function Contacts() {
 
     const { styles } = ContactsStyles()
+    const theme = useSelector(state => state.theme.styles);
 
     const [constacts, setContacts] = useState([
         {
@@ -18,14 +20,14 @@ export default function Contacts() {
         },
         {
             id: 2,
-            userName: 'John',
-            userSoName: 'Brown',
+            userName: 'Kevin',
+            userSoName: 'Vranch',
             lastVizit: 'Был(a) недавно',
         },
         {
             id: 3,
-            userName: 'John',
-            userSoName: 'Brown',
+            userName: 'Antonio',
+            userSoName: 'Smit',
             lastVizit: 'Был(a) недавно',
         }
     ])
@@ -38,7 +40,6 @@ export default function Contacts() {
         setSearchVisible(true);
         setRefreshing(false)
     };
-
 
     return (
         <>
@@ -63,10 +64,10 @@ export default function Contacts() {
                         <IconUser />
                         <View style={styles.userItemSubContent}>
                             <View style={styles.usetTitleContaner}>
-                                <Text>{contact.userName} {contact.userSoName}</Text>
+                                <Text style={{ color: theme.activeItems }}>{contact.userName} {contact.userSoName}</Text>
                             </View>
                             <View style={styles.lastVizit}>
-                                <Text>{contact.lastVizit}</Text>
+                                <Text style={{ color: theme.activeItems }}>{contact.lastVizit}</Text>
                             </View>
                         </View>
                     </View>
