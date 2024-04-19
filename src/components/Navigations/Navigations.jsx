@@ -1,11 +1,15 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import ChatScreen from '../Messages/ChatScreen/ChatScreen';
 import Contacts from '../Contacts/Contacts';
 import Messages from '../Messages/Messages';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Setting from '../Setting/Setting';
+
+const RootStack = createStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
@@ -52,11 +56,28 @@ function MyTabs() {
     );
 }
 
+function RootStackScreen() {
+    return (
+      <RootStack.Navigator>
+        <RootStack.Screen
+          name="Main"
+          component={MyTabs}
+          options={{ headerShown: false }}
+        />
+        <RootStack.Screen
+          name="ChatScreen"
+          component={ChatScreen}
+          options={{ headerShown: false }}
+        />
+      </RootStack.Navigator>
+    );
+  }
+
 
 export default function Navigations() {
     return (
         <NavigationContainer>
-            <MyTabs />
+            <RootStackScreen />
         </NavigationContainer>
     );
 }
