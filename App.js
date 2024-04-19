@@ -1,12 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Provider } from 'react-redux';
 import Navigations from './src/components/Navigations/Navigations';
+import store from './src/redux/store';
 
 export default function App() {
   return (
+    <Provider store={store}>
       <Navigations></Navigations>
-    // <View style={styles.container}>
-    // </View>
+    </Provider>
   );
 }
 
