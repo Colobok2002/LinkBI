@@ -7,7 +7,7 @@ export default function MessagesStyles() {
     const styles = StyleSheet.create({
         container: {
             display: "flex",
-            gap: 10,
+            flexDirection: "column",
             backgroundColor: theme.backgroundColor,
         },
         userItem: {
