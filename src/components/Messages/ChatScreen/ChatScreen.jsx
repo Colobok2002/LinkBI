@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-function ChatScreen() {
+
+import ChatScreenStyles from './ChatScreenStyles';
+import IconUser from '../../Ui/IconUser';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+export default function ChatScreen() {
 
     const theme = useSelector(state => state.theme.styles);
+    const { styles } = ChatScreenStyles()
+    const navigation = useNavigation();
+
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState('');
 
@@ -24,7 +33,24 @@ function ChatScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.title}>
+                {/* <TouchableOpacity onPress={() => navigation.goBack()}> */}
+                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                    <Icon name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
+                <View style={styles.titleUserContent}>
+                    <IconUser size={20} />
+                    <View style={styles.titleSubContent}>
+                        <View style={styles.usetTitleContaner}>
+                            <Text style={{ color: theme.activeItems }}>John Brown</Text>
+                        </View>
+                        <View style={styles.lastVizit}>
+                            <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
             <FlatList
                 data={messages}
                 keyExtractor={item => item.id.toString()}
@@ -44,45 +70,6 @@ function ChatScreen() {
                 />
                 <Button title="Отправить" onPress={sendMessage} />
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        padding: 10
-    },
-    input: {
-        flex: 1,
-        marginRight: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        padding: 10
-    },
-    myMessage: {
-        alignSelf: 'flex-end',
-        margin: 5,
-        padding: 10,
-        backgroundColor: '#ddf',
-        borderRadius: 10
-    },
-    otherMessage: {
-        alignSelf: 'flex-start',
-        margin: 5,
-        padding: 10,
-        backgroundColor: '#fdd',
-        borderRadius: 10
-    },
-    time: {
-        fontSize: 10,
-        color: 'grey',
-        alignSelf: 'flex-end'
-    }
-});
-
-export default ChatScreen;

@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 
@@ -58,21 +58,43 @@ function MyTabs() {
 
 function RootStackScreen() {
     return (
-      <RootStack.Navigator>
-        <RootStack.Screen
-          name="Main"
-          component={MyTabs}
-          options={{ headerShown: false }}
-        />
-        <RootStack.Screen
-          name="ChatScreen"
-          component={ChatScreen}
-          options={{ headerShown: false }}
-        />
-      </RootStack.Navigator>
-    );
-  }
-
+        <RootStack.Navigator
+            initialRouteName='Main'
+            screenOptions={{
+                headerShown: false,
+                // cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter,
+                // cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+            }}
+        >
+            <RootStack.Screen
+                name="Main"
+                component={MyTabs}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <RootStack.Screen
+                name="ChatScreen"
+                component={ChatScreen}
+                options={{
+                    headerShown: false,
+                    cardStyleInterpolator: ({ current, layouts }) => ({
+                        cardStyle: {
+                            transform: [
+                                {
+                                    translateX: current.progress.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [layouts.screen.width, 0]
+                                    }),
+                                },
+                            ],
+                        },
+                    }),
+                }}
+            />
+        </RootStack.Navigator>
+    )
+}
 
 export default function Navigations() {
     return (
