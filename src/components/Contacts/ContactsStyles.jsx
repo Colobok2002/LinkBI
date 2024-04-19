@@ -29,8 +29,7 @@ export default function ContactsStyles() {
             borderBottomWidth: 1,
         },
     }); 
-    
-    console.log(styles)
+
 
     return { styles }
 }

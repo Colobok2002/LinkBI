@@ -2,29 +2,21 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const themes = {
     light: {
-        tabBarActiveTintColor: "#6A0DAD",
-        tabBarInactiveTintColor: "#43464B",
-        tabBarBackgroundColor: "#FFFFFF",
-        textColor: '#000000',
         backgroundColor: '#ffffff',
-        buttonColor: '#dddddd',
-        headerColor: '#eeeeee'
+        textColor: '#CFCFCF',
+        activeItems : "#43464B",
     },
     dark: {
-        tabBarActiveTintColor: "#6A0DAD",
-        tabBarInactiveTintColor: "#FFFFFF",
-        tabBarBackgroundColor: "#43464B",
-        textColor: '#ffffff',
         backgroundColor: '#43464B',
-        buttonColor: '#555555',
-        headerColor: '#222222'
+        textColor: '#CFCFCF',
+        activeItems : "#ffffff",
     }
 };
 
 const themeSlice = createSlice({
     name: 'theme',
     initialState: {
-        currentTheme: 'light',
+        currentTheme: 'dark',
         styles: themes.light,
     },
     reducers: {

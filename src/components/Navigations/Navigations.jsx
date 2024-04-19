@@ -15,13 +15,13 @@ function MyTabs() {
     return (
         <Tab.Navigator
             screenOptions={{
-                tabBarActiveTintColor: theme.tabBarActiveTintColor,
-                tabBarInactiveTintColor: theme.tabBarInactiveTintColor,
+                tabBarActiveTintColor: theme.activeItems,
+                tabBarInactiveTintColor: theme.textColor,
                 tabBarStyle: {
-                    backgroundColor: theme.tabBarBackgroundColor,
+                    backgroundColor: theme.backgroundColor,
                 },
                 headerStyle: {
-                    backgroundColor: theme.tabBarBackgroundColor,
+                    backgroundColor: theme.backgroundColor,
                 },
                 headerTintColor: theme.tabBarInactiveTintColor,
                 headerTitleStyle: {
