@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Modalize from '../../Ui/Modalize';
 
 export default function ChatScreen() {
 
@@ -33,6 +34,7 @@ export default function ChatScreen() {
     };
 
     return (
+        <Modalize onRequestClose={() => navigation.navigate('Main')}>
         <SafeAreaView style={styles.container}>
             <View style={styles.title}>
                 {/* <TouchableOpacity onPress={() => navigation.goBack()}> */}
@@ -71,5 +73,6 @@ export default function ChatScreen() {
                 <Button title="Отправить" onPress={sendMessage} />
             </View>
         </SafeAreaView>
+        </Modalize>
     );
 }
