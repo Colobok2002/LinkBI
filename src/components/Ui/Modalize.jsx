@@ -1,23 +1,28 @@
-import Animated, { useSharedValue, useAnimatedGestureHandler, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
-import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
 
-const Modalize = ({ children, onRequestClose }) => {
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { StyleSheet, Platform } from 'react-native';
+
+const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
+
+    if (Platform.OS === 'ios') {
+        return <>{children}</>;
+    }
+
     const translateX = useSharedValue(0);
-    const onGestureEvent = useAnimatedGestureHandler({
-        onActive: (event) => {
+    const panGesture = Gesture.Pan()
+        .onUpdate((event) => {
             if (event.translationX > 0) {
                 translateX.value = event.translationX;
             }
-        },
-        onEnd: (event) => {
+        })
+        .onEnd((event) => {
             if (event.translationX > 100) {
                 runOnJS(onRequestClose)();
             } else {
                 translateX.value = withSpring(0, { damping: 12, stiffness: 70 });
             }
-        },
-    });
+        });
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -26,23 +31,17 @@ const Modalize = ({ children, onRequestClose }) => {
     });
 
     return (
-        <GestureHandlerRootView style={StyleSheet.absoluteFillObject}>
-            <PanGestureHandler onGestureEvent={onGestureEvent}>
-                <Animated.View style={[styles.modal, animatedStyle]}>
-                    {children}
-                </Animated.View>
-            </PanGestureHandler>
-        </GestureHandlerRootView>
+        <GestureDetector gesture={panGesture}>
+            <Animated.View style={[styles.modal, animatedStyle]}>
+                {children}
+            </Animated.View>
+        </GestureDetector>
     );
 };
 
 const styles = StyleSheet.create({
     modal: {
         flex: 1,
-        backgroundColor: 'white',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 16
     }
 });
 

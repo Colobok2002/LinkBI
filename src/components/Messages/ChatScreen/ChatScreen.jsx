@@ -34,45 +34,44 @@ export default function ChatScreen() {
     };
 
     return (
-        <Modalize onRequestClose={() => navigation.navigate('Main')}>
-        <SafeAreaView style={styles.container}>
-            <View style={styles.title}>
-                {/* <TouchableOpacity onPress={() => navigation.goBack()}> */}
-                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                    <Icon name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <View style={styles.titleUserContent}>
-                    <IconUser size={20} />
-                    <View style={styles.titleSubContent}>
-                        <View style={styles.usetTitleContaner}>
-                            <Text style={{ color: theme.activeItems }}>John Brown</Text>
-                        </View>
-                        <View style={styles.lastVizit}>
-                            <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+        <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.title}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                        <Icon name="arrow-back" size={24} color="black" />
+                    </TouchableOpacity>
+                    <View style={styles.titleUserContent}>
+                        <IconUser size={20} />
+                        <View style={styles.titleSubContent}>
+                            <View style={styles.usetTitleContaner}>
+                                <Text style={{ color: theme.activeItems }}>John Brown</Text>
+                            </View>
+                            <View style={styles.lastVizit}>
+                                <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-            <FlatList
-                data={messages}
-                keyExtractor={item => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}>
-                        <Text style={{ color: theme.activeItems }}>{item.text}</Text>
-                        <Text style={styles.time}>{item.time}</Text>
-                    </View>
-                )}
-            />
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setText}
-                    value={text}
-                    placeholder="Введите сообщение..."
+                <FlatList
+                    data={messages}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <View style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}>
+                            <Text style={{ color: theme.activeItems }}>{item.text}</Text>
+                            <Text style={styles.time}>{item.time}</Text>
+                        </View>
+                    )}
                 />
-                <Button title="Отправить" onPress={sendMessage} />
-            </View>
-        </SafeAreaView>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setText}
+                        value={text}
+                        placeholder="Введите сообщение..."
+                    />
+                    <Button title="Отправить" onPress={sendMessage} />
+                </View>
+            </SafeAreaView>
         </Modalize>
     );
 }
