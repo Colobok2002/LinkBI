@@ -1,9 +1,10 @@
-import { ScrollView, Text, View, TextInput, RefreshControl } from 'react-native'
-import IconUser from '../Ui/IconUser'
+import { ScrollView, Text, View, RefreshControl } from 'react-native'
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
+
+import IconUser from '../Ui/IconUser'
 import SerchFiled from '../Ui/SerchFiled';
 import ContactsStyles from './ContactsStyles';
-import { useSelector } from 'react-redux';
 
 
 export default function Contacts() {
@@ -57,7 +58,7 @@ export default function Contacts() {
                         progressBackgroundColor="transparent"
                     />
                 }
-                scrollEventThrottle={16}
+                scrollEventThrottle={10}
             >
                 {constacts.map(contact => (
                     <View key={contact.id} style={styles.userItem}>

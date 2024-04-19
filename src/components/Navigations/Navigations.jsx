@@ -23,11 +23,13 @@ function MyTabs() {
                 headerStyle: {
                     backgroundColor: theme.backgroundColor,
                 },
-                headerTintColor: theme.tabBarInactiveTintColor,
+                headerTintColor: theme.activeItems,
                 headerTitleStyle: {
                     fontWeight: 'bold',
+                    color: theme.activeItems
                 }
             }}
+            initialRouteName="Сообщения"
         >
             <Tab.Screen name="Контакты" component={Contacts} options={{
                 tabBarIcon: ({ color, size }) => (
