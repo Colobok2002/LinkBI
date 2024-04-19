@@ -1,12 +1,9 @@
 import Animated, { useSharedValue, useAnimatedGestureHandler, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
 
 const Modalize = ({ children, onRequestClose }) => {
     const translateX = useSharedValue(0);
-
-    const navigation = useNavigation();
     const onGestureEvent = useAnimatedGestureHandler({
         onActive: (event) => {
             if (event.translationX > 0) {
