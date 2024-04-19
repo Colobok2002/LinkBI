@@ -1,4 +1,5 @@
-import { ScrollView, Text, View, RefreshControl } from 'react-native'
+import { ScrollView, Text, View, RefreshControl, TouchableOpacity } from 'react-native'
+import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 
@@ -10,6 +11,7 @@ import MessagesStyles from './MessagesStyles';
 
 export default function Messages() {
 
+    const navigation = useNavigation();
     const { styles } = MessagesStyles()
     const theme = useSelector(state => state.theme.styles);
 
@@ -74,7 +76,12 @@ export default function Messages() {
                 style={styles.container}
             >
                 {chats.map(chat => (
-                    <View key={chat.id} style={styles.userItem}>
+
+                    <TouchableOpacity
+                        key={chat.id}
+                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.id })}
+                        style={styles.userItem}
+                    >
                         <IconUser />
                         <View style={styles.userItemSubContent}>
                             <View style={styles.usetTitleContaner}>
@@ -105,7 +112,7 @@ export default function Messages() {
                                 )}
                             </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </ScrollView>
         </>
