@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { useSelector } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -62,8 +62,6 @@ function RootStackScreen() {
             initialRouteName='Main'
             screenOptions={{
                 headerShown: false,
-                // cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter,
-                // cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
             }}
         >
             <RootStack.Screen

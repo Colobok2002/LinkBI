@@ -1,12 +1,9 @@
-import { Modal, Text, View, TouchableWithoutFeedback, TouchableOpacity, Platform } from 'react-native';
-
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import ChatScreenStyles from '../ChatScreenStyles';
 import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
-import MessageItemAbout from './MessageItemAbout';
+import { Text, TouchableOpacity } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
-
+import ChatScreenStyles from '../ChatScreenStyles';
 
 const MessageItem = ({ item }) => {
 
@@ -15,10 +12,10 @@ const MessageItem = ({ item }) => {
 
     const [lastTap, setLastTap] = useState(null);
 
-
     const handleDoubleTap = () => {
         const now = Date.now();
-        const DOUBLE_PRESS_DELAY = 300;
+
+        const DOUBLE_PRESS_DELAY = 600;
 
         if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
             dispatch(setMessage(item))

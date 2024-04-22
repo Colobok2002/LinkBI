@@ -10,6 +10,7 @@ const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
     }
 
     const translateX = useSharedValue(0);
+
     const panGesture = Gesture.Pan()
         .onUpdate((event) => {
             if (event.translationX > 0) {

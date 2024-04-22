@@ -3,10 +3,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 
-import IconUser from '../Ui/IconUser'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import SerchFiled from '../Ui/SerchFiled';
 import MessagesStyles from './MessagesStyles';
+import SerchFiled from '../Ui/SerchFiled';
+import IconUser from '../Ui/IconUser'
 
 
 export default function Messages() {
@@ -76,7 +76,6 @@ export default function Messages() {
                 style={styles.container}
             >
                 {chats.map(chat => (
-
                     <TouchableOpacity
                         key={chat.id}
                         onPress={() => navigation.navigate('ChatScreen', { chatId: chat.id })}

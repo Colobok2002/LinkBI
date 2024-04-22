@@ -1,33 +1,31 @@
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform } from 'react-native';
+import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-
-import { useState, useEffect, useRef } from 'react';
+import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import { Modal } from 'react-native';
 
+import MessageItemAbout from './MessageItem/MessageItemAbout';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MessageItem from './MessageItem/MessageItem';
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Modalize from '../../Ui/Modalize';
-import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
-import MessageItem from './MessageItem/MessageItem';
-import MessageItemAbout from './MessageItem/MessageItemAbout';
 
-import { BlurView as ExpoBlurView } from 'expo-blur';
 
 
 export default function ChatScreen() {
 
     const dispatch = useDispatch();
+    const navigation = useNavigation();
+    const { styles } = ChatScreenStyles();
 
     const theme = useSelector(state => state.theme.styles);
     const openModelAbout = useSelector(state => state.message.openModelAbout);
     const isDragging = useSelector(state => state.message.isDragging);
-    const { styles } = ChatScreenStyles();
 
-    const navigation = useNavigation();
-    
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState('');
 
@@ -45,7 +43,6 @@ export default function ChatScreen() {
             setText('');
         }
     };
-
 
 
     return (

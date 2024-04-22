@@ -14,7 +14,6 @@ import { setOpenModelAbout } from '../../redux/slices/messageSlice';
 const MessageSubMenu = () => {
 
     const dispatch = useDispatch();
-    const theme = useSelector(state => state.theme.styles);
     const message = useSelector(state => state.message.message);
 
     const { showNotification } = MuToast()

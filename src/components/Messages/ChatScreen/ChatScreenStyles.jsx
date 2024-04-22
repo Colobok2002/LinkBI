@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
 import { StyleSheet } from "react-native"
+
+
 export default function ChatScreenStyles() {
 
     const theme = useSelector(state => state.theme.styles);
@@ -16,7 +18,6 @@ export default function ChatScreenStyles() {
             alignItems: "center",
             flexDirection: "row",
             gap: 10,
-            // justifyContent:'center',
             paddingHorizontal: 10,
             backgroundColor: theme.backgroundColor,
             height: 60,
@@ -66,19 +67,8 @@ export default function ChatScreenStyles() {
 
 
         },
-        modalView: {
-            // backgroundColor : "red"
-        },
         _modalViewContainer: {
-            // marginHorizontal: 20,
-            // marginVertical: 100,
             paddingVertical: 200,
-        },
-        get modalViewContainer() {
-            return this._modalViewContainer;
-        },
-        set modalViewContainer(value) {
-            this._modalViewContainer = value;
         },
         modalText: {
             marginBottom: 15,

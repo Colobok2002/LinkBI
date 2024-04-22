@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 export default function MessagesStyles() {
     const theme = useSelector(state => state.theme.styles);
+
     const styles = StyleSheet.create({
         container: {
             display: "flex",

@@ -1,15 +1,17 @@
-import React, { useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { setIsDragging } from '../../../../redux/slices/messageSlice';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
+import { Text, View } from 'react-native';
+import { useRef } from 'react';
+
 import MessageSubMenu from '../../../Ui/MessageSubMenu';
 import ChatScreenStyles from '../ChatScreenStyles';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsDragging } from '../../../../redux/slices/messageSlice';
 
 const MessageItemAbout = () => {
 
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
+
     const message = useSelector(state => state.message.message);
 
     const scrollViewRef = useRef();

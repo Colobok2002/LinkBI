@@ -1,8 +1,10 @@
 import { View, StyleSheet, TextInput } from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useSelector } from 'react-redux';
 
+import Entypo from 'react-native-vector-icons/Entypo';
+
 export default function SerchFiled() {
+    
     const theme = useSelector(state => state.theme.styles);
 
     return (
@@ -23,9 +25,7 @@ const styles = StyleSheet.create({
         justifyContent: "start",
         paddingHorizontal: 20,
         gap: 10,
-        // marginTop: 10,
-        // marginHorizontal: 10,
-        margin : 10,
+        margin: 10,
         borderRadius: 5,
         height: 40,
     },
