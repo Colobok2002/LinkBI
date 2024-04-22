@@ -69,7 +69,7 @@ export default function ChatScreen() {
                             <Text style={styles.time}>{item.time}</Text>
                         </View>
                         <View onStartShouldSetResponder={() => true}>
-                            <MessageSubMenu />
+                            <MessageSubMenu myMessage={item.sender === 'me'} />
                         </View>
                     </ScrollView>
                 </>
