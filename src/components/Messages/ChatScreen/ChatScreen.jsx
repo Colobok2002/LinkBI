@@ -11,10 +11,12 @@ import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MessageSubMenu from '../../Ui/MessageSubMenu';
 import Modalize from '../../Ui/Modalize';
-import { setMessage } from '../../../redux/slices/messageSlice';
+import { setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 
 export default function ChatScreen() {
     const theme = useSelector(state => state.theme.styles);
+    const dispatch = useDispatch();
+
     const { styles } = ChatScreenStyles();
     const navigation = useNavigation();
 
@@ -37,7 +39,10 @@ export default function ChatScreen() {
     };
 
     const MessageItem = ({ item }) => {
-        const [modalVisible, setModalVisible] = useState(false);
+
+        const openModelAbout = useSelector(state => state.message.openModelAbout);
+
+        // const [modalVisible, setModalVisible] = useState(false);
         const [isDragging, setIsDragging] = useState(false);
         const [lastTap, setLastTap] = useState(null);
 
@@ -46,7 +51,8 @@ export default function ChatScreen() {
             const DOUBLE_PRESS_DELAY = 300;
 
             if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-                setModalVisible(true);
+                dispatch(setMessage(item))
+                dispatch(setOpenModelAbout(true))
             } else {
                 setLastTap(now);
             }
@@ -77,18 +83,18 @@ export default function ChatScreen() {
             );
         };
 
-        const dispatch = useDispatch();
-        useEffect(() => {
-            if (modalVisible) {
-                dispatch(setMessage(item))
-            }
-        }, [modalVisible]);
+
+        // useEffect(() => {
+        //     if (openModelAbout) {
+
+        //     }
+        // }, [openModelAbout]);
 
 
         return (
             <>
                 <TouchableOpacity
-                    onLongPress={() => setModalVisible(true)}
+                    onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
                     onPress={handleDoubleTap}
                     style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
                 >
@@ -98,9 +104,9 @@ export default function ChatScreen() {
                 <Modal
                     animationType="fade"
                     transparent={true}
-                    visible={modalVisible}
+                    visible={openModelAbout}
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        dispatch(setMessage(null)), dispatch(setOpenModelAbout(false));
 
                     }}
 
@@ -108,7 +114,8 @@ export default function ChatScreen() {
                     <TouchableWithoutFeedback
                         onPress={() => {
                             if (!isDragging) {
-                                setModalVisible(false);
+                                dispatch(setMessage(null)),
+                                    dispatch(setOpenModelAbout(false))
                             }
                             setIsDragging(false);
                         }}

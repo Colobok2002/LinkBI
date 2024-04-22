@@ -21,7 +21,7 @@ const MessageSubMenu = () => {
             minWidth: "100%",
             paddingHorizontal: 5,
             display: "flex",
-            alignItems: message != null && message.itMyMessage ? "flex-end" : "flex-start",
+            alignItems:  message.itMyMessage ? "flex-end" : "flex-start",
         },
         myMessage: {
             backgroundColor: "#ffffff",
