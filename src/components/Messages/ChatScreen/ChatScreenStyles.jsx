@@ -9,7 +9,7 @@ export default function ChatScreenStyles() {
             display: "flex",
             flexDirection: "column",
             backgroundColor: theme.backgroundColor,
-            flex: 1
+            flex: 1,
         },
         title: {
             display: "flex",
@@ -56,7 +56,26 @@ export default function ChatScreenStyles() {
             fontSize: 10,
             color: 'grey',
             alignSelf: 'flex-end'
-        }
+        },
+        centeredView: {
+            flex: 1,
+            justifyContent: "flex-end",
+            display: "flex",
+            
+           
+        },
+        modalView: {
+            margin: 20,
+        },
+        modalViewContainer: {
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: "flex-start",
+        },
+        modalText: {
+            marginBottom: 15,
+            textAlign: "center"
+        },
     });
 
     return { styles }
