@@ -24,7 +24,6 @@ export default function MuTosat() {
                 });
                 break;
         }
-
     }
 
     return { showNotification };
