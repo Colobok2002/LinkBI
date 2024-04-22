@@ -2,7 +2,7 @@ import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWit
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { BlurView as ExpoBlurView } from 'expo-blur';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from 'react-native';
 
@@ -41,8 +41,9 @@ export default function ChatScreen() {
     const MessageItem = ({ item }) => {
 
         const openModelAbout = useSelector(state => state.message.openModelAbout);
-
+        const scrollViewRef = useRef();
         // const [modalVisible, setModalVisible] = useState(false);
+        const message = useSelector(state => state.message.message);
         const [isDragging, setIsDragging] = useState(false);
         const [lastTap, setLastTap] = useState(null);
 
@@ -58,38 +59,34 @@ export default function ChatScreen() {
             }
         };
 
-
         const renderContent = () => {
-            return (
-                <>
-                    <ScrollView
-                        style={styles.modalView}
-                        contentContainerStyle={styles.modalViewContainer}
-                        onScrollBeginDrag={() => setIsDragging(true)}
-                        onScrollEndDrag={() => setIsDragging(false)}
-                    >
-                        <View
-                            style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
-                            onStartShouldSetResponder={() => true}
+            if (message != null) {
+
+                return (
+                    <>
+                        <ScrollView
+                            style={styles.modalView}
+                            contentContainerStyle={styles.modalViewContainer}
+                            onScrollBeginDrag={() => setIsDragging(true)}
+                            onScrollEndDrag={() => setIsDragging(false)}
+                            ref={scrollViewRef}
+                            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
                         >
-                            <Text style={{ color: 'black' }}>{item.text}</Text>
-                            <Text style={styles.time}>{item.time}</Text>
-                        </View>
-                        <View onStartShouldSetResponder={() => true}>
-                            <MessageSubMenu />
-                        </View>
-                    </ScrollView>
-                </>
-            );
+                            <View
+                                style={message.itMyMessage ? styles.myMessage : styles.otherMessage}
+                                onStartShouldSetResponder={() => true}
+                            >
+                                <Text style={{ color: 'black' }}>{message.text}</Text>
+                                <Text style={styles.time}>{message.time}</Text>
+                            </View>
+                            <View onStartShouldSetResponder={() => true}>
+                                <MessageSubMenu />
+                            </View>
+                        </ScrollView>
+                    </>
+                );
+            }
         };
-
-
-        // useEffect(() => {
-        //     if (openModelAbout) {
-
-        //     }
-        // }, [openModelAbout]);
-
 
         return (
             <>

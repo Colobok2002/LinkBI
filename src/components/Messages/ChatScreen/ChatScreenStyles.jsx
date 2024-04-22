@@ -67,12 +67,18 @@ export default function ChatScreenStyles() {
 
         },
         modalView: {
-            margin: 20,
+            backgroundColor : "red"
         },
-        modalViewContainer: {
-            flex: 1,
-            justifyContent: 'flex-end',
-            alignItems: "flex-start",
+        _modalViewContainer: {
+            marginHorizontal: 20,
+            // marginVertical: 100,
+            paddingVertical: 200,
+        },
+        get modalViewContainer() {
+            return this._modalViewContainer;
+        },
+        set modalViewContainer(value) {
+            this._modalViewContainer = value;
         },
         modalText: {
             marginBottom: 15,

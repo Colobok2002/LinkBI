@@ -1,27 +1,39 @@
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather'
 
 import * as Clipboard from 'expo-clipboard';
-// 
+import MuToast from './MuToast';
+import { setOpenModelAbout } from '../../redux/slices/messageSlice';
+
+
+
 const MessageSubMenu = () => {
 
+    const dispatch = useDispatch();
     const theme = useSelector(state => state.theme.styles);
     const message = useSelector(state => state.message.message);
 
+    const { showNotification } = MuToast()
+
     const copyToClipboard = () => {
         Clipboard.setStringAsync(message.text);
+        dispatch(setOpenModelAbout(false))
+        showNotification({ message: "Сообщение успешно скопировано", type: "in" })
     };
+
+
+    console.log(message)
 
     const styles = StyleSheet.create({
         MessageSubMenuContaner: {
             minWidth: "100%",
             paddingHorizontal: 5,
             display: "flex",
-            alignItems:  message.itMyMessage ? "flex-end" : "flex-start",
+            alignItems: message.itMyMessage ? "flex-end" : "flex-start",
         },
         myMessage: {
             backgroundColor: "#ffffff",
