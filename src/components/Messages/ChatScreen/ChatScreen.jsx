@@ -1,16 +1,17 @@
-import { View, Text, TextInput, Button, FlatList, SafeAreaView as SAV, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Platform } from 'react-native';
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { BlurView as ExpoBlurView } from 'expo-blur';
-import { BlurView } from "@react-native-community/blur";
-import { Modal } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Platform } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { BlurView as ExpoBlurView } from 'expo-blur';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Modal } from 'react-native';
+
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MessageSubMenu from '../../Ui/MessageSubMenu';
 import Modalize from '../../Ui/Modalize';
+import { setMessage } from '../../../redux/slices/messageSlice';
 
 export default function ChatScreen() {
     const theme = useSelector(state => state.theme.styles);
@@ -22,14 +23,14 @@ export default function ChatScreen() {
 
     useEffect(() => {
         setMessages([
-            { id: 1, text: "Привет, как дела?Привет, как дела?Привет, как дела?Привет, как дела?", sender: "other", time: "12:01" },
-            { id: 2, text: "Всё хорошо, спасибо!", sender: "me", time: "12:02" }
+            { id: 1, text: "Привет, как дела?Привет, как дела?Привет, как дела?Привет, как дела?", itMyMessage: false, time: "12:01" },
+            { id: 2, text: "Всё хорошо, спасибо!", itMyMessage: true, time: "12:02" }
         ]);
     }, []);
 
     const sendMessage = () => {
         if (text) {
-            const newMessage = { id: messages.length + 1, text, sender: "me", time: "12:03" };
+            const newMessage = { id: messages.length + 1, text, itMyMessage: true, time: "12:03" };
             setMessages([...messages, newMessage]);
             setText('');
         }
@@ -62,19 +63,26 @@ export default function ChatScreen() {
                         onScrollEndDrag={() => setIsDragging(false)}
                     >
                         <View
-                            style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}
+                            style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
                             onStartShouldSetResponder={() => true}
                         >
                             <Text style={{ color: 'black' }}>{item.text}</Text>
                             <Text style={styles.time}>{item.time}</Text>
                         </View>
                         <View onStartShouldSetResponder={() => true}>
-                            <MessageSubMenu myMessage={item.sender === 'me'} />
+                            <MessageSubMenu />
                         </View>
                     </ScrollView>
                 </>
             );
         };
+
+        const dispatch = useDispatch();
+        useEffect(() => {
+            if (modalVisible) {
+                dispatch(setMessage(item))
+            }
+        }, [modalVisible]);
 
 
         return (
@@ -82,7 +90,7 @@ export default function ChatScreen() {
                 <TouchableOpacity
                     onLongPress={() => setModalVisible(true)}
                     onPress={handleDoubleTap}
-                    style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}
+                    style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
                 >
                     <Text style={{ color: 'black' }}>{item.text}</Text>
                     <Text style={styles.time}>{item.time}</Text>
@@ -93,6 +101,7 @@ export default function ChatScreen() {
                     visible={modalVisible}
                     onRequestClose={() => {
                         setModalVisible(!modalVisible);
+
                     }}
 
                 >
