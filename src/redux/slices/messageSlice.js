@@ -30,5 +30,5 @@ const messageSlice = createSlice({
     }
 });
 
-export const { setMessage, removeMessage, setOpenModelAbout } = messageSlice.actions;
+export const { setMessage, removeMessage, setOpenModelAbout, setIsDragging } = messageSlice.actions;
 export default messageSlice;

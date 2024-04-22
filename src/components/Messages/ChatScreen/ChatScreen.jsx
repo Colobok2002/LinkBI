@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -9,9 +9,8 @@ import { Modal } from 'react-native';
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MessageSubMenu from '../../Ui/MessageSubMenu';
 import Modalize from '../../Ui/Modalize';
-import { setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
+import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import MessageItem from './MessageItem/MessageItem';
 import MessageItemAbout from './MessageItem/MessageItemAbout';
 
@@ -21,16 +20,14 @@ import { BlurView as ExpoBlurView } from 'expo-blur';
 export default function ChatScreen() {
 
     const dispatch = useDispatch();
-    
+
     const theme = useSelector(state => state.theme.styles);
     const openModelAbout = useSelector(state => state.message.openModelAbout);
+    const isDragging = useSelector(state => state.message.isDragging);
     const { styles } = ChatScreenStyles();
 
     const navigation = useNavigation();
-
-
-    const [isDragging, setIsDragging] = useState(false);
-
+    
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState('');
 
@@ -72,7 +69,7 @@ export default function ChatScreen() {
                                     dispatch(setMessage(null)),
                                         dispatch(setOpenModelAbout(false))
                                 }
-                                setIsDragging(false);
+                                dispatch(setIsDragging(false))
                             }}
                         >
 
