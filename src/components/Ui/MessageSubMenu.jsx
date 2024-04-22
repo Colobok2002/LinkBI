@@ -25,9 +25,6 @@ const MessageSubMenu = () => {
         showNotification({ message: "Сообщение успешно скопировано", type: "in" })
     };
 
-
-    console.log(message)
-
     const styles = StyleSheet.create({
         MessageSubMenuContaner: {
             minWidth: "100%",

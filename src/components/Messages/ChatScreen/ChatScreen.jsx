@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Platform } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { BlurView as ExpoBlurView } from 'expo-blur';
+
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from 'react-native';
@@ -12,13 +12,24 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MessageSubMenu from '../../Ui/MessageSubMenu';
 import Modalize from '../../Ui/Modalize';
 import { setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
+import MessageItem from './MessageItem/MessageItem';
+import MessageItemAbout from './MessageItem/MessageItemAbout';
+
+import { BlurView as ExpoBlurView } from 'expo-blur';
+
 
 export default function ChatScreen() {
-    const theme = useSelector(state => state.theme.styles);
-    const dispatch = useDispatch();
 
+    const dispatch = useDispatch();
+    
+    const theme = useSelector(state => state.theme.styles);
+    const openModelAbout = useSelector(state => state.message.openModelAbout);
     const { styles } = ChatScreenStyles();
+
     const navigation = useNavigation();
+
+
+    const [isDragging, setIsDragging] = useState(false);
 
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState('');
@@ -38,109 +49,45 @@ export default function ChatScreen() {
         }
     };
 
-    const MessageItem = ({ item }) => {
-
-        const openModelAbout = useSelector(state => state.message.openModelAbout);
-        const scrollViewRef = useRef();
-        // const [modalVisible, setModalVisible] = useState(false);
-        const message = useSelector(state => state.message.message);
-        const [isDragging, setIsDragging] = useState(false);
-        const [lastTap, setLastTap] = useState(null);
-
-        const handleDoubleTap = () => {
-            const now = Date.now();
-            const DOUBLE_PRESS_DELAY = 300;
-
-            if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-                dispatch(setMessage(item))
-                dispatch(setOpenModelAbout(true))
-            } else {
-                setLastTap(now);
-            }
-        };
-
-        const renderContent = () => {
-            if (message != null) {
-
-                return (
-                    <>
-                        <ScrollView
-                            style={styles.modalView}
-                            contentContainerStyle={styles.modalViewContainer}
-                            onScrollBeginDrag={() => setIsDragging(true)}
-                            onScrollEndDrag={() => setIsDragging(false)}
-                            ref={scrollViewRef}
-                            onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-                        >
-                            <View
-                                style={message.itMyMessage ? styles.myMessage : styles.otherMessage}
-                                onStartShouldSetResponder={() => true}
-                            >
-                                <Text style={{ color: 'black' }}>{message.text}</Text>
-                                <Text style={styles.time}>{message.time}</Text>
-                            </View>
-                            <View onStartShouldSetResponder={() => true}>
-                                <MessageSubMenu />
-                            </View>
-                        </ScrollView>
-                    </>
-                );
-            }
-        };
-
-        return (
-            <>
-                <TouchableOpacity
-                    onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
-                    onPress={handleDoubleTap}
-                    style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
-                >
-                    <Text style={{ color: 'black' }}>{item.text}</Text>
-                    <Text style={styles.time}>{item.time}</Text>
-                </TouchableOpacity>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={openModelAbout}
-                    onRequestClose={() => {
-                        dispatch(setMessage(null)), dispatch(setOpenModelAbout(false));
-
-                    }}
-
-                >
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            if (!isDragging) {
-                                dispatch(setMessage(null)),
-                                    dispatch(setOpenModelAbout(false))
-                            }
-                            setIsDragging(false);
-                        }}
-                    >
-                        {Platform.OS === 'ios' ? (
-                            <ExpoBlurView style={styles.centeredView} intensity={50}>
-                                {renderContent()}
-                            </ExpoBlurView>
-                        ) : (
-
-                            <View style={[styles.centeredView, { backgroundColor: theme.backgroundColor }]}>
-                                {renderContent()}
-                            </View>
-                        )}
-                    </TouchableWithoutFeedback>
-                </Modal >
-            </>
-        );
-    };
-
-
 
 
     return (
         <>
-            {/* <SafeAreaView style={styles.container}> */}
             <SafeAreaProvider>
                 <SafeAreaView style={styles.container}>
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={openModelAbout}
+                        onRequestClose={() => {
+                            dispatch(setMessage(null)), dispatch(setOpenModelAbout(false));
+
+                        }}
+
+                    >
+
+                        <TouchableWithoutFeedback
+                            onPress={() => {
+                                if (!isDragging) {
+                                    dispatch(setMessage(null)),
+                                        dispatch(setOpenModelAbout(false))
+                                }
+                                setIsDragging(false);
+                            }}
+                        >
+
+                            {Platform.OS === 'ios' ? (
+                                <ExpoBlurView style={styles.centeredView} intensity={50}>
+                                    <MessageItemAbout></MessageItemAbout>
+                                </ExpoBlurView>
+                            ) : (
+
+                                <View style={[styles.centeredView, { backgroundColor: theme.backgroundColor }]}>
+                                    <MessageItemAbout></MessageItemAbout>
+                                </View>
+                            )}
+                        </TouchableWithoutFeedback>
+                    </Modal >
                     <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
                         <View style={styles.title}>
                             <TouchableOpacity onPress={() => navigation.navigate('Main')}>
@@ -177,7 +124,6 @@ export default function ChatScreen() {
                     </Modalize>
                 </SafeAreaView>
             </SafeAreaProvider>
-            {/* </SafeAreaView> */}
         </>
     );
 }

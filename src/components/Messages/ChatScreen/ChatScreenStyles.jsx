@@ -67,10 +67,10 @@ export default function ChatScreenStyles() {
 
         },
         modalView: {
-            backgroundColor : "red"
+            // backgroundColor : "red"
         },
         _modalViewContainer: {
-            marginHorizontal: 20,
+            // marginHorizontal: 20,
             // marginVertical: 100,
             paddingVertical: 200,
         },

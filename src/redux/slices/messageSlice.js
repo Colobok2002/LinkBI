@@ -2,10 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const messageSlice = createSlice({
     name: 'message',
+
     initialState: {
         message: null,
         openModelAbout: false,
+        isDragging: false,
     },
+
     reducers: {
         setOpenModelAbout: (state, action = null) => {
             if (action == null) {
@@ -20,7 +23,10 @@ const messageSlice = createSlice({
         },
         removeMessage: (state) => {
             state.message = null;
-        }
+        },
+        setIsDragging: (state, action) => {
+            state.isDragging = action.payload;
+        },
     }
 });
 
