@@ -1,11 +1,11 @@
 import { View, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default function IconUser({ size = 40 }) {
 
-    const theme = useSelector(state => state.theme.styles);
+    // const theme = useSelector(state => state.theme.styles);
 
     const styles = StyleSheet.create({
         userIcon: {

@@ -1,13 +1,13 @@
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { setOpenModelAbout } from '../../redux/slices/messageSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather'
+import MuToast from './MuToast';
 
 import * as Clipboard from 'expo-clipboard';
-import MuToast from './MuToast';
-import { setOpenModelAbout } from '../../redux/slices/messageSlice';
 
 
 

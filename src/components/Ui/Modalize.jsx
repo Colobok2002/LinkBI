@@ -1,7 +1,7 @@
 
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { StyleSheet, Platform } from 'react-native';
+import { Platform } from 'react-native';
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
@@ -33,17 +33,11 @@ const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
     return (
         <GestureDetector gesture={panGesture}>
-            <Animated.View style={[styles.modal, animatedStyle]}>
+            <Animated.View style={[{ flex: 1 }, animatedStyle]}>
                 {children}
             </Animated.View>
         </GestureDetector>
     );
 };
-
-const styles = StyleSheet.create({
-    modal: {
-        flex: 1,
-    }
-});
 
 export default Modalize;

@@ -18,12 +18,6 @@ export default function Messages() {
     const [isRefreshing, setRefreshing] = useState(false);
     const [isSearchVisible, setSearchVisible] = useState(false);
 
-    const onRefresh = () => {
-        setRefreshing(true)
-        setSearchVisible(true);
-        setRefreshing(false)
-    };
-
     const [chats, setChats] = useState([
         {
             id: 1,
@@ -57,6 +51,13 @@ export default function Messages() {
         },
     ]);
 
+    const onRefresh = () => {
+        setRefreshing(true)
+        setSearchVisible(true);
+        setRefreshing(false)
+    };
+
+    
     return (
         <>
             {isSearchVisible && (

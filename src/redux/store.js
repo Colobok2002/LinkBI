@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import themeSlice from './slices/themeSlice';
 import messageSlice from './slices/messageSlice';
+import themeSlice from './slices/themeSlice';
 
 const store = configureStore({
   reducer: {

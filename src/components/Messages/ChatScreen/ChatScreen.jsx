@@ -2,8 +2,8 @@ import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWit
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useDispatch, useSelector } from 'react-redux';
+import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useState, useEffect } from 'react';
 import { Modal } from 'react-native';
 

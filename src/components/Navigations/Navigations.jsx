@@ -16,6 +16,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
 
     const theme = useSelector(state => state.theme.styles);
+    
     return (
         <Tab.Navigator
             screenOptions={{
