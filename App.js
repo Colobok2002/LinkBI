@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 
 import Navigations from './src/components/Navigations/Navigations';
@@ -13,12 +12,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    flex: 1,
-    justifyContent: 'center',
-  },
-});

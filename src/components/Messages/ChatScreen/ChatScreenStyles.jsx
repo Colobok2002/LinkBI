@@ -7,72 +7,72 @@ export default function ChatScreenStyles() {
     const theme = useSelector(state => state.theme.styles);
 
     const styles = StyleSheet.create({
+        _modalViewContainer: {
+            paddingVertical: 200,
+        },
+        centeredView: {
+            display: "flex",
+            flex: 1,
+            justifyContent: "flex-end",
+
+
+        },
         container: {
+            backgroundColor: theme.backgroundColor,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: theme.backgroundColor,
             flex: 1,
         },
-        title: {
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            gap: 10,
-            paddingHorizontal: 10,
-            backgroundColor: theme.backgroundColor,
-            height: 60,
-            borderBottomColor: "#C0C0C0",
-            borderBottomWidth: 1,
-        },
-        titleUserContent: {
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            gap: 20,
+        input: {
+            borderColor: 'gray',
+            borderWidth: 1,
+            flex: 1,
+            marginRight: 10,
+            padding: 10
         },
         inputContainer: {
             flexDirection: 'row',
             padding: 10
         },
-        input: {
-            flex: 1,
-            marginRight: 10,
-            borderWidth: 1,
-            borderColor: 'gray',
-            padding: 10
-        },
-        myMessage: {
-            alignSelf: 'flex-end',
-            margin: 5,
-            padding: 10,
-            backgroundColor: '#ddf',
-            borderRadius: 10
-        },
-        otherMessage: {
-            alignSelf: 'flex-start',
-            margin: 5,
-            padding: 10,
-            backgroundColor: '#fdd',
-            borderRadius: 10
-        },
-        time: {
-            fontSize: 10,
-            color: 'grey',
-            alignSelf: 'flex-end'
-        },
-        centeredView: {
-            flex: 1,
-            justifyContent: "flex-end",
-            display: "flex",
-
-
-        },
-        _modalViewContainer: {
-            paddingVertical: 200,
-        },
         modalText: {
             marginBottom: 15,
             textAlign: "center"
+        },
+        myMessage: {
+            alignSelf: 'flex-end',
+            backgroundColor: '#ddf',
+            borderRadius: 10,
+            margin: 5,
+            padding: 10
+        },
+        otherMessage: {
+            alignSelf: 'flex-start',
+            backgroundColor: '#fdd',
+            borderRadius: 10,
+            margin: 5,
+            padding: 10
+        },
+        time: {
+            alignSelf: 'flex-end',
+            color: 'grey',
+            fontSize: 10
+        },
+        title: {
+            alignItems: "center",
+            backgroundColor: theme.backgroundColor,
+            borderBottomColor: "#C0C0C0",
+            borderBottomWidth: 1,
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            height: 60,
+            paddingHorizontal: 10,
+        },
+        titleUserContent: {
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            gap: 20,
         },
     });
 

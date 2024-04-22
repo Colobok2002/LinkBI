@@ -7,56 +7,56 @@ export default function MessagesStyles() {
 
     const styles = StyleSheet.create({
         container: {
+            backgroundColor: theme.backgroundColor,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: theme.backgroundColor,
-        },
-        userItem: {
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            padding: 10,
-        },
-        userItemSubContent: {
-            flex: 1,
-            gap: 5,
-            paddingVertical: 5,
-            borderBottomColor: "#C0C0C0",
-            borderBottomWidth: 1,
-        },
-        usetTitleContaner: {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: 10,
         },
         userCheckAndTimeContaner: {
             display: "flex",
             flexDirection: "row",
             gap: 5,
         },
-        userLastMsgContaner: {
-            display: "flex",
-            height: 50,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 5,
-        },
-        userLastMsg: {
-            maxWidth: "80%",
-
-            fontSize: 12,
-            padding: 5,
-            flexDirection: "row",
-            backgroundColor: "#C0C0C0",
-            borderRadius: 5
-        },
         userCountMsg: {
-            padding: 5,
             backgroundColor: "#C0C0C0",
             borderRadius: 5,
+            padding: 5,
+        },
+        userItem: {
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            padding: 10,
+        },
+        userItemSubContent: {
+            borderBottomColor: "#C0C0C0",
+            borderBottomWidth: 1,
+            flex: 1,
+            gap: 5,
+            paddingVertical: 5,
+        },
+        userLastMsg: {
+            backgroundColor: "#C0C0C0",
+
+            borderRadius: 5,
+            flexDirection: "row",
+            fontSize: 12,
+            maxWidth: "80%",
+            padding: 5
+        },
+        userLastMsgContaner: {
+            alignItems: "flex-start",
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            height: 50,
+            justifyContent: "space-between",
+        },
+        usetTitleContaner: {
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            justifyContent: "space-between",
         }
     });
 

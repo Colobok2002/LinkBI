@@ -26,41 +26,41 @@ const MessageSubMenu = () => {
 
     const styles = StyleSheet.create({
         MessageSubMenuContaner: {
+            alignItems: message.itMyMessage ? "flex-end" : "flex-start",
+            display: "flex",
             minWidth: "100%",
             paddingHorizontal: 5,
-            display: "flex",
-            alignItems: message.itMyMessage ? "flex-end" : "flex-start",
         },
         myMessage: {
             backgroundColor: "#ffffff",
-            minWidth: 200,
+            borderColor: "#eeeeee",
             borderRadius: 10,
             borderWidth: 1,
-            borderColor: "#eeeeee"
+            minWidth: 200
 
         },
         myMessageAction: {
+            alignItems: "center",
+            borderBottomColor: "#eeeeee",
+            borderBottomWidth: 1,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center",
-            padding: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: "#eeeeee"
+            padding: 10
         },
         myMessageActionDell: {
+            alignItems: "center",
+            color: "red",
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center",
             padding: 10,
-            color: "red",
         }
     })
 
     return (
         <View style={styles.MessageSubMenuContaner}>
-            <View style={[styles.myMessage]}>
+            <View style={styles.myMessage}>
                 <TouchableOpacity style={styles.myMessageAction}>
                     <Text>Ответить</Text>
                     <FontAwesome5 name={"reply"}></FontAwesome5>

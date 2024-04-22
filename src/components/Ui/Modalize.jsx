@@ -5,10 +5,6 @@ import { Platform } from 'react-native';
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
-    if (Platform.OS === 'ios') {
-        return <>{children}</>;
-    }
-
     const translateX = useSharedValue(0);
 
     const panGesture = Gesture.Pan()
@@ -30,6 +26,10 @@ const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
             transform: [{ translateX: translateX.value }],
         };
     });
+
+    if (chekToIphone && Platform.OS === 'ios') {
+        return <>{children}</>;
+    }
 
     return (
         <GestureDetector gesture={panGesture}>

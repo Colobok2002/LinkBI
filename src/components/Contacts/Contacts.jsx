@@ -12,7 +12,7 @@ export default function Contacts() {
     const { styles } = ContactsStyles()
     const theme = useSelector(state => state.theme.styles);
 
-    const [constacts, setContacts] = useState([
+    const [constacts] = useState([
         {
             id: 1,
             userName: 'John',

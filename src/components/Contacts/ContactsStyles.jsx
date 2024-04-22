@@ -6,27 +6,27 @@ export default function ContactsStyles() {
 
     const styles = StyleSheet.create({
         container: {
+            backgroundColor: theme.backgroundColor,
             display: "flex",
             flexDirection:"column",
-            backgroundColor: theme.backgroundColor,
         },
         userItem: {
+            alignItems: "center",
             display: "flex",
             flexDirection: "row",
-            alignItems: "center",
             gap: 10,
             padding: 10,
         },
         userItemSubContent: {
-            flex: 1,
-            gap: 5,
-            height: 60,
-            paddingVertical: 5,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-around",
             borderBottomColor: "#C0C0C0",
             borderBottomWidth: 1,
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            gap: 5,
+            height: 60,
+            justifyContent: "space-around",
+            paddingVertical: 5,
         },
     }); 
 

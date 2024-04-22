@@ -18,7 +18,7 @@ export default function Messages() {
     const [isRefreshing, setRefreshing] = useState(false);
     const [isSearchVisible, setSearchVisible] = useState(false);
 
-    const [chats, setChats] = useState([
+    const [chats] = useState([
         {
             id: 1,
             userName: 'John',
