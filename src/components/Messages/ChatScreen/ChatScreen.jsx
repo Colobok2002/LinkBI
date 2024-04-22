@@ -95,7 +95,7 @@ export default function ChatScreen() {
                             </ExpoBlurView>
                         ) : (
 
-                            <View style={[styles.centeredView, { backgroundColor: "red" }]}>
+                            <View style={[styles.centeredView, { backgroundColor: theme.backgroundColor }]}>
                                 {renderContent()}
                             </View>
                         )}
@@ -112,7 +112,6 @@ export default function ChatScreen() {
         <>
             {/* <SafeAreaView style={styles.container}> */}
             <SafeAreaProvider>
-
                 <SafeAreaView style={styles.container}>
 
                     <View style={styles.title}>
