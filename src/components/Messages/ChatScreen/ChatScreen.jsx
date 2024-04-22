@@ -10,6 +10,7 @@ import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MessageSubMenu from '../../Ui/MessageSubMenu';
+import Modalize from '../../Ui/Modalize';
 
 export default function ChatScreen() {
     const theme = useSelector(state => state.theme.styles);
@@ -113,39 +114,40 @@ export default function ChatScreen() {
             {/* <SafeAreaView style={styles.container}> */}
             <SafeAreaProvider>
                 <SafeAreaView style={styles.container}>
-
-                    <View style={styles.title}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                            <Icon name="arrow-back" size={24} color="black" />
-                        </TouchableOpacity>
-                        <View style={styles.titleUserContent}>
-                            <IconUser size={20} />
-                            <View style={styles.titleSubContent}>
-                                <View style={styles.usetTitleContaner}>
-                                    <Text style={{ color: theme.activeItems }}>John Brown</Text>
-                                </View>
-                                <View style={styles.lastVizit}>
-                                    <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                    <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
+                        <View style={styles.title}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                                <Icon name="arrow-back" size={24} color="black" />
+                            </TouchableOpacity>
+                            <View style={styles.titleUserContent}>
+                                <IconUser size={20} />
+                                <View style={styles.titleSubContent}>
+                                    <View style={styles.usetTitleContaner}>
+                                        <Text style={{ color: theme.activeItems }}>John Brown</Text>
+                                    </View>
+                                    <View style={styles.lastVizit}>
+                                        <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                    <FlatList
-                        data={messages}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <MessageItem item={item} />
-                        )}
-                    />
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setText}
-                            value={text}
-                            placeholder="Введите сообщение..."
+                        <FlatList
+                            data={messages}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <MessageItem item={item} />
+                            )}
                         />
-                        <Button title="Отправить" onPress={sendMessage} />
-                    </View>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={setText}
+                                value={text}
+                                placeholder="Введите сообщение..."
+                            />
+                            <Button title="Отправить" onPress={sendMessage} />
+                        </View>
+                    </Modalize>
                 </SafeAreaView>
             </SafeAreaProvider>
             {/* </SafeAreaView> */}
