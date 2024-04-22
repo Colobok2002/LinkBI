@@ -38,6 +38,19 @@ export default function ChatScreen() {
     const MessageItem = ({ item }) => {
         const [modalVisible, setModalVisible] = useState(false);
         const [isDragging, setIsDragging] = useState(false);
+        const [lastTap, setLastTap] = useState(null);
+
+        const handleDoubleTap = () => {
+            const now = Date.now();
+            const DOUBLE_PRESS_DELAY = 300;
+
+            if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
+                setModalVisible(true);
+            } else {
+                setLastTap(now);
+            }
+        };
+
 
         const renderContent = () => {
             return (
@@ -68,6 +81,7 @@ export default function ChatScreen() {
             <>
                 <TouchableOpacity
                     onLongPress={() => setModalVisible(true)}
+                    onPress={handleDoubleTap}
                     style={item.sender === 'me' ? styles.myMessage : styles.otherMessage}
                 >
                     <Text style={{ color: 'black' }}>{item.text}</Text>

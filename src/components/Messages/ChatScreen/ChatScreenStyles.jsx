@@ -20,6 +20,8 @@ export default function ChatScreenStyles() {
             paddingHorizontal: 10,
             backgroundColor: theme.backgroundColor,
             height: 60,
+            borderBottomColor: "#C0C0C0",
+            borderBottomWidth: 1,
         },
         titleUserContent: {
             display: "flex",
@@ -61,8 +63,8 @@ export default function ChatScreenStyles() {
             flex: 1,
             justifyContent: "flex-end",
             display: "flex",
-            
-           
+
+
         },
         modalView: {
             margin: 20,
