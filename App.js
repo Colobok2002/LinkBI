@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
+
 import Navigations from './src/components/Navigations/Navigations';
 import store from './src/redux/store';
 import Toast from 'react-native-toast-message';
@@ -7,7 +8,7 @@ import Toast from 'react-native-toast-message';
 export default function App() {
   return (
     <Provider store={store}>
-      <Navigations></Navigations>
+      <Navigations />
       <Toast />
     </Provider>
   );
@@ -15,9 +16,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    flex: 1,
     justifyContent: 'center',
   },
 });

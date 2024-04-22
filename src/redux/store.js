@@ -6,7 +6,7 @@ const store = configureStore({
   reducer: {
     theme: themeSlice.reducer,
     message: messageSlice.reducer,
-  }
+  },
 });
 
 export default store;
