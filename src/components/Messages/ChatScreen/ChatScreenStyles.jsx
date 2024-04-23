@@ -7,15 +7,13 @@ export default function ChatScreenStyles() {
     const theme = useSelector(state => state.theme.styles);
 
     const styles = StyleSheet.create({
-        _modalViewContainer: {
+        modalViewContainer: {
             paddingVertical: 200,
         },
         centeredView: {
             display: "flex",
             flex: 1,
             justifyContent: "flex-end",
-
-
         },
         container: {
             backgroundColor: theme.backgroundColor,

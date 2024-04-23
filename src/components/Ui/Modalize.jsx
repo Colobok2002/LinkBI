@@ -4,7 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Platform, View } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useState } from 'react';
+
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
@@ -52,7 +52,6 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const opacity = useSharedValue(0);
     const size = useSharedValue(1);
     const lastTranslationX = useSharedValue(0);
-
 
 
     const panGesture = Gesture.Pan()
