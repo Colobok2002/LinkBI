@@ -8,6 +8,7 @@ import ChatScreen from '../Messages/ChatScreen/ChatScreen';
 import Contacts from '../Contacts/Contacts';
 import Messages from '../Messages/Messages';
 import Setting from '../Setting/Setting';
+import AuthScreen from '../Authorization/AuthScreen';
 
 const RootStack = createStackNavigator();
 
@@ -16,7 +17,7 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
 
     const theme = useSelector(state => state.theme.styles);
-    
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -96,9 +97,11 @@ function RootStackScreen() {
 }
 
 export default function Navigations() {
+    const auth = useSelector(state => state.auth.auth);
+    console.log(auth)
     return (
         <NavigationContainer>
-            <RootStackScreen />
+            {auth ? <RootStackScreen /> : <AuthScreen />}
         </NavigationContainer>
     );
 }
