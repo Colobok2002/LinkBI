@@ -9,6 +9,8 @@ import Contacts from '../Contacts/Contacts';
 import Messages from '../Messages/Messages';
 import Setting from '../Setting/Setting';
 import AuthScreen from '../Authorization/AuthScreen';
+import BiometricAuth from '../Authorization/BiometricAuth';
+import CustomKeyboard from '../Ui/CustomKeyboard';
 
 const RootStack = createStackNavigator();
 
@@ -97,11 +99,13 @@ function RootStackScreen() {
 }
 
 export default function Navigations() {
-    const auth = useSelector(state => state.auth.auth);
+    const auth = useSelector(state => state.user.auth);
     console.log(auth)
     return (
         <NavigationContainer>
-            {auth ? <RootStackScreen /> : <AuthScreen />}
+            {/* {auth ? <RootStackScreen /> : <AuthScreen />} */}
+            {/* <BiometricAuth></BiometricAuth> */}
+            <CustomKeyboard></CustomKeyboard>
         </NavigationContainer>
     );
 }
