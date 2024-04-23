@@ -4,6 +4,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Platform, View } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { useSelector } from 'react-redux';
 
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
@@ -53,6 +54,7 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const size = useSharedValue(1);
     const lastTranslationX = useSharedValue(0);
 
+    const theme = useSelector(state => state.theme.styles);
 
     const panGesture = Gesture.Pan()
         .onUpdate((event) => {
@@ -111,7 +113,7 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
                     {children}
                 </View>
                 <Animated.View style={[{ position: "absolute", bottom: 15, right: -30 }, textAnimatedStyle, iconAnimatedStyle]}>
-                    <FontAwesome5 name="reply" size={10} color="white" />
+                    <FontAwesome5 name="reply" size={10} color={theme.activeItems} />
                 </Animated.View>
             </Animated.View>
         </GestureDetector>
