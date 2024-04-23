@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 
 import ChatScreenStyles from '../ChatScreenStyles';
+import { RightSwipeEvent } from '../../../Ui/Modalize';
 
 const MessageItem = ({ item }) => {
 
@@ -27,7 +28,7 @@ const MessageItem = ({ item }) => {
 
 
     return (
-        <>
+        <RightSwipeEvent>
             <TouchableOpacity
                 onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
                 onPress={handleDoubleTap}
@@ -36,7 +37,7 @@ const MessageItem = ({ item }) => {
                 <Text style={{ color: 'black' }}>{item.text}</Text>
                 <Text style={styles.time}>{item.time}</Text>
             </TouchableOpacity>
-        </>
+        </RightSwipeEvent>
     );
 };
 
