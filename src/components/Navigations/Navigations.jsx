@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChatScreen from '../Messages/ChatScreen/ChatScreen';
@@ -11,6 +12,11 @@ import Setting from '../Setting/Setting';
 import AuthScreen from '../Authorization/AuthScreen';
 import BiometricAuth from '../Authorization/BiometricAuth';
 import CustomKeyboard from '../Ui/CustomKeyboard';
+
+import * as SecureStore from 'expo-secure-store';
+import { setAuthenticated } from '../../redux/slices/userSlice';
+import { Text } from 'react-native';
+
 
 const RootStack = createStackNavigator();
 
@@ -99,13 +105,45 @@ function RootStackScreen() {
 }
 
 export default function Navigations() {
-    const auth = useSelector(state => state.user.auth);
-    console.log(auth)
+
+    const dispatch = useDispatch();
+    const [loadind, setLoading] = useState(true)
+
+    useEffect(() => {
+
+        const initializeAuth = async () => {
+            const userId = await SecureStore.getItemAsync('userJWTToken');
+            if (userId) {
+                dispatch(setAuthenticated())
+            }
+            setLoading(false)
+        };
+
+        initializeAuth();
+    }, []);
+
+    const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+
+    if (loadind) {
+        return (
+            <Text> Loading ...</Text>
+        )
+    }
+    if (isAuthenticated == false) {
+        return (
+            <AuthScreen />
+        )
+    }
+    if (isLoggedIn == false) {
+        return (
+            <CustomKeyboard />
+        )
+    }
+
     return (
         <NavigationContainer>
-            {/* {auth ? <RootStackScreen /> : <AuthScreen />} */}
-            {/* <BiometricAuth></BiometricAuth> */}
-            <CustomKeyboard></CustomKeyboard>
+            <RootStackScreen />
         </NavigationContainer>
     );
 }

@@ -2,32 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Импорт иконок Material
+import { useDispatch } from 'react-redux';
+import { setLoggedIn } from '../../redux/slices/userSlice';
+import MuTosat from '../Ui/MuToast';
 
 const BiometricAuth = () => {
     const [biometricType, setBiometricType] = useState(null);
+    const dispatch = useDispatch();
+    const { showNotification } = MuTosat()
 
     useEffect(() => {
-        (async () => {
+        const initializeAuth = async () => {
             const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
-            if (types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
-                setBiometricType('face'); // Face ID доступен
-            } else if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-                setBiometricType('fingerprint'); // Touch ID (отпечаток пальца) доступен
+            if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+                setBiometricType('fingerprint');
             }
-        })();
+            else if (types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)) {
+                setBiometricType('face');
+            }
+            await handleBiometricAuth(false)
+        };
+
+        initializeAuth()
+
     }, []);
 
-    const handleBiometricAuth = async () => {
+    const handleBiometricAuth = async (showMessage = true) => {
         const biometricAuth = await LocalAuthentication.authenticateAsync({
-            promptMessage: 'Authenticate',
+            promptMessage: 'Авторизация',
             cancelLabel: 'Cancel',
             disableDeviceFallback: true,
         });
-
         if (biometricAuth.success) {
-            alert('Authentication successful!');
+            console.log(123)
+            dispatch(setLoggedIn())
         } else {
-            alert('Authentication failed!');
+            if (showMessage) {
+                showNotification({ "message": "Ошибка биометрии (возможно она не настроена на ващем устройстве)", type: "er" })
+            }
         }
     };
 

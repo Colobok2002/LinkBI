@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import BiometricAuth from '../Authorization/BiometricAuth';
-import { useSelector } from 'react-redux';
+import { setLoggedIn } from '../../redux/slices/userSlice';
+
 
 const CustomKeyboard = () => {
 
+    const dispatch = useDispatch();
     const theme = useSelector(state => state.theme.styles);
     const [inputValue, setInputValue] = useState('');
     const [errorCode, setErrorCode] = useState(false);
@@ -16,6 +19,7 @@ const CustomKeyboard = () => {
             if (inputValue == "11111") {
                 setSuccessfullyCode(true);
                 setInputValue("")
+                dispatch(setLoggedIn())
             } else {
                 setErrorCode(true)
                 setInputValue("")
@@ -28,7 +32,6 @@ const CustomKeyboard = () => {
 
     }, [inputValue]);
 
-    console.log(errorCode)
     const handleAddChar = (char) => {
         setInputValue(prev => prev + char);
     };

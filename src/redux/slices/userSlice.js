@@ -9,10 +9,8 @@ const userSlice = createSlice({
         userData: {}
     },
     reducers: {
-        setAuthenticated: (state, action) => {
+        setAuthenticated: (state) => {
             state.isAuthenticated = true;
-            state.userData.id = action.payload;
-            SecureStore.setItemAsync('userJWTToken', action.payload.toString());
         },
         delAuthenticated: (state) => {
             state.isAuthenticated = false;
