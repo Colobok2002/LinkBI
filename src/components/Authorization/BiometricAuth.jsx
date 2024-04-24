@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Импорт иконок Material
@@ -34,7 +34,6 @@ const BiometricAuth = () => {
             disableDeviceFallback: true,
         });
         if (biometricAuth.success) {
-            console.log(123)
             dispatch(setLoggedIn())
         } else {
             if (showMessage) {
@@ -60,9 +59,9 @@ const BiometricAuth = () => {
 
 const styles = StyleSheet.create({
     container: {
+        alignItems: 'center',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
         padding: 20,
     }
 });

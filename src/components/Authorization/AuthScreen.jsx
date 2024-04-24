@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
@@ -40,17 +40,17 @@ const AuthScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
+        alignItems: 'center',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
         padding: 20,
     },
     input: {
-        width: '100%',
+        borderRadius: 5,
+        borderWidth: 1,
         marginBottom: 10,
         padding: 10,
-        borderWidth: 1,
-        borderRadius: 5,
+        width: '100%',
     },
 });
 

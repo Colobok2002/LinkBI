@@ -10,7 +10,6 @@ import Contacts from '../Contacts/Contacts';
 import Messages from '../Messages/Messages';
 import Setting from '../Setting/Setting';
 import AuthScreen from '../Authorization/AuthScreen';
-import BiometricAuth from '../Authorization/BiometricAuth';
 import CustomKeyboard from '../Ui/CustomKeyboard';
 
 import * as SecureStore from 'expo-secure-store';

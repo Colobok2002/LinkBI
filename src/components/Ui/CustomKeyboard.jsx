@@ -43,24 +43,43 @@ const CustomKeyboard = () => {
 
     const styles = StyleSheet.create({
         container: {
-            flex: 1,
-            justifyContent: 'flex-end',
             alignItems: 'center',
+            backgroundColor: theme.backgroundColor,
+            flex: 1,
             gap: 30,
-            paddingBottom: 100,
-            backgroundColor: theme.backgroundColor
+            justifyContent: 'flex-end',
+            paddingBottom: 100
         },
         inputPassword: {
-            flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center",
+            flexDirection: "row",
             gap: 10,
+            justifyContent: "center",
         },
         inputPasswordDot: {
+            backgroundColor: theme.textColor,
+            borderRadius: 100,
             height: 15,
             width: 15,
-            borderRadius: 100,
-            backgroundColor: theme.textColor,
+        },
+        key: {
+            alignItems: "center",
+            borderRadius: 30,
+            display: "flex",
+            height: 80,
+            justifyContent: 'center',
+            width: 80,
+        },
+        keyDell: {
+            alignItems: "center",
+            display: "flex",
+            height: 80,
+            justifyContent: 'center',
+            width: 80,
+        },
+        keyText: {
+            color: theme.textColor,
+            fontSize: 30,
         },
         keyboard: {
             flexDirection: 'column',
@@ -70,28 +89,9 @@ const CustomKeyboard = () => {
             flexDirection: 'row',
             gap: 10,
         },
-        key: {
-            height: 80,
-            width: 80,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: 'center',
-            borderRadius: 30,
-        },
-        keyDell: {
-            height: 80,
-            width: 80,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: 'center',
-        },
-        keyText: {
-            fontSize: 30,
-            color: theme.textColor
-        },
         passText: {
+            color: theme.textColor,
             fontSize: 15,
-            color: theme.textColor
         }
     });
 

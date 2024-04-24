@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -35,7 +35,6 @@ export default function ChatScreen() {
     const [text, setText] = useState('');
     const [showScrollDownButton, setShowScrollDownButton] = useState(false);
     const [countScrollDownButton, setCountScrollDownButton] = useState(0);
-    const [inputHeight, setInputHeight] = useState(40);
 
     const flatListRef = useRef()
 
@@ -77,23 +76,8 @@ export default function ChatScreen() {
                 { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
                 { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
                 { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-            ];
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
+            ]
 
             setMessages(prevMessages => [...moreMessages, ...prevMessages]);
         }
@@ -103,7 +87,7 @@ export default function ChatScreen() {
     const handleScroll = (event) => {
         const y = event.nativeEvent.contentOffset.y;
         setCountScrollDownButton(y)
-        const threshold = 100; // Вы можете настроить это значение по вашему усмотрению
+        const threshold = 200;
         if (y > threshold) {
             setShowScrollDownButton(true);
         } else {

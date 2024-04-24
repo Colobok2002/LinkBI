@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import ChatScreenStyles from '../ChatScreenStyles';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const MessageItem = ({ item }) => {
 

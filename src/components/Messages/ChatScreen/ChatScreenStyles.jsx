@@ -6,9 +6,6 @@ export default function ChatScreenStyles() {
     const theme = useSelector(state => state.theme.styles);
 
     const styles = StyleSheet.create({
-        modalViewContainer: {
-            paddingVertical: 200,
-        },
         centeredView: {
             display: "flex",
             flex: 1,
@@ -26,18 +23,21 @@ export default function ChatScreenStyles() {
             width: "70%"
         },
         inputContainer: {
+            alignItems: 'center',
+            display: "flex",
             flexDirection: 'row',
             flex: 1,
-            display: "flex",
-            alignItems: 'center',
+            gap: 30,
             justifyContent: "space-between",
             padding: 10,
-            gap: 30,
-            position:"relative",
+            position: "relative",
         },
         modalText: {
             marginBottom: 15,
             textAlign: "center"
+        },
+        modalViewContainer: {
+            paddingVertical: 200,
         },
         myMessage: {
             alignSelf: 'flex-end',

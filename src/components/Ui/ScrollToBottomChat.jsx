@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
@@ -16,28 +16,25 @@ const ScrollToBottomChat = ({ show, scrollToEnd, countSctoll = null, countEvents
 
     const styles = StyleSheet.create({
         scrollButton: {
-            width: 50,
-            height: 50,
-            justifyContent: 'center',
             alignItems: 'center',
-            position: "absolute",
             backgroundColor: theme.activeItems,
             borderRadius: 25,
-        },
-        scrollButtonIcon: {
-
+            height: 50,
+            justifyContent: 'center',
+            position: "absolute",
+            width: 50,
         },
         scrollButtonCount: {
-            backgroundColor: "#ADD8E6",
-            display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            backgroundColor: "#ADD8E6",
             borderRadius: 200,
+            display: "flex",
             height: 25,
-            width: 25,
+            justifyContent: "center",
             position: "absolute",
-            top: -20,
             right: -18,
+            top: -20,
+            width: 25,
 
         },
         scrollButtonCountMessages: {

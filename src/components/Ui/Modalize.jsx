@@ -71,10 +71,15 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const lastTranslationX = useSharedValue(0);
     const dispatch = useDispatch();
 
+    const [oldStatetranslateX, setOldStatetranslateX] = useState(0)
+
     const theme = useSelector(state => state.theme.styles);
 
     const setValue = (value) => {
-        dispatch(setTranslateX(value))
+        if (value != oldStatetranslateX) {
+            dispatch(setTranslateX(value))
+            setOldStatetranslateX(value)
+        }
     }
     const panGesture = Gesture.Pan()
         .activeOffsetX([-5, 5])
@@ -95,7 +100,7 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
                 }
                 lastTranslationX.value = translateX.value
             } else {
-                runOnJS(setValue)(event.translationX)
+                runOnJS(setValue)(Math.floor(event.translationX))
             }
         })
         .onEnd((event) => {
