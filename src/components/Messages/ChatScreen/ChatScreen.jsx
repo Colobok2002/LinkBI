@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-native';
 
 import MessageItemAbout from './MessageItem/MessageItemAbout';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MessageItem from './MessageItem/MessageItem';
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
@@ -30,6 +30,7 @@ export default function ChatScreen() {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
+    const [showScrollDownButton, setShowScrollDownButton] = useState(false);
 
     const flatListRef = useRef()
 
@@ -69,6 +70,21 @@ export default function ChatScreen() {
             setMessages(prevMessages => [...moreMessages, ...prevMessages]);
         }
         setLoading(false);
+    };
+
+    const handleScroll = (event) => {
+        const y = event.nativeEvent.contentOffset.y;
+        const threshold = 100; // Вы можете настроить это значение по вашему усмотрению
+        if (y > threshold) {
+            setShowScrollDownButton(true);
+        } else {
+            setShowScrollDownButton(false);
+        }
+    };
+
+    const scrollToEnd = () => {
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+        setShowScrollDownButton(false);
     };
 
     return (
@@ -111,7 +127,7 @@ export default function ChatScreen() {
                     <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
                         <View style={styles.title}>
                             <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                                <Icon name="arrow-back" size={24} color="black" />
+                                <Ionicons name="arrow-back" size={24} color="black" />
                             </TouchableOpacity>
                             <View style={styles.titleUserContent}>
                                 <IconUser size={20} />
@@ -125,6 +141,7 @@ export default function ChatScreen() {
                                 </View>
                             </View>
                         </View>
+                        <View></View>
                         <FlatList
                             ref={flatListRef}
                             data={messages}
@@ -137,11 +154,25 @@ export default function ChatScreen() {
                             onContentSizeChange={() => {
 
                             }}
+                            onScroll={handleScroll}
                             maintainVisibleContentPosition={{
                                 minIndexForVisible: 0,
                             }}
                         />
+
                         <View style={styles.inputContainer}>
+                            {showScrollDownButton && (
+                                <TouchableOpacity style={styles.scrollButton} onPress={scrollToEnd}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="arrow-down" size={24} color="#ADD8E6" />
+                                        <View style={styles.scrollButtonCount}>
+                                            <Text style={styles.scrollButtonCountMessages}>
+                                                3
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            )}
                             <TextInput
                                 style={styles.input}
                                 onChangeText={setText}
@@ -152,7 +183,7 @@ export default function ChatScreen() {
                         </View>
                     </Modalize>
                 </SafeAreaView>
-            </SafeAreaProvider>
+            </SafeAreaProvider >
         </>
     );
 }

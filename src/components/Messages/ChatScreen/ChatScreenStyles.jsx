@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { StyleSheet } from "react-native"
 
-
 export default function ChatScreenStyles() {
 
     const theme = useSelector(state => state.theme.styles);
@@ -72,6 +71,38 @@ export default function ChatScreenStyles() {
             flexDirection: "row",
             gap: 20,
         },
+        scrollButton: {
+            position: 'absolute',
+            right: 20,
+            bottom: 80,
+            width: 50,
+            height: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.activeItems,
+            borderRadius: 25,
+        },
+        scrollButtonIcon: {
+
+        },
+        scrollButtonCount: {
+            backgroundColor: "#ADD8E6",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 200,
+            height: 25,
+            width: 25,
+            position: "absolute",
+            top: -20,
+            right: -18,
+
+        },
+        scrollButtonCountMessages: {
+            color: theme.activeItems,
+            fontSize: 15,
+
+        }
     });
 
     return { styles }
