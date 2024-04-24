@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-native';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 import MessageItemAbout from './MessageItem/MessageItemAbout';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,8 +15,8 @@ import MessageItem from './MessageItem/MessageItem';
 import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
+import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 
-import Animated from 'react-native-reanimated';
 
 export default function ChatScreen() {
 
@@ -31,6 +33,7 @@ export default function ChatScreen() {
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
     const [showScrollDownButton, setShowScrollDownButton] = useState(false);
+    const [countScrollDownButton, setCountScrollDownButton] = useState(0);
 
     const flatListRef = useRef()
 
@@ -50,7 +53,7 @@ export default function ChatScreen() {
     const loadInitialMessages = async () => {
         setLoading(true);
         const initialMessages = [
-            { id: 25, text: 'Это последнее сообщение', itMyMessage: false, time: '12:25' },
+            { id: uuidv4(), text: 'Это последнее сообщение', itMyMessage: false, time: '12:25' },
         ];
         setTimeout(() => {
             setMessages(initialMessages);
@@ -61,10 +64,10 @@ export default function ChatScreen() {
     const loadMoreMessages = () => {
         setLoading(true);
 
-        if (messages.length < 30) {
+        if (messages.length < 100) {
 
             const moreMessages = [
-                { id: messages.length + 1, text: `Сообщение ${messages.length + 1}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
+                { id: uuidv4(), text: `Сообщение ${messages.length + 1}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
             ];
 
             setMessages(prevMessages => [...moreMessages, ...prevMessages]);
@@ -74,6 +77,7 @@ export default function ChatScreen() {
 
     const handleScroll = (event) => {
         const y = event.nativeEvent.contentOffset.y;
+        setCountScrollDownButton(y)
         const threshold = 100; // Вы можете настроить это значение по вашему усмотрению
         if (y > threshold) {
             setShowScrollDownButton(true);
@@ -86,6 +90,7 @@ export default function ChatScreen() {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
         setShowScrollDownButton(false);
     };
+
 
     return (
         <>
@@ -161,7 +166,8 @@ export default function ChatScreen() {
                         />
 
                         <View style={styles.inputContainer}>
-                            {showScrollDownButton && (
+                            <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
+                            {/* {showScrollDownButton && (
                                 <TouchableOpacity style={styles.scrollButton} onPress={scrollToEnd}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Ionicons name="arrow-down" size={24} color="#ADD8E6" />
@@ -172,7 +178,7 @@ export default function ChatScreen() {
                                         </View>
                                     </View>
                                 </TouchableOpacity>
-                            )}
+                            )} */}
                             <TextInput
                                 style={styles.input}
                                 onChangeText={setText}
