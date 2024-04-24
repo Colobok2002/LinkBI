@@ -23,13 +23,17 @@ export default function ChatScreenStyles() {
         input: {
             borderColor: 'gray',
             borderWidth: 1,
-            flex: 1,
-            marginRight: 10,
-            padding: 10
+            width: "70%"
         },
         inputContainer: {
             flexDirection: 'row',
-            padding: 10
+            flex: 1,
+            display: "flex",
+            alignItems: 'center',
+            justifyContent: "space-between",
+            padding: 10,
+            gap: 30,
+            position:"relative",
         },
         modalText: {
             marginBottom: 15,

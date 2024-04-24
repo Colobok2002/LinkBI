@@ -4,6 +4,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 
+
+
 const ScrollToBottomChat = ({ show, scrollToEnd, countSctoll = null, countEvents = 0 }) => {
 
     const theme = useSelector(state => state.theme.styles);
@@ -18,6 +20,7 @@ const ScrollToBottomChat = ({ show, scrollToEnd, countSctoll = null, countEvents
             height: 50,
             justifyContent: 'center',
             alignItems: 'center',
+            position: "absolute",
             backgroundColor: theme.activeItems,
             borderRadius: 25,
         },
@@ -53,7 +56,6 @@ const ScrollToBottomChat = ({ show, scrollToEnd, countSctoll = null, countEvents
             } else if (countSctoll < 150) {
                 opacity.value = withSpring(countSctoll / 200);
                 scale.value = withSpring(countSctoll / 200);
-                // translateX.value = withSpring(countSctoll / 200);
                 translateX.value = withSpring(20);
             } else {
                 opacity.value = withSpring(1);
@@ -79,8 +81,8 @@ const ScrollToBottomChat = ({ show, scrollToEnd, countSctoll = null, countEvents
                 { scale: scale.value }
             ],
             position: 'absolute',
-            right: 40,
-            bottom: 70,
+            right: 80,
+            top: -60,
         };
     });
 

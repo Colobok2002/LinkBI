@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -17,6 +17,7 @@ import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
 import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 
+import Feather from 'react-native-vector-icons/Feather';
 
 export default function ChatScreen() {
 
@@ -34,6 +35,7 @@ export default function ChatScreen() {
     const [text, setText] = useState('');
     const [showScrollDownButton, setShowScrollDownButton] = useState(false);
     const [countScrollDownButton, setCountScrollDownButton] = useState(0);
+    const [inputHeight, setInputHeight] = useState(40);
 
     const flatListRef = useRef()
 
@@ -44,9 +46,12 @@ export default function ChatScreen() {
     const sendMessage = () => {
         if (text) {
             const newMessage = { id: messages.length + 1, text, itMyMessage: true, time: "12:03" };
-            setMessages([...messages, newMessage]);
+            setMessages([newMessage, ...messages]);
             setText('');
+            setTimeout(() => scrollToEnd(), 300)
+
         }
+
     };
 
 
@@ -55,10 +60,8 @@ export default function ChatScreen() {
         const initialMessages = [
             { id: uuidv4(), text: 'Это последнее сообщение', itMyMessage: false, time: '12:25' },
         ];
-        setTimeout(() => {
-            setMessages(initialMessages);
-            setLoading(false);
-        }, 1000);
+        setMessages(initialMessages);
+
     };
 
     const loadMoreMessages = () => {
@@ -106,7 +109,6 @@ export default function ChatScreen() {
                         }}
 
                     >
-
                         <TouchableWithoutFeedback
                             onPress={() => {
                                 if (!isDragging) {
@@ -116,7 +118,6 @@ export default function ChatScreen() {
                                 dispatch(setIsDragging(false))
                             }}
                         >
-
                             {Platform.OS === 'ios' ? (
                                 <ExpoBlurView style={styles.centeredView} intensity={50}>
                                     <MessageItemAbout></MessageItemAbout>
@@ -165,28 +166,28 @@ export default function ChatScreen() {
                             }}
                         />
 
-                        <View style={styles.inputContainer}>
-                            <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
-                            {/* {showScrollDownButton && (
-                                <TouchableOpacity style={styles.scrollButton} onPress={scrollToEnd}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Ionicons name="arrow-down" size={24} color="#ADD8E6" />
-                                        <View style={styles.scrollButtonCount}>
-                                            <Text style={styles.scrollButtonCountMessages}>
-                                                3
-                                            </Text>
-                                        </View>
-                                    </View>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={{
+                                display: "flex", alignItems: "center", flexDirection: "row"
+                            }}
+                        >
+                            <View style={styles.inputContainer}>
+                                <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
+                                <TextInput
+                                    label="Введите сообщение"
+                                    value={text}
+                                    onChangeText={text => setText(text)}
+                                    multiline
+                                    style={{ flex:1, maxHeight: 200, backgroundColor: "white", padding: 10 }}
+                                    numberOfLines={4}
+                                    mode="outlined"
+                                />
+                                <TouchableOpacity onPress={sendMessage} >
+                                    <Feather name='send' size={24} color="#ADD8E6"></Feather>
                                 </TouchableOpacity>
-                            )} */}
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={setText}
-                                value={text}
-                                placeholder="Введите сообщение..."
-                            />
-                            <Button title="Отправить" onPress={sendMessage} />
-                        </View>
+                            </View>
+                        </KeyboardAvoidingView>
                     </Modalize>
                 </SafeAreaView>
             </SafeAreaProvider >
