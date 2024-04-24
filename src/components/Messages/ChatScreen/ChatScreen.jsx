@@ -48,7 +48,9 @@ export default function ChatScreen() {
             const newMessage = { id: messages.length + 1, text, itMyMessage: true, time: "12:03" };
             setMessages([newMessage, ...messages]);
             setText('');
-            setTimeout(() => scrollToEnd(), 300)
+            if (!showScrollDownButton) {
+                setTimeout(() => scrollToEnd(), 300)
+            }
 
         }
 
@@ -58,9 +60,11 @@ export default function ChatScreen() {
     const loadInitialMessages = async () => {
         setLoading(true);
         const initialMessages = [
-            { id: uuidv4(), text: 'Это последнее сообщение', itMyMessage: false, time: '12:25' },
+            { id: uuidv4(), text: 'Это последнее сообщение ' + uuidv4(), itMyMessage: false, time: '12:25' },
         ];
         setMessages(initialMessages);
+        // loadMoreMessages()
+        // setInterval(() => loadMoreMessages(), 1000)
 
     };
 
@@ -68,9 +72,27 @@ export default function ChatScreen() {
         setLoading(true);
 
         if (messages.length < 100) {
-
             const moreMessages = [
-                { id: uuidv4(), text: `Сообщение ${messages.length + 1}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
+                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
             ];
 
             setMessages(prevMessages => [...moreMessages, ...prevMessages]);
@@ -148,12 +170,14 @@ export default function ChatScreen() {
                             </View>
                         </View>
                         <View></View>
+
                         <FlatList
                             ref={flatListRef}
                             data={messages}
                             inverted
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => <MessageItem item={item} />}
+                            // renderItem={({ item }) => <Text key={item.id} >{item.text}</Text>}
                             onEndReached={loadMoreMessages}
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
@@ -165,7 +189,6 @@ export default function ChatScreen() {
                                 minIndexForVisible: 0,
                             }}
                         />
-
                         <KeyboardAvoidingView
                             behavior={Platform.OS === "ios" ? "padding" : "height"}
                             style={{
@@ -179,7 +202,7 @@ export default function ChatScreen() {
                                     value={text}
                                     onChangeText={text => setText(text)}
                                     multiline
-                                    style={{ flex:1, maxHeight: 200, backgroundColor: "white", padding: 10 }}
+                                    style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 10 }}
                                     numberOfLines={4}
                                     mode="outlined"
                                 />
@@ -191,6 +214,7 @@ export default function ChatScreen() {
                     </Modalize>
                 </SafeAreaView>
             </SafeAreaProvider >
+
         </>
     );
 }

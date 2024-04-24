@@ -4,14 +4,30 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Platform, View } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTranslateX } from '../../redux/slices/clouseAndroidSlice';
+import { useEffect, useState } from 'react';
 
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
+    const translateXProps = useSelector(state => state.clouseAndroid.translateX);
     const translateX = useSharedValue(0);
+    const [oldStatetranslateX, setOldStatetranslateX] = useState(0)
+
+
+    useEffect(() => {
+        if (translateXProps == 0 && oldStatetranslateX > 200) {
+            onRequestClose()
+        } else {
+            translateX.value = translateXProps
+            setOldStatetranslateX(translateXProps)
+        }
+    }, [translateXProps]);
 
     const panGesture = Gesture.Pan()
+        .activeOffsetX([-10, 10])
+        .failOffsetY([-5, 5])
         .onUpdate((event) => {
             if (event.translationX > 0) {
                 translateX.value = event.translationX;
@@ -53,9 +69,13 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const opacity = useSharedValue(0);
     const size = useSharedValue(1);
     const lastTranslationX = useSharedValue(0);
+    const dispatch = useDispatch();
 
     const theme = useSelector(state => state.theme.styles);
 
+    const setValue = (value) => {
+        dispatch(setTranslateX(value))
+    }
     const panGesture = Gesture.Pan()
         .activeOffsetX([-5, 5])
         .failOffsetY([-5, 5])
@@ -74,6 +94,8 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
                     }
                 }
                 lastTranslationX.value = translateX.value
+            } else {
+                runOnJS(setValue)(event.translationX)
             }
         })
         .onEnd((event) => {
@@ -88,6 +110,7 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
 
             opacity.value = withSpring(0);
             size.value = withSpring(1);
+            runOnJS(setValue)(0)
         });
 
     const animatedStyle = useAnimatedStyle(() => {
