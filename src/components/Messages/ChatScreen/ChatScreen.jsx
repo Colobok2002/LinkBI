@@ -1,10 +1,10 @@
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator } from 'react-native';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlurView as ExpoBlurView } from 'expo-blur';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-native';
 
 import MessageItemAbout from './MessageItem/MessageItemAbout';
@@ -14,7 +14,7 @@ import ChatScreenStyles from './ChatScreenStyles';
 import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
 
-
+import Animated from 'react-native-reanimated';
 
 export default function ChatScreen() {
 
@@ -22,18 +22,19 @@ export default function ChatScreen() {
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
 
+
     const theme = useSelector(state => state.theme.styles);
     const openModelAbout = useSelector(state => state.message.openModelAbout);
     const isDragging = useSelector(state => state.message.isDragging);
 
     const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
 
+    const flatListRef = useRef()
+
     useEffect(() => {
-        setMessages([
-            { id: 1, text: "Привет, как дела?Привет, как дела?Привет, как дела?Привет, как дела?", itMyMessage: false, time: "12:01" },
-            { id: 2, text: "Всё хорошо, спасибо!", itMyMessage: true, time: "12:02" }
-        ]);
+        loadInitialMessages();
     }, []);
 
     const sendMessage = () => {
@@ -44,6 +45,31 @@ export default function ChatScreen() {
         }
     };
 
+
+    const loadInitialMessages = async () => {
+        setLoading(true);
+        const initialMessages = [
+            { id: 25, text: 'Это последнее сообщение', itMyMessage: false, time: '12:25' },
+        ];
+        setTimeout(() => {
+            setMessages(initialMessages);
+            setLoading(false);
+        }, 1000);
+    };
+
+    const loadMoreMessages = () => {
+        setLoading(true);
+
+        if (messages.length < 30) {
+
+            const moreMessages = [
+                { id: messages.length + 1, text: `Сообщение ${messages.length + 1}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
+            ];
+
+            setMessages(prevMessages => [...moreMessages, ...prevMessages]);
+        }
+        setLoading(false);
+    };
 
     return (
         <>
@@ -100,11 +126,20 @@ export default function ChatScreen() {
                             </View>
                         </View>
                         <FlatList
+                            ref={flatListRef}
                             data={messages}
+                            inverted
                             keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <MessageItem item={item} />
-                            )}
+                            renderItem={({ item }) => <MessageItem item={item} />}
+                            onEndReached={loadMoreMessages}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                            onContentSizeChange={() => {
+
+                            }}
+                            maintainVisibleContentPosition={{
+                                minIndexForVisible: 0,
+                            }}
                         />
                         <View style={styles.inputContainer}>
                             <TextInput

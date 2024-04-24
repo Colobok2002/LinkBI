@@ -57,6 +57,8 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const theme = useSelector(state => state.theme.styles);
 
     const panGesture = Gesture.Pan()
+        .activeOffsetX([-5, 5])
+        .failOffsetY([-5, 5])
         .onUpdate((event) => {
             if (event.translationX < 0) {
                 translateX.value = event.translationX;

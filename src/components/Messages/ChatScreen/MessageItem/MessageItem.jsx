@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import ChatScreenStyles from '../ChatScreenStyles';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const MessageItem = ({ item }) => {
 
@@ -28,16 +29,18 @@ const MessageItem = ({ item }) => {
 
 
     return (
+
         <RightSwipeEvent>
-            <TouchableOpacity
+            < TouchableOpacity
                 onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
                 onPress={handleDoubleTap}
                 style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
             >
                 <Text style={{ color: 'black' }}>{item.text}</Text>
                 <Text style={styles.time}>{item.time}</Text>
-            </TouchableOpacity>
+            </ TouchableOpacity>
         </RightSwipeEvent>
+
     );
 };
 
