@@ -28,7 +28,7 @@ export default function ChatScreenStyles() {
             flexDirection: 'row',
             flex: 1,
             gap: 30,
-            justifyContent: "space-between",
+            justifyContent: "spase-around",
             padding: 10,
             position: "relative",
         },

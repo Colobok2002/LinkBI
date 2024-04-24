@@ -17,6 +17,8 @@ import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
 import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 
+import { Keyboard } from 'react-native';
+
 import Feather from 'react-native-vector-icons/Feather';
 
 export default function ChatScreen() {
@@ -37,6 +39,8 @@ export default function ChatScreen() {
     const [countScrollDownButton, setCountScrollDownButton] = useState(0);
 
     const flatListRef = useRef()
+    const inputRef = useRef(null);
+
 
     useEffect(() => {
         loadInitialMessages();
@@ -50,11 +54,8 @@ export default function ChatScreen() {
             if (!showScrollDownButton) {
                 setTimeout(() => scrollToEnd(), 300)
             }
-
         }
-
     };
-
 
     const loadInitialMessages = async () => {
         setLoading(true);
@@ -62,9 +63,6 @@ export default function ChatScreen() {
             { id: uuidv4(), text: 'Это последнее сообщение ' + uuidv4(), itMyMessage: false, time: '12:25' },
         ];
         setMessages(initialMessages);
-        // loadMoreMessages()
-        // setInterval(() => loadMoreMessages(), 1000)
-
     };
 
     const loadMoreMessages = () => {
@@ -101,6 +99,8 @@ export default function ChatScreen() {
     };
 
 
+
+
     return (
         <>
             <SafeAreaProvider>
@@ -113,7 +113,6 @@ export default function ChatScreen() {
                             dispatch(setMessage(null)), dispatch(setOpenModelAbout(false));
 
                         }}
-
                     >
                         <TouchableWithoutFeedback
                             onPress={() => {
@@ -156,8 +155,8 @@ export default function ChatScreen() {
                         <View></View>
 
                         <FlatList
-                            ref={flatListRef}
                             data={messages}
+                            ref={flatListRef}
                             inverted
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item }) => <MessageItem item={item} />}
@@ -172,6 +171,7 @@ export default function ChatScreen() {
                             maintainVisibleContentPosition={{
                                 minIndexForVisible: 0,
                             }}
+                            keyboardShouldPersistTaps='handled'
                         />
                         <KeyboardAvoidingView
                             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -184,11 +184,11 @@ export default function ChatScreen() {
                                 <TextInput
                                     label="Введите сообщение"
                                     value={text}
+                                    ref={inputRef}
                                     onChangeText={text => setText(text)}
                                     multiline
-                                    style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 10 }}
-                                    numberOfLines={4}
-                                    mode="outlined"
+                                    style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 5 }}
+                                    autoFocus={false}
                                 />
                                 <TouchableOpacity onPress={sendMessage} >
                                     <Feather name='send' size={24} color="#ADD8E6"></Feather>
