@@ -15,6 +15,9 @@ import CustomKeyboard from '../Ui/CustomKeyboard';
 import * as SecureStore from 'expo-secure-store';
 import { setAuthenticated } from '../../redux/slices/userSlice';
 import { Text } from 'react-native';
+import getApi from '../../../Api';
+import { ApiUrl } from '../../../Constains';
+import { setSession } from '../../redux/slices/sessionSlice';
 
 
 const RootStack = createStackNavigator();
@@ -106,19 +109,32 @@ function RootStackScreen() {
 export default function Navigations() {
 
     const dispatch = useDispatch();
-    const [loadind, setLoading] = useState(true)
+    const [loadind, setLoading] = useState(false)
+    const uuid = useSelector(state => state.session.uuid);
+    const { api } = getApi()
 
     useEffect(() => {
+        if (uuid == null) {
+            api.get(ApiUrl + "/token/generateToken").then(response => {
+                dispatch(setSession(
+                    {
+                        publicKey: response.data.public_key,
+                        uuid: response.data.uuid
 
-        const initializeAuth = async () => {
-            const userId = await SecureStore.getItemAsync('userJWTToken');
-            if (userId) {
-                dispatch(setAuthenticated())
+                    }
+                ))
             }
-            setLoading(false)
-        };
+            )
+        }
+        // const initializeAuth = async () => {
+        //     const userId = await SecureStore.getItemAsync('userJWTToken');
+        //     if (userId) {
+        //         dispatch(setAuthenticated())
+        //     }
+        //     setLoading(false)
+        // };
 
-        initializeAuth();
+        // initializeAuth();
     }, []);
 
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);
