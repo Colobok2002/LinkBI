@@ -119,17 +119,18 @@ export default function Navigations() {
                 dispatch(setSession(
                     {
                         publicKey: response.data.public_key,
-                        uuid: response.data.uuid
+                        privatKey: response.data.privat_key,
+                        uuid: response.data.uuid,
 
                     }
                 ))
             }
             )
         }
+        // dispatch(setAuthenticated())
         // const initializeAuth = async () => {
         //     const userId = await SecureStore.getItemAsync('userJWTToken');
         //     if (userId) {
-        //         dispatch(setAuthenticated())
         //     }
         //     setLoading(false)
         // };

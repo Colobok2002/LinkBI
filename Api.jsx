@@ -22,15 +22,15 @@ const getApi = () => {
     //     }
     // );
 
-    // api.interceptors.response.use(
-    //     (res) => {
-    //         return res;
-    //     },
-    //     async (err) => {
-    //         showNotification({ "message": "Ошибка сервера<br>Пожалуйста обновите страницу или пвторите попытку позже", "type": "er" })
-    //         return Promise.reject(err);
-    //     }
-    // );
+    api.interceptors.response.use(
+        (res) => {
+            return res;
+        },
+        async (err) => {
+            console.error(err);
+            return Promise.reject(err);
+        }
+    );
 
     return { api }
 };

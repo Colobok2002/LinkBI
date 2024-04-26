@@ -6,12 +6,14 @@ const sessionSlice = createSlice({
     initialState: {
         uuid: null,
         publicKey: null,
+        privatKey : null,
     },
 
     reducers: {
         setSession: (state, action) => {
             state.uuid = action.payload.uuid
             state.publicKey = action.payload.publicKey
+            state.privatKey = action.payload.privatKey
         },
     },
 });
