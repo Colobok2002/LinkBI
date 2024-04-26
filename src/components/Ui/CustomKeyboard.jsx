@@ -43,7 +43,7 @@ const CustomKeyboard = () => {
                         'Pin-code не совпадают',
                         'Повторите попытку',
                         [
-                            { text: 'Повторить', onPress: () => { setPinCode(""), setInputValue("") } },
+                            { text: 'Повторить', onPress: () => { setErrorCode(false);setPinCode(""), setInputValue("") } },
                             // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
                             // {
                             //     text: 'Отмена',

@@ -1,0 +1,5 @@
+eas login
+
+eas build -p ios --profile development --local
+eas build -p android --profile development --local
+
