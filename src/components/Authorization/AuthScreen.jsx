@@ -13,6 +13,9 @@ import SegmentedControl from '../Ui/SegmentedControl';
 const RegistrationScreen = () => {
     const dispatch = useDispatch();
     const { api } = getApi();
+    const uuid = useSelector(state => state.session.uuid)
+    const publicKey = useSelector(state => state.session.publicKey)
+
     const [name, setName] = useState('');
     const [soName, setSoName] = useState('');
     const [nik, setNik] = useState('@');
@@ -46,15 +49,20 @@ const RegistrationScreen = () => {
 
     const handleRegister = () => {
         try {
+
+            const encryptor = new JSEncrypt();
+            encryptor.setPublicKey(publicKey);
+
             const requestData = {
-                name,
-                soName,
-                nik,
-                login,
-                password
+                Uuid: uuid,
+                Name: encryptor.encrypt(name),
+                SoName: encryptor.encrypt(soName),
+                Nik: encryptor.encrypt(nik),
+                Login: encryptor.encrypt(login),
+                Password: encryptor.encrypt(password),
             };
 
-            api.post(ApiUrl + "/user/register", requestData).then(response => {
+            api.post(ApiUrl + "/user/registration", requestData).then(response => {
                 console.log('Registration successful:', response.data);
             });
         } catch (error) {
@@ -111,6 +119,10 @@ const AuthScreen = () => {
     const { api } = getApi()
     const publicKey = useSelector(state => state.session.publicKey)
     const privatKey = useSelector(state => state.session.privatKey)
+
+    const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
+    const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
+
     const uuid = useSelector(state => state.session.uuid)
 
 
@@ -124,20 +136,22 @@ const AuthScreen = () => {
         try {
 
             const encryptor = new JSEncrypt();
+
             encryptor.setPublicKey(publicKey);
-
-
             const encryptedUsername = encryptor.encrypt(username);
             const encryptedPassword = encryptor.encrypt(password);
 
-            const setRequestData = {
+            const requestData = {
                 uuid: uuid,
+                pKey: lokalPublicKey,
                 login: encryptedUsername,
                 password: encryptedPassword
             }
 
-            api.post(ApiUrl + "/user/log-in-with-credentials", setRequestData).then(response => {
-                console.log(response.data);
+            api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
+                encryptor.setPrivateKey(lokalPprivatKey);
+                const token = encryptor.decrypt(response.data.token)
+                SecureStore.setItem("userToken", token)
             })
 
         } catch (error) {

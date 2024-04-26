@@ -14,7 +14,7 @@ const userSlice = createSlice({
         },
         delAuthenticated: (state) => {
             state.isAuthenticated = false;
-            SecureStore.deleteItemAsync('userJWTToken');
+            SecureStore.deleteItemAsync('userToken');
         },
         setLoggedIn: (state) => {
             state.isLoggedIn = true;

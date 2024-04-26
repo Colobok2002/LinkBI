@@ -12,12 +12,13 @@ import Setting from '../Setting/Setting';
 import AuthScreen from '../Authorization/AuthScreen';
 import CustomKeyboard from '../Ui/CustomKeyboard';
 
+import JSEncrypt from 'jsencrypt';
 import * as SecureStore from 'expo-secure-store';
 import { setAuthenticated } from '../../redux/slices/userSlice';
 import { Text } from 'react-native';
 import getApi from '../../../Api';
 import { ApiUrl } from '../../../Constains';
-import { setSession } from '../../redux/slices/sessionSlice';
+import { setLokalKeys, setSession } from '../../redux/slices/sessionSlice';
 
 
 const RootStack = createStackNavigator();
@@ -111,31 +112,53 @@ export default function Navigations() {
     const dispatch = useDispatch();
     const [loadind, setLoading] = useState(false)
     const uuid = useSelector(state => state.session.uuid);
+    const publicKey = useSelector(state => state.session.publicKey)
     const { api } = getApi()
 
     useEffect(() => {
-        if (uuid == null) {
-            api.get(ApiUrl + "/token/generateToken").then(response => {
-                dispatch(setSession(
-                    {
-                        publicKey: response.data.public_key,
-                        privatKey: response.data.privat_key,
-                        uuid: response.data.uuid,
+        (async () => {
+            setLoading(true);
 
-                    }
-                ))
+            let _uuid = uuid;
+            let _publicKey = publicKey
+
+            if (uuid == null) {
+                const response = await api.get(ApiUrl + "/token/generateToken");
+                dispatch(setSession({
+                    publicKey: response.data.public_key,
+                    uuid: response.data.uuid,
+                }));
+                _uuid = response.data.uuid
+                _publicKey = response.data.public_key
             }
-            )
-        }
-        // dispatch(setAuthenticated())
-        // const initializeAuth = async () => {
-        //     const userId = await SecureStore.getItemAsync('userJWTToken');
-        //     if (userId) {
-        //     }
-        //     setLoading(false)
-        // };
 
-        // initializeAuth();
+            const encryptor = new JSEncrypt();
+
+            encryptor.getKey();
+
+            const lokalPublicKey = encryptor.getPublicKey()
+
+            dispatch(setLokalKeys({
+                lokalPublicKey: lokalPublicKey,
+                lokalPprivatKey: encryptor.getPrivateKey()
+            }));
+
+            const token = SecureStore.getItem("userToken");
+
+            encryptor.setPublicKey(_publicKey);
+            const enToken = encryptor.encrypt(token);
+
+
+            const responseP = await api.post(ApiUrl + `/user/chek-token?`, {
+                uuid: _uuid,
+                pKey: lokalPublicKey,
+                token: enToken
+            }).then(response => {
+                dispatch(setAuthenticated())
+            });
+
+            setLoading(false);
+        })()
     }, []);
 
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);
