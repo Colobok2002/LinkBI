@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
-import { setAuthenticated, setLoggedIn } from '../../redux/slices/userSlice';
 import getApi from '../../../Api';
 import { ApiUrl } from '../../../Constains';
 

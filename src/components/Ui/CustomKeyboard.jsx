@@ -1,9 +1,9 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BiometricAuth from '../Authorization/BiometricAuth';
 import { setLoggedIn } from '../../redux/slices/userSlice';
-
+import * as SecureStore from 'expo-secure-store';
 
 const CustomKeyboard = () => {
 
@@ -12,29 +12,84 @@ const CustomKeyboard = () => {
     const [inputValue, setInputValue] = useState('');
     const [errorCode, setErrorCode] = useState(false);
     const [successfullyCode, setSuccessfullyCode] = useState(false);
+    const [pinCode, setPinCode] = useState("");
+    const [createAccessСode, setCreateAccessСode] = useState(true);
 
 
     useEffect(() => {
-        if (inputValue.length == 5) {
-            if (inputValue == "11111") {
-                setSuccessfullyCode(true);
-                setInputValue("")
-                dispatch(setLoggedIn())
-            } else {
-                setErrorCode(true)
-                setInputValue("")
-            }
-        } else if (errorCode && inputValue > 0) {
-            setErrorCode(false)
-        } else if (successfullyCode && inputValue > 0) {
-            setSuccessfullyCode(false)
+        // SecureStore.deleteItemAsync("access_code")
+        const AccessСode = SecureStore.getItem("access_code")
+        if (AccessСode) {
+            setCreateAccessСode(false)
+            setPinCode(AccessСode)
         }
+    }, []);
 
-    }, [inputValue]);
 
-    const handleAddChar = (char) => {
-        setInputValue(prev => prev + char);
-    };
+    const handelChangeInput = (newItem) => {
+        const _inputValue = inputValue + newItem
+        setInputValue(_inputValue)
+        if (createAccessСode) {
+            setErrorCode(false)
+            if (pinCode.length + 1 < 5) {
+                setPinCode(_inputValue)
+            } else if (pinCode.length == 4 && _inputValue.length == 5) {
+                setPinCode(_inputValue)
+                setInputValue("")
+            } else if (_inputValue.length == 5) {
+                if (pinCode != _inputValue) {
+                    setErrorCode(true)
+                    Alert.alert(
+                        'Pin-code не совпадают',
+                        'Повторите попытку',
+                        [
+                            { text: 'Повторить', onPress: () => { setPinCode(""), setInputValue("") } },
+                            // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
+                            // {
+                            //     text: 'Отмена',
+                            //     onPress: () => console.log('Отменено'),
+                            //     style: 'cancel',
+                            // },
+                        ],
+                        { cancelable: false },
+                    );
+                } else {
+                    SecureStore.setItem("access_code", _inputValue)
+                    setSuccessfullyCode(true);
+                    Alert.alert(
+                        'Pin-code успешно установлен',
+                        '',
+                        [
+                            { text: 'Продолжить', onPress: () => { dispatch(setLoggedIn()) } },
+                            // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
+                            // {
+                            //     text: 'Отмена',
+                            //     onPress: () => console.log('Отменено'),
+                            //     style: 'cancel',
+                            // },
+                        ],
+                        { cancelable: false },
+                    );
+                }
+            }
+
+        } else {
+            if (_inputValue.length == 5) {
+                if (_inputValue == pinCode) {
+                    setSuccessfullyCode(true);
+                    setInputValue("")
+                    dispatch(setLoggedIn())
+                } else {
+                    setErrorCode(true)
+                    setInputValue("")
+                }
+            } else if (errorCode && _inputValue > 0) {
+                setErrorCode(false)
+            } else if (successfullyCode && _inputValue > 0) {
+                setSuccessfullyCode(false)
+            }
+        }
+    }
 
 
     const handleDeleteChar = () => {
@@ -98,7 +153,11 @@ const CustomKeyboard = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.passText}>Введите пароль</Text>
+            {createAccessСode ? (
+                <Text style={styles.passText}>{pinCode.length == 5 ? "Повторите" : "Создайте"} Pin-code</Text>
+            ) : (
+                <Text style={styles.passText}>Введите Pin-code</Text>
+            )}
             <View style={styles.inputPassword}>
                 <View style={[styles.inputPasswordDot, inputValue.length > 0 ? { backgroundColor: "blue" } : {}, errorCode ? { backgroundColor: "red" } : {}, successfullyCode ? { backgroundColor: "green" } : {}]}></View>
                 <View style={[styles.inputPasswordDot, inputValue.length > 1 ? { backgroundColor: "blue" } : {}, errorCode ? { backgroundColor: "red" } : {}, successfullyCode ? { backgroundColor: "green" } : {}]}></View>
@@ -108,43 +167,45 @@ const CustomKeyboard = () => {
             </View>
             <View style={styles.keyboard}>
                 <View style={styles.keyboardRow}>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('1')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('1')}>
                         <Text style={styles.keyText}>1</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('2')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('2')}>
                         <Text style={styles.keyText}>2</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('3')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('3')}>
                         <Text style={styles.keyText}>3</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.keyboardRow}>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('4')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('4')}>
                         <Text style={styles.keyText}>4</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('5')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('5')}>
                         <Text style={styles.keyText}>5</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('6')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('6')}>
                         <Text style={styles.keyText}>6</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.keyboardRow}>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('7')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('7')}>
                         <Text style={styles.keyText}>7</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('8')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('8')}>
                         <Text style={styles.keyText}>8</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('9')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('9')}>
                         <Text style={styles.keyText}>9</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.keyboardRow}>
                     <View style={styles.keyDell}>
-                        <BiometricAuth></BiometricAuth>
+                        {!createAccessСode && (
+                            <BiometricAuth></BiometricAuth>
+                        )}
                     </View>
-                    <TouchableOpacity style={styles.key} onPress={() => handleAddChar('0')}>
+                    <TouchableOpacity style={styles.key} onPress={() => handelChangeInput('0')}>
                         <Text style={styles.keyText}>0</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.keyDell} onPress={handleDeleteChar}>
