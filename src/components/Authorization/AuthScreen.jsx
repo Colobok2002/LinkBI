@@ -7,6 +7,7 @@ import { ApiUrl } from '../../../Constains';
 
 import JSEncrypt from 'jsencrypt';
 import SegmentedControl from '../Ui/SegmentedControl';
+import { setAuthenticated } from '../../redux/slices/userSlice';
 
 
 const RegistrationScreen = () => {
@@ -150,6 +151,7 @@ const AuthScreen = () => {
             api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
                 encryptor.setPrivateKey(lokalPprivatKey);
                 const token = encryptor.decrypt(response.data.token)
+                dispatch(setAuthenticated())
                 SecureStore.setItem("userToken", token)
             })
 
@@ -209,7 +211,6 @@ const AuthScreen = () => {
                     <TouchableOpacity style={styles.sumbitBtn} onPress={handleLogin} >
                         <Text>Войти</Text>
                     </TouchableOpacity>
-
                 </View>
             )}
         </View>

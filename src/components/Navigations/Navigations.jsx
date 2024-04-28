@@ -19,6 +19,7 @@ import { Text } from 'react-native';
 import getApi from '../../../Api';
 import { ApiUrl } from '../../../Constains';
 import { setLokalKeys, setSession } from '../../redux/slices/sessionSlice';
+import LoadingTextAnimation from '../Ui/LoadingTextAnimation';
 
 
 const RootStack = createStackNavigator();
@@ -119,44 +120,50 @@ export default function Navigations() {
         (async () => {
             setLoading(true);
 
-            // let _uuid = uuid;
-            // let _publicKey = publicKey
+            let _uuid = uuid;
+            let _publicKey = publicKey
 
-            // if (uuid == null) {
-            //     const response = await api.get(ApiUrl + "/token/generateToken");
-            //     dispatch(setSession({
-            //         publicKey: response.data.public_key,
-            //         uuid: response.data.uuid,
-            //     }));
-            //     _uuid = response.data.uuid
-            //     _publicKey = response.data.public_key
-            // }
+            if (uuid == null) {
+                const response = await api.get(ApiUrl + "/token/generateToken");
+                dispatch(setSession({
+                    publicKey: response.data.public_key,
+                    uuid: response.data.uuid,
+                }));
+                _uuid = response.data.uuid
+                _publicKey = response.data.public_key
+            }
 
-            // const encryptor = new JSEncrypt();
+            const encryptor = new JSEncrypt();
 
-            // encryptor.getKey();
+            encryptor.getKey();
 
-            // const lokalPublicKey = encryptor.getPublicKey()
+            const lokalPublicKey = encryptor.getPublicKey()
 
-            // dispatch(setLokalKeys({
-            //     lokalPublicKey: lokalPublicKey,
-            //     lokalPprivatKey: encryptor.getPrivateKey()
-            // }));
+            dispatch(setLokalKeys({
+                lokalPublicKey: lokalPublicKey,
+                lokalPprivatKey: encryptor.getPrivateKey()
+            }));
 
-            // const token = SecureStore.getItem("userToken");
+            const token = SecureStore.getItem("userToken");
 
-            // encryptor.setPublicKey(_publicKey);
-            // const enToken = encryptor.encrypt(token);
+            if (token != null) {
 
+                //     encryptor.setPublicKey(_publicKey);
+                //     const enToken = encryptor.encrypt(token);
 
-            // await api.post(ApiUrl + `/user/chek-token?`, {
-            //     uuid: _uuid,
-            //     pKey: lokalPublicKey,
-            //     token: enToken
-            // }).then(response => {
-            //     dispatch(setAuthenticated())
-            // });
-            dispatch(setAuthenticated())
+                //     const requestData = {
+                //         uuid: _uuid,
+                //         pKey: lokalPublicKey,
+                //         token: enToken
+                //     }
+
+                //     console.log(requestData)
+
+                //     await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
+                //         dispatch(setAuthenticated())
+                //     });
+                dispatch(setAuthenticated())
+            }
             setLoading(false);
         })()
     }, []);
@@ -166,7 +173,7 @@ export default function Navigations() {
 
     if (loadind) {
         return (
-            <Text> Loading ...</Text>
+            <LoadingTextAnimation></LoadingTextAnimation>
         )
     }
     if (isAuthenticated == false) {

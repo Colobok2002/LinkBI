@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BiometricAuth from '../Authorization/BiometricAuth';
-import { setLoggedIn } from '../../redux/slices/userSlice';
+import { delAuthenticated, setLoggedIn } from '../../redux/slices/userSlice';
 import * as SecureStore from 'expo-secure-store';
 
 const CustomKeyboard = () => {
@@ -43,7 +43,7 @@ const CustomKeyboard = () => {
                         'Pin-code не совпадают',
                         'Повторите попытку',
                         [
-                            { text: 'Повторить', onPress: () => { setErrorCode(false);setPinCode(""), setInputValue("") } },
+                            { text: 'Повторить', onPress: () => { setErrorCode(false); setPinCode(""), setInputValue("") } },
                             // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
                             // {
                             //     text: 'Отмена',
@@ -95,6 +95,23 @@ const CustomKeyboard = () => {
     const handleDeleteChar = () => {
         setInputValue(prev => prev.slice(0, -1));
     };
+
+    const handleRemovePinCode = () => {
+        Alert.alert(
+            'Сбросить Pin-Code',
+            'Вам нужно будет заного войти в аккаунт',
+            [
+                { text: 'Продолжить', onPress: () => { SecureStore.deleteItemAsync("access_code"), dispatch(delAuthenticated()) } },
+                {
+                    text: 'Отмена',
+                    style: 'cancel',
+                },
+                // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
+            ],
+            { cancelable: false },
+        );
+    };
+
 
     const styles = StyleSheet.create({
         container: {
@@ -213,6 +230,11 @@ const CustomKeyboard = () => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <TouchableOpacity onPress={handleRemovePinCode}>
+                <Text style={styles.passText}>
+                    Забыли Pin-code ?
+                </Text>
+            </TouchableOpacity>
             <Text style={styles.passText}>Версия 1.0.0</Text>
         </View>
     );
