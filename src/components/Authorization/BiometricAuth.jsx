@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Импорт иконок Material
 import { useDispatch } from 'react-redux';
 import { setLoggedIn } from '../../redux/slices/userSlice';
 import MuTosat from '../Ui/MuToast';
+
 
 const BiometricAuth = () => {
     const [biometricType, setBiometricType] = useState(null);
@@ -45,7 +46,12 @@ const BiometricAuth = () => {
     return (
         <View style={styles.container}>
             {biometricType === 'face' && (
-                <MaterialIcons name="face" size={40} onPress={handleBiometricAuth} />
+                <TouchableOpacity onPress={handleBiometricAuth}>
+                    <Image
+                        source={require('../../../assets/icons/faseId.png')} // Путь к изображению в папке assets
+                        style={{ width: 60, height: 60 }}
+                    />
+                </TouchableOpacity>
             )}
             {biometricType === 'fingerprint' && (
                 <MaterialIcons name="fingerprint" size={40} onPress={handleBiometricAuth} />
