@@ -14,7 +14,10 @@ const RegistrationScreen = () => {
     const dispatch = useDispatch();
     const { api } = getApi();
     const uuid = useSelector(state => state.session.uuid)
+
     const publicKey = useSelector(state => state.session.publicKey)
+    const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
+    const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
 
     const [name, setName] = useState('');
     const [soName, setSoName] = useState('');
@@ -48,26 +51,26 @@ const RegistrationScreen = () => {
 
 
     const handleRegister = () => {
-        try {
 
-            const encryptor = new JSEncrypt();
-            encryptor.setPublicKey(publicKey);
+        const encryptor = new JSEncrypt();
 
-            const requestData = {
-                Uuid: uuid,
-                Name: encryptor.encrypt(name),
-                SoName: encryptor.encrypt(soName),
-                Nik: encryptor.encrypt(nik),
-                Login: encryptor.encrypt(login),
-                Password: encryptor.encrypt(password),
-            };
+        const requestData = {
+            Uuid: uuid,
+            pKey: lokalPublicKey,
+            Name: name,
+            SoName: soName,
+            Nik: nik,
+            Login: login,
+            Password: password,
+        };
 
-            api.post(ApiUrl + "/user/registration", requestData).then(response => {
-                console.log('Registration successful:', response.data);
-            });
-        } catch (error) {
-            console.error('Error during registration:', error);
-        }
+        api.post(ApiUrl + "/user/registration", requestData).then(response => {
+            encryptor.setPrivateKey(lokalPprivatKey);
+            const token = encryptor.decrypt(response.data.token)
+            SecureStore.setItem("userToken", token)
+            dispatch(setAuthenticated())
+        })
+
     };
 
     return (
@@ -118,7 +121,6 @@ const AuthScreen = () => {
     const dispatch = useDispatch();
     const { api } = getApi()
     const publicKey = useSelector(state => state.session.publicKey)
-    const privatKey = useSelector(state => state.session.privatKey)
 
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
     const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
@@ -137,22 +139,18 @@ const AuthScreen = () => {
 
             const encryptor = new JSEncrypt();
 
-            encryptor.setPublicKey(publicKey);
-            const encryptedUsername = encryptor.encrypt(username);
-            const encryptedPassword = encryptor.encrypt(password);
-
             const requestData = {
                 uuid: uuid,
                 pKey: lokalPublicKey,
-                login: encryptedUsername,
-                password: encryptedPassword
+                login: username,
+                password: password
             }
 
             api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
                 encryptor.setPrivateKey(lokalPprivatKey);
                 const token = encryptor.decrypt(response.data.token)
-                dispatch(setAuthenticated())
                 SecureStore.setItem("userToken", token)
+                dispatch(setAuthenticated())
             })
 
         } catch (error) {
