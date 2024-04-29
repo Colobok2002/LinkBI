@@ -136,7 +136,7 @@ export default function Navigations() {
             encryptor.getKey();
 
             const lokalPublicKey = encryptor.getPublicKey()
-
+            
             dispatch(setLokalKeys({
                 lokalPublicKey: lokalPublicKey,
                 lokalPprivatKey: encryptor.getPrivateKey()
@@ -144,24 +144,19 @@ export default function Navigations() {
 
             const token = SecureStore.getItem("userToken");
 
-            if (token != null) {
-
-                encryptor.setPublicKey(_publicKey);
-                const enToken = encryptor.encrypt(token);
+            if (token && token != null && token != undefined) {
 
                 const requestData = {
                     uuid: _uuid,
                     pKey: lokalPublicKey,
-                    token: enToken
+                    token: token
                 }
-
-                console.log(requestData)
 
                 await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
                     dispatch(setAuthenticated())
                 });
-                // Если хочешь чтоб после авторизации даже было окошка входа раскомить ниже и закомить все это условие 
-                // dispatch(setAuthenticated())
+
+                dispatch(setAuthenticated())
             }
             setLoading(false);
         })()

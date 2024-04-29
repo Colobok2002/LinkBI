@@ -1,15 +1,19 @@
 import axios from "axios";
 import MuTosat from "./src/components/Ui/MuToast";
-import { useSelector } from "react-redux";
 import JSEncrypt from 'jsencrypt';
-
+import store from "./src/redux/store";
 
 const getApi = () => {
 
     const { showNotification } = MuTosat()
-    const publicKey = useSelector(state => state.session.publicKey)
 
     const api = axios.create({});
+
+    let publicKey = store.getState().session.publicKey;
+
+    store.subscribe(() => {
+        publicKey = store.getState().session.publicKey;
+    });
 
 
     api.interceptors.request.use(
@@ -30,7 +34,7 @@ const getApi = () => {
             encryptor.setPublicKey(publicKey);
             const modifiedData = { ...data };
             for (let key in modifiedData) {
-                if (key.toLowerCase() !== "Uuid".toLowerCase() && key.toLowerCase() !== "pKey".toLowerCase()) {
+                if (!["Uuid".toLowerCase(), "pKey".toLowerCase()].includes(key.toLowerCase())) {
                     modifiedData[key] = encryptor.encrypt(modifiedData[key]);
                 }
             }
@@ -53,6 +57,7 @@ const getApi = () => {
             } else {
                 showNotification({ "message": "Что то пошло не так", type: "error" });
             }
+            console.log(err)
             return Promise.reject(err);
         }
     );
