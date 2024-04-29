@@ -15,7 +15,7 @@ import CustomKeyboard from '../Ui/CustomKeyboard';
 import JSEncrypt from 'jsencrypt';
 import * as SecureStore from 'expo-secure-store';
 import { setAuthenticated } from '../../redux/slices/userSlice';
-import { Text } from 'react-native';
+import { AppState, Text } from 'react-native';
 import getApi from '../../../Api';
 import { ApiUrl } from '../../../Constains';
 import { setLokalKeys, setSession } from '../../redux/slices/sessionSlice';
@@ -122,7 +122,6 @@ export default function Navigations() {
 
             let _uuid = uuid;
             let _publicKey = publicKey
-
             if (uuid == null) {
                 const response = await api.get(ApiUrl + "/token/generateToken");
                 dispatch(setSession({
@@ -132,7 +131,6 @@ export default function Navigations() {
                 _uuid = response.data.uuid
                 _publicKey = response.data.public_key
             }
-
             const encryptor = new JSEncrypt();
 
             encryptor.getKey();
@@ -148,24 +146,38 @@ export default function Navigations() {
 
             if (token != null) {
 
-                //     encryptor.setPublicKey(_publicKey);
-                //     const enToken = encryptor.encrypt(token);
+                encryptor.setPublicKey(_publicKey);
+                const enToken = encryptor.encrypt(token);
 
-                //     const requestData = {
-                //         uuid: _uuid,
-                //         pKey: lokalPublicKey,
-                //         token: enToken
-                //     }
+                const requestData = {
+                    uuid: _uuid,
+                    pKey: lokalPublicKey,
+                    token: enToken
+                }
 
-                //     console.log(requestData)
+                console.log(requestData)
 
-                //     await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
-                //         dispatch(setAuthenticated())
-                //     });
-                dispatch(setAuthenticated())
+                await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
+                    dispatch(setAuthenticated())
+                });
+                // Если хочешь чтоб после авторизации даже было окошка входа раскомить ниже и закомить все это условие 
+                // dispatch(setAuthenticated())
             }
             setLoading(false);
         })()
+        // const handleAppStateChange = (nextAppState) => {
+        //     if (nextAppState === 'background') {
+        //         console.log('App has gone to the background!');
+        //         // Здесь можно выполнять задачи перед уходом приложения в фон
+        //     }
+        //     console.log(nextAppState)
+        // };
+
+        // AppState.addEventListener('change', handleAppStateChange);
+
+        // return () => {
+        //     AppState.removeEventListener('change', handleAppStateChange);44
+        // };
     }, []);
 
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);
