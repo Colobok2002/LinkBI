@@ -83,9 +83,9 @@ const CustomKeyboard = () => {
                     setErrorCode(true)
                     setInputValue("")
                 }
-            } else if (errorCode && _inputValue > 0) {
+            } else if (errorCode && _inputValue.length > 0) {
                 setErrorCode(false)
-            } else if (successfullyCode && _inputValue > 0) {
+            } else if (successfullyCode && _inputValue.length > 0) {
                 setSuccessfullyCode(false)
             }
         }
