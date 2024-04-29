@@ -1,29 +1,35 @@
-import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import * as SecureStore from 'expo-secure-store';
-import getApi from '../../../Api';
-import { ApiUrl } from '../../../Constains';
-
-import JSEncrypt from 'jsencrypt';
-import SegmentedControl from '../Ui/SegmentedControl';
+import { ApiUrl, useDebouncedFunction } from '../../../Constains';
 import { setAuthenticated } from '../../redux/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+
+import SegmentedControl from '../Ui/SegmentedControl';
+import * as SecureStore from 'expo-secure-store';
+import MuTosat from '../Ui/MuToast';
+import getApi from '../../../Api';
+import JSEncrypt from 'jsencrypt';
 
 
 const RegistrationScreen = () => {
-    const dispatch = useDispatch();
+    const { showNotification } = MuTosat()
     const { api } = getApi();
-    const uuid = useSelector(state => state.session.uuid)
 
-    const publicKey = useSelector(state => state.session.publicKey)
+    const dispatch = useDispatch();
+    const uuid = useSelector(state => state.session.uuid)
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
     const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
+
 
     const [name, setName] = useState('');
     const [soName, setSoName] = useState('');
     const [nik, setNik] = useState('@');
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
+
+    const [uniqueNik, setUniqueNik] = useState(true);
+    const [uniqueLogin, setUniqueLogin] = useState(true);
+    const [chekState, setChekState] = useState(true)
 
     const styles = StyleSheet.create({
         container: {
@@ -40,7 +46,8 @@ const RegistrationScreen = () => {
             width: '100%',
         },
         sumbitBtn: {
-            backgroundColor: "red",
+            backgroundColor: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? "#acdd9a" : "#808080",
+            opacity: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? 1 : 0.3,
             display: "flex",
             alignItems: "center",
             padding: 20,
@@ -50,26 +57,59 @@ const RegistrationScreen = () => {
     });
 
 
-    const handleRegister = () => {
-
-        const encryptor = new JSEncrypt();
-
+    useEffect(() => {
         const requestData = {
             Uuid: uuid,
-            pKey: lokalPublicKey,
-            Name: name,
-            SoName: soName,
             Nik: nik,
             Login: login,
-            Password: password,
         };
+        setChekState(false)
+        chekUniqD(requestData)
+            .then(() => {
+                setChekState(true)
+            })
+    }, [nik, login]);
 
-        api.post(ApiUrl + "/user/registration", requestData).then(response => {
-            encryptor.setPrivateKey(lokalPprivatKey);
-            const token = encryptor.decrypt(response.data.token)
-            SecureStore.setItem("userToken", token)
-            dispatch(setAuthenticated())
+    const chekUniq = async (requestData) => {
+        await api.post(ApiUrl + "/user/check-uniqueness-registration-data", requestData).then(response => {
+            setUniqueNik(response.data.uniqueNik)
+            setUniqueLogin(response.data.uniqueLogin)
         })
+    }
+
+    const chekUniqD = useDebouncedFunction(chekUniq, 500)
+
+    const handleRegister = () => {
+
+        if (chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0) {
+
+            const encryptor = new JSEncrypt();
+
+            const requestData = {
+                Uuid: uuid,
+                pKey: lokalPublicKey,
+                Name: name,
+                SoName: soName,
+                Nik: nik,
+                Login: login,
+                Password: password,
+            };
+
+            api.post(ApiUrl + "/user/registration", requestData).then(response => {
+                encryptor.setPrivateKey(lokalPprivatKey);
+                const token = encryptor.decrypt(response.data.token)
+                SecureStore.setItem("userToken", token)
+                dispatch(setAuthenticated())
+            })
+        } else {
+            if (!chekState) {
+                showNotification({ "message": "Дождитесь проверки на уникальность", "type": "i" })
+            } else if (!uniqueNik || !uniqueLogin) {
+                showNotification({ "message": "Поля ник и логин должны быть уникальн", "type": "i" })
+            } else {
+                showNotification({ "message": "Заполните все поля", "type": "i" })
+            }
+        }
 
     };
 
@@ -89,13 +129,13 @@ const RegistrationScreen = () => {
                     onChangeText={setSoName}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, !uniqueNik ? { borderColor: "red" } : {}]}
                     placeholder="@Nickname"
                     value={nik}
                     onChangeText={newNik => setNik('@' + newNik.replace(/^@/, ''))}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, !uniqueLogin ? { borderColor: "red" } : {}]}
                     placeholder="Login"
                     value={login}
                     onChangeText={setLogin}
@@ -118,21 +158,42 @@ const RegistrationScreen = () => {
 
 const AuthScreen = () => {
 
-    const dispatch = useDispatch();
     const { api } = getApi()
-    const publicKey = useSelector(state => state.session.publicKey)
 
+    const dispatch = useDispatch();
+    const uuid = useSelector(state => state.session.uuid)
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
     const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
-
-    const uuid = useSelector(state => state.session.uuid)
-
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const [registerations, setRegisterations] = useState("Авторизация")
 
+    const styles = StyleSheet.create({
+        container: {
+            alignItems: 'center',
+            flex: 1,
+            marginTop: "75%",
+            gap: 20,
+            padding: 20,
+        },
+        input: {
+            borderRadius: 5,
+            borderWidth: 1,
+            marginBottom: 10,
+            padding: 10,
+            width: '100%',
+        },
+        sumbitBtn: {
+            backgroundColor: "#acdd9a",
+            display: "flex",
+            alignItems: "center",
+            padding: 20,
+            borderRadius: 10,
+
+        }
+    });
 
     const handleLogin = () => {
         try {
@@ -157,31 +218,6 @@ const AuthScreen = () => {
             console.error('Error encrypting data:', error);
         }
     };
-
-    const styles = StyleSheet.create({
-        container: {
-            alignItems: 'center',
-            flex: 1,
-            marginTop: "75%",
-            gap: 20,
-            padding: 20,
-        },
-        input: {
-            borderRadius: 5,
-            borderWidth: 1,
-            marginBottom: 10,
-            padding: 10,
-            width: '100%',
-        },
-        sumbitBtn: {
-            backgroundColor: "red",
-            display: "flex",
-            alignItems: "center",
-            padding: 20,
-            borderRadius: 10,
-
-        }
-    });
 
 
     return (

@@ -46,8 +46,13 @@ const getApi = () => {
             return res;
         },
         async (err) => {
-            // console.error(err.response.data.error);
-            // showNotification({ "message": err.response.data.error, type: "er" })
+            if (err.response && err.response.data && err.response.data.error) {
+                showNotification({ "message": err.response.data.error, type: "error" });
+            } else if (err.request) {
+                showNotification({ "message": "Внутреняя ошибка сервера, проверте соединение", type: "error" });
+            } else {
+                showNotification({ "message": "Что то пошло не так", type: "error" });
+            }
             return Promise.reject(err);
         }
     );

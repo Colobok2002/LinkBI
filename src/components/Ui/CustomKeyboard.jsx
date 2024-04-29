@@ -230,11 +230,13 @@ const CustomKeyboard = () => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <TouchableOpacity onPress={handleRemovePinCode}>
-                <Text style={styles.passText}>
-                    Забыли Pin-code ?
-                </Text>
-            </TouchableOpacity>
+            {!createAccessСode && (
+                <TouchableOpacity onPress={handleRemovePinCode}>
+                    <Text style={styles.passText}>
+                        Забыли Pin-code ?
+                    </Text>
+                </TouchableOpacity>
+            )}
             <Text style={styles.passText}>Версия 1.0.0</Text>
         </View>
     );
