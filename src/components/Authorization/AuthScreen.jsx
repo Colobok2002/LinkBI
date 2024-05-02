@@ -118,33 +118,33 @@ const RegistrationScreen = () => {
             <View style={{ flex: 1, width: "100%" }}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Name"
+                    placeholder="Имя"
                     value={name}
-                    onChangeText={setName}
+                    onChangeText={(value) => name.length <= 30 ? setName(value) : showNotification({ "message": "Слишком длинное имя", type: "i" })}
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder="Surname"
+                    placeholder="Фамилия"
                     value={soName}
-                    onChangeText={setSoName}
+                    onChangeText={(value) => soName.length <= 30 ? setSoName(value) : showNotification({ "message": "Слишком длинная фамилия", type: "i" })}
                 />
                 <TextInput
                     style={[styles.input, !uniqueNik ? { borderColor: "red" } : {}]}
                     placeholder="@Nickname"
                     value={nik}
-                    onChangeText={newNik => setNik('@' + newNik.replace(/^@/, ''))}
+                    onChangeText={(newNik) => nik.length <= 30 ? setNik('@' + newNik.replace(/^@/, '')) : showNotification({ "message": "Слишком длинный никнейм", type: "i" })}
                 />
                 <TextInput
                     style={[styles.input, !uniqueLogin ? { borderColor: "red" } : {}]}
                     placeholder="Login"
                     value={login}
-                    onChangeText={setLogin}
+                    onChangeText={(value) => login.length <= 30 ? setLogin(value) : showNotification({ "message": "Слишком длинный Login", type: "i" })}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Password"
                     value={password}
-                    onChangeText={setPassword}
+                    onChangeText={(value) => password.length <= 30 ? setPassword(value) : showNotification({ "message": "Слишком длинный Password", type: "i" })}
                     secureTextEntry
                 />
             </View>
@@ -158,6 +158,7 @@ const RegistrationScreen = () => {
 
 const AuthScreen = () => {
 
+    const { showNotification } = MuTosat()
     const { api } = getApi()
 
     const dispatch = useDispatch();
@@ -230,15 +231,15 @@ const AuthScreen = () => {
                     <View style={{ flex: 1, width: "100%" }}>
                         <TextInput
                             style={styles.input}
-                            placeholder="Username"
+                            placeholder="Login"
                             value={username}
-                            onChangeText={setUsername}
+                            onChangeText={(value) => username.length <= 30 ? setUsername(value) : showNotification({ "message": "Слишком длинный Login", type: "i" })}
                         />
                         <TextInput
                             style={styles.input}
                             placeholder="Password"
                             value={password}
-                            onChangeText={setPassword}
+                            onChangeText={(value) => password.length <= 30 ? setPassword(value) : showNotification({ "message": "Слишком длинный Password", type: "i" })}
                             secureTextEntry
                         />
                     </View>
