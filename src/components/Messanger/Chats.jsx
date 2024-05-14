@@ -1,9 +1,10 @@
-import { ScrollView, Text, View, RefreshControl, TouchableOpacity, Button, TextInput } from 'react-native'
+import { ScrollView, Text, View, RefreshControl, TouchableOpacity, Button, TextInput, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import * as SecureStore from 'expo-secure-store';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MessagesStyles from './MessagesStyles';
 import SwiperFlatList from 'react-native-swiper';
@@ -12,7 +13,7 @@ import { updateSerch } from '../../redux/slices/serchAnimationSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { ApiUrl } from '../../../Constains';
+import { ApiUrl, useDebouncedFunction } from '../../../Constains';
 
 
 export default function Chats() {
@@ -25,6 +26,8 @@ export default function Chats() {
     const [isRefreshing, setRefreshing] = useState(false);
     const [isSearchVisible, setSearchVisible] = useState(false);
     const [serchValue, setSerchValue] = useState("");
+    const [serchLoadind, setSerchLoading] = useState(false);
+    const [serchResult, setSerchResult] = useState([])
 
     const serchRef = useRef(null)
     const swiperRef = useRef(null);
@@ -62,26 +65,36 @@ export default function Chats() {
         },
     ]);
 
-    const [serchResult, setSerchResult] = useState([])
 
 
     useEffect(() => {
-        if (serchValue.length > 0) {
-            getSerchResult(serchValue)
-        }
+        setSerchLoading(true)
+        getSerchResultD(serchValue)
     }, [serchValue]);
 
-    const getSerchResult = (serchStr) => {
-        axios.get(ApiUrl + `/chats/find-chats?search_term=${serchStr}&uuid=2`).then((response) => {
-            if (response.data.data) {
-                setSerchResult(response.data.data)
-            } else (
-                
-                
-                setSerchResult([])
-            )
 
-        })
+    const getSerchResultD = useDebouncedFunction((value) => getSerchResult(value), 500)
+
+    const getSerchResult = (serchStr) => {
+        if (serchStr.length > 0) {
+            axios.get(ApiUrl + `/chats/find-chats?search_term=${serchStr}&uuid=2`).then((response) => {
+                if (response.data.data) {
+                    setSerchResult(response.data.data)
+                } else {
+                    setSerchResult([])
+                }
+            }).finally(() => setSerchLoading(false))
+        } else {
+            let serchHistory = SecureStore.getItem("serchHistory")
+            if (!serchHistory) {
+                serchHistory = []
+                SecureStore.setItem("serchHistory", JSON.stringify([]))
+            } else {
+                serchHistory = JSON.parse(serchHistory)
+            }
+            setSerchResult(serchHistory)
+            setSerchLoading(false)
+        }
     }
 
     const serchOn = () => {
@@ -101,9 +114,21 @@ export default function Chats() {
         swiperRef.current?.scrollTo(newIndex);
     };
 
-
     const selektSerchItem = (itemId) => {
-        console.log(itemId)
+        const item = serchResult.find(item => item.user_id === itemId)
+        let serchHistory = SecureStore.getItem("serchHistory")
+        if (!serchHistory) {
+            serchHistory = []
+            SecureStore.setItem("serchHistory", JSON.stringify([]))
+        } else {
+            serchHistory = JSON.parse(serchHistory)
+        }
+        if (!serchHistory.find(item => item.user_id === itemId)) {
+            serchHistory.push(item)
+            SecureStore.setItem("serchHistory", JSON.stringify(serchHistory))
+        }
+        navigation.navigate('ChatScreen', { chatId: itemId })
+        setTimeout(() => serchOff(), 1000)
     }
 
     return (
@@ -128,31 +153,41 @@ export default function Chats() {
                         index={1}
                     >
                         <View>
-                            {serchValue.length == 0 && (
-                                <Text>Недавние</Text>
-                            )}
-                            <ScrollView
-                                scrollEventThrottle={10}
-                                style={styles.container}
-                            >
-                                {serchResult.map(chat => (
-                                    <TouchableOpacity
-                                        key={chat.user_id}
-                                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.user_id })}
-                                        style={styles.userItem}
-                                    >
-                                        <IconUser />
-                                        <View style={styles.userItemSubContent}>
-                                            <View style={styles.usetTitleContaner}>
-                                                <Text style={{ color: theme.activeItems }}>{chat.name} {chat.soName}</Text>
-                                            </View>
-                                            <View style={styles.usetTitleContaner}>
-                                                <Text style={{ color: theme.activeItems }}>{chat.nik}</Text>
-                                            </View>
+                            {!serchLoadind ? (
+                                <>
+                                    {serchValue.length == 0 && (
+                                        <View style={styles.userItem}>
+                                            <Text style={{ color: theme.activeItems }}>Недавние</Text>
                                         </View>
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView>
+                                    )}
+                                    <ScrollView
+                                        scrollEventThrottle={10}
+                                        style={styles.container}
+                                    >
+                                        {serchResult.map(chat => (
+                                            <TouchableOpacity
+                                                key={chat.user_id}
+                                                onPress={() => selektSerchItem(chat.user_id)}
+                                                style={styles.userItem}
+                                            >
+                                                <IconUser />
+                                                <View style={styles.userItemSubContent}>
+                                                    <View style={styles.usetTitleContaner}>
+                                                        <Text style={{ color: theme.activeItems }}>{chat.name} {chat.soName}</Text>
+                                                    </View>
+                                                    <View style={styles.usetTitleContaner}>
+                                                        <Text style={{ color: theme.activeItems }}>{chat.nik}</Text>
+                                                    </View>
+                                                </View>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </ScrollView>
+                                </>
+                            ) : (
+                                <View style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <ActivityIndicator></ActivityIndicator>
+                                </View>
+                            )}
                         </View>
                         <View>
                             <ScrollView

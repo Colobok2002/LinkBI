@@ -28,6 +28,13 @@ export default function MessagesStyles() {
             gap: 10,
             padding: 10,
         },
+        userItemS: {
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            padding: 10,
+        },
         userItemSubContent: {
             borderBottomColor: "#C0C0C0",
             borderBottomWidth: 1,
