@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ChatScreen from '../Messages/ChatScreen/ChatScreen';
+import ChatScreen from '../Messanger/ChatScreen/ChatScreen';
 import Contacts from '../Contacts/Contacts';
-import Messages from '../Messages/Messages';
+import Messages from '../Messanger/Chats';
 import Setting from '../Setting/Setting';
 import AuthScreen from '../Authorization/AuthScreen';
 import CustomKeyboard from '../Ui/CustomKeyboard';
