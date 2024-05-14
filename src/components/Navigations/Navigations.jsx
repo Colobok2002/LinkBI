@@ -31,19 +31,9 @@ function MyTabs() {
     const theme = useSelector(state => state.theme.styles);
     const serchAnimation = useSelector(state => state.serchAnimation.serch)
 
-    console.log(serchAnimation)
-
-
-    useEffect(() => {
-        console.log(serchAnimation)
-    }, [serchAnimation]);
-    
     const tabBarStyle = useMemo(() => {
-        console.log(serchAnimation)
         return serchAnimation ? { display: 'none' } : { backgroundColor: theme.backgroundColor };
-    }, [serchAnimation, theme]); // Убедитесь, что theme является объектом, изменения которого вы хотите отслеживать
-
-
+    }, [serchAnimation, theme]);
 
     return (
         <Tab.Navigator
