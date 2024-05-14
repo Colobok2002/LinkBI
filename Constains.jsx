@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-export const ApiUrl = "http://localhost:8080"
-// export const ApiUrl = "https://8bf7-176-213-88-7.ngrok-free.app"
+// export const ApiUrl = "http://localhost:8080"
+export const ApiUrl = "https://576f-109-195-245-104.ngrok-free.app"
 
 
 

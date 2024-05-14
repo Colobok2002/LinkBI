@@ -1,17 +1,16 @@
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import Entypo from 'react-native-vector-icons/Entypo';
 
-export default function SerchFiled() {
+export default function SerchFiled({ onPress = () => { } }) {
 
     const theme = useSelector(state => state.theme.styles);
-
     return (
-        <View style={{ backgroundColor: theme.backgroundColor }}>
+        <View style={{ backgroundColor: theme.backgroundColor, flex: 1, }}>
             <View style={[styles.searchField, { backgroundColor: theme.textColor }]}>
                 <Entypo name={"magnifying-glass"} size={20} />
-                <TextInput style={styles.searchInput} placeholder="Поиск..." />
+                <TextInput style={styles.searchInput} onFocus={onPress} placeholder="Поиск..." />
             </View>
         </View>
     )

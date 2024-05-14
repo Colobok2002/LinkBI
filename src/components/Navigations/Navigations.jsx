@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChatScreen from '../Messanger/ChatScreen/ChatScreen';
@@ -29,15 +29,28 @@ const Tab = createBottomTabNavigator();
 function MyTabs() {
 
     const theme = useSelector(state => state.theme.styles);
+    const serchAnimation = useSelector(state => state.serchAnimation.serch)
+
+    console.log(serchAnimation)
+
+
+    useEffect(() => {
+        console.log(serchAnimation)
+    }, [serchAnimation]);
+    
+    const tabBarStyle = useMemo(() => {
+        console.log(serchAnimation)
+        return serchAnimation ? { display: 'none' } : { backgroundColor: theme.backgroundColor };
+    }, [serchAnimation, theme]); // Убедитесь, что theme является объектом, изменения которого вы хотите отслеживать
+
+
 
     return (
         <Tab.Navigator
             screenOptions={{
                 tabBarActiveTintColor: theme.activeItems,
                 tabBarInactiveTintColor: theme.textColor,
-                tabBarStyle: {
-                    backgroundColor: theme.backgroundColor,
-                },
+                tabBarStyle: tabBarStyle,
                 headerStyle: {
                     backgroundColor: theme.backgroundColor,
                 },
@@ -49,23 +62,21 @@ function MyTabs() {
             }}
             initialRouteName="Сообщения"
         >
-            {/* <Tab.Screen name="Контакты" component={Contacts} options={{
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name={"contacts"} size={size} color={color} />
-                ),
-            }} /> */}
-            <Tab.Screen name="Сообщения" component={Messages}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Icon name={"message"} size={size} color={color} />
-                    ),
-                }} />
-            <Tab.Screen name="Настройки" component={Setting}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Icon name={"settings"} size={size} color={color} />
-                    ),
-                }} />
+            <>
+                <Tab.Screen name="Сообщения" component={Messages}
+                    options={{
+                        headerShown: !serchAnimation,
+                        tabBarIcon: ({ color, size }) => (
+                            <Icon name={"message"} size={size} color={color} />
+                        ),
+                    }} />
+                <Tab.Screen name="Настройки" component={Setting}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Icon name={"settings"} size={size} color={color} />
+                        ),
+                    }} />
+            </>
         </Tab.Navigator>
     );
 }
@@ -136,7 +147,7 @@ export default function Navigations() {
             encryptor.getKey();
 
             const lokalPublicKey = encryptor.getPublicKey()
-            
+
             dispatch(setLokalKeys({
                 lokalPublicKey: lokalPublicKey,
                 lokalPprivatKey: encryptor.getPrivateKey()

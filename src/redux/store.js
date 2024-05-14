@@ -4,6 +4,7 @@ import themeSlice from './slices/themeSlice';
 import userSlice from './slices/userSlice';
 import clouseAndroidSlice from './slices/clouseAndroidSlice';
 import sessionSlice from './slices/sessionSlice';
+import serchAnimationSlice from './slices/serchAnimationSlice';
 
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     user: userSlice.reducer,
     clouseAndroid: clouseAndroidSlice.reducer,
     session: sessionSlice.reducer,
+    serchAnimation: serchAnimationSlice.reducer,
   },
 });
 
