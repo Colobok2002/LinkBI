@@ -49,11 +49,11 @@ function MyTabs() {
             }}
             initialRouteName="Сообщения"
         >
-            <Tab.Screen name="Контакты" component={Contacts} options={{
+            {/* <Tab.Screen name="Контакты" component={Contacts} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Icon name={"contacts"} size={size} color={color} />
                 ),
-            }} />
+            }} /> */}
             <Tab.Screen name="Сообщения" component={Messages}
                 options={{
                     tabBarIcon: ({ color, size }) => (

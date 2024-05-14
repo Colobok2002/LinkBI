@@ -58,16 +58,18 @@ const RegistrationScreen = () => {
 
 
     useEffect(() => {
-        const requestData = {
-            Uuid: uuid,
-            Nik: nik,
-            Login: login,
-        };
-        setChekState(false)
-        chekUniqD(requestData)
-            .then(() => {
-                setChekState(true)
-            })
+        if (login.length > 0 && nik.length > 1) {
+            const requestData = {
+                Uuid: uuid,
+                Nik: nik,
+                Login: login,
+            };
+            setChekState(false)
+            chekUniqD(requestData)
+                .then(() => {
+                    setChekState(true)
+                })
+        }
     }, [nik, login]);
 
     const chekUniq = async (requestData) => {
@@ -81,7 +83,7 @@ const RegistrationScreen = () => {
 
     const handleRegister = () => {
 
-        if (chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0) {
+        if (chekState && uniqueNik && uniqueLogin && name.length > 1 && nik.length > 1 && login.length > 1 && password.length > 0) {
 
             const encryptor = new JSEncrypt();
 
