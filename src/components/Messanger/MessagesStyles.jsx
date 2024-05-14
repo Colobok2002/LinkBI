@@ -57,7 +57,18 @@ export default function MessagesStyles() {
             flexDirection: "row",
             gap: 10,
             justifyContent: "space-between",
-        }
+        },
+        searchField: {
+            alignItems: "center",
+            borderRadius: 5,
+            display: "flex",
+            flexDirection: "row",
+            gap: 10,
+            height: 40,
+            justifyContent: "start",
+            margin: 10,
+            paddingHorizontal: 20,
+        },
     });
 
     return { styles }
