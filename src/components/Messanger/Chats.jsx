@@ -170,7 +170,7 @@ export default function Chats() {
                                                 onPress={() => selektSerchItem(chat.user_id)}
                                                 style={styles.userItem}
                                             >
-                                                <IconUser />
+                                                <IconUser size={25} />
                                                 <View style={styles.userItemSubContent}>
                                                     <View style={styles.usetTitleContaner}>
                                                         <Text style={{ color: theme.activeItems }}>{chat.name} {chat.soName}</Text>
