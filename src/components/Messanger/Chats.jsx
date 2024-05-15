@@ -114,7 +114,23 @@ export default function Chats() {
         swiperRef.current?.scrollTo(newIndex);
     };
 
-    const selektSerchItem = (itemId) => {
+    const selektSerchItem = async (itemId) => {
+
+        const token = SecureStore.getItem("userToken");
+
+        const requestData = {
+            "companion_id": itemId,
+            "user_token": token,
+            "uuid": "string"
+        }
+
+        let chatId = null
+
+        await axios.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
+            chatId = response.data.chat_id
+        }
+        ).catch(error => { console.log(error.response.data) })
+
         const item = serchResult.find(item => item.user_id === itemId)
         let serchHistory = SecureStore.getItem("serchHistory")
         if (!serchHistory) {
@@ -127,7 +143,7 @@ export default function Chats() {
             serchHistory.push(item)
             SecureStore.setItem("serchHistory", JSON.stringify(serchHistory))
         }
-        navigation.navigate('ChatScreen', { chatId: itemId })
+        navigation.navigate('ChatScreen', { chatId: chatId })
         setTimeout(() => serchOff(), 1000)
     }
 

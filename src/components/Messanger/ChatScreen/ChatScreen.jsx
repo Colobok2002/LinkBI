@@ -1,7 +1,7 @@
 import { View, Text, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useState, useEffect, useRef } from 'react';
@@ -23,9 +23,11 @@ import Feather from 'react-native-vector-icons/Feather';
 
 export default function ChatScreen() {
 
+    const route = useRoute();
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
+    const { chatId } = route.params;
 
 
     const theme = useSelector(state => state.theme.styles);
@@ -40,7 +42,6 @@ export default function ChatScreen() {
 
     const flatListRef = useRef()
     const inputRef = useRef(null);
-
 
     useEffect(() => {
         loadInitialMessages();
@@ -97,8 +98,6 @@ export default function ChatScreen() {
         flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
         setShowScrollDownButton(false);
     };
-
-
 
 
     return (

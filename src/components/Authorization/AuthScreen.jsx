@@ -83,7 +83,7 @@ const RegistrationScreen = () => {
 
     const handleRegister = () => {
 
-        if (chekState && uniqueNik && uniqueLogin && name.length > 1 && nik.length > 1 && login.length > 1 && password.length > 0) {
+        if (chekState && uniqueNik && uniqueLogin && name.length > 0 && nik.length > 0 && login.length > 0 && password.length > 0) {
 
             const encryptor = new JSEncrypt();
 
