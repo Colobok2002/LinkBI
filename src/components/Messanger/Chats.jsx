@@ -22,6 +22,8 @@ export default function Chats() {
     const navigation = useNavigation();
     const { styles } = MessagesStyles()
     const theme = useSelector(state => state.theme.styles);
+    const token = SecureStore.getItem("userToken");
+    const encodedToken = encodeURIComponent(token);
 
     const [isRefreshing, setRefreshing] = useState(false);
     const [isSearchVisible, setSearchVisible] = useState(false);
@@ -32,40 +34,27 @@ export default function Chats() {
     const serchRef = useRef(null)
     const swiperRef = useRef(null);
 
-    const [chats] = useState([
-        {
-            id: 1,
-            userName: 'John',
-            userSoName: 'Brown',
-            lastMsg: "eqwewqeqwewqewqeqwewqeqwewq",
-            countNoReadMsg: 10,
-            lastMsgFromMe: false,
-            lastMsgRead: false,
-            lastMsgTime: "12:30",
-        },
-        {
-            id: 2,
-            userName: 'Kevin',
-            userSoName: 'Vranch',
-            lastMsg: "eqwewqeqwewqewqeqwewqeqwewq",
-            countNoReadMsg: 0,
-            lastMsgFromMe: true,
-            lastMsgRead: false,
-            lastMsgTime: "12:30",
-        },
-        {
-            id: 3,
-            userName: 'Antonio',
-            userSoName: 'Smit',
-            lastMsg: "eqwewqeqwewqewqeqwewqeqwewq",
-            countNoReadMsg: 0,
-            lastMsgFromMe: true,
-            lastMsgRead: true,
-            lastMsgTime: "12:30",
-        },
-    ]);
+    const [chats, setChats] = useState([]);
 
+    const [chatsSecured, setChatsSecured] = useState([])
 
+    useEffect(() => {
+        getChats()
+        axios.get(ApiUrl + `/chats/get-chats-secured?user_token=${encodedToken}&uuid=1`).then((response) => {
+            if (response.data.data) {
+                setChatsSecured(response.data.chatsSecured)
+            }
+        }).catch((err) => { err.response.data })
+    }, []);
+
+    const getChats = () => {
+        axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
+            if (response.data.chats) {
+                // setChats(props => props.concat(response.data.chats))
+                setChats(response.data.chats)
+            }
+        }).catch((err) => { err.response.data })
+    }
 
     useEffect(() => {
         setSerchLoading(true)
@@ -129,7 +118,7 @@ export default function Chats() {
         await axios.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
             chatId = response.data.chat_id
         }
-        ).catch(error => { console.log(error.response.data) })
+        )
 
         const item = serchResult.find(item => item.user_id === itemId)
         let serchHistory = SecureStore.getItem("serchHistory")
@@ -145,6 +134,22 @@ export default function Chats() {
         }
         navigation.navigate('ChatScreen', { chatId: chatId })
         setTimeout(() => serchOff(), 1000)
+    }
+
+
+    function formatDateTime(dateTimeString) {
+        const dateTime = new Date(dateTimeString);
+        const now = new Date();
+
+        const isToday = dateTime.toDateString() === now.toDateString();
+        const hours = dateTime.getHours().toString().padStart(2, '0');
+        const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+        const day = dateTime.getDate().toString().padStart(2, '0');
+        const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+        const formattedDate = `${day}:${month}`;
+        const formattedTime = `${hours}:${minutes}`;
+
+        return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
     }
 
     return (
@@ -206,20 +211,22 @@ export default function Chats() {
                             )}
                         </View>
                         <View>
+                            <Button title='Обновить' onPress={getChats}></Button>
                             <ScrollView
                                 scrollEventThrottle={10}
                                 style={styles.container}
                             >
                                 {chats.map(chat => (
                                     <TouchableOpacity
-                                        key={chat.id}
-                                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.id })}
+                                        key={chat.chat_id}
+                                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.chat_id })}
                                         style={styles.userItem}
                                     >
+
                                         <IconUser />
                                         <View style={styles.userItemSubContent}>
                                             <View style={styles.usetTitleContaner}>
-                                                <Text style={{ color: theme.activeItems }}>{chat.userName} {chat.userSoName}</Text>
+                                                <Text style={{ color: theme.activeItems }}>{chat.companion_name} {chat.companion_so_name}</Text>
                                                 <View style={styles.userCheckAndTimeContaner}>
                                                     {
                                                         chat.lastMsgFromMe && (
@@ -232,16 +239,19 @@ export default function Chats() {
                                                             </>
                                                         )
                                                     }
-                                                    <Text style={{ color: theme.activeItems }}>{chat.lastMsgTime}</Text>
+                                                    <Text style={{ color: theme.activeItems }}>{formatDateTime(chat.last_msg_time)}</Text>
                                                 </View>
                                             </View>
                                             <View style={styles.userLastMsgContaner}>
-                                                <View style={styles.userLastMsg}>
-                                                    <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{chat.lastMsg}</Text>
-                                                </View>
-                                                {chat.countNoReadMsg != 0 && (
+                                                {chat.lastMsg && (
+
+                                                    <View style={styles.userLastMsg}>
+                                                        <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{chat.lastMsg}</Text>
+                                                    </View>
+                                                )}
+                                                {chat.new_msg_count != 0 && (
                                                     <View style={styles.userCountMsg}>
-                                                        <Text style={{ color: theme.activeItems }}>30</Text>
+                                                        <Text style={{ color: theme.activeItems }}>{chat.new_msg_count}</Text>
                                                     </View>
                                                 )}
                                             </View>

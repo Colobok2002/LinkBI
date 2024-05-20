@@ -57,7 +57,6 @@ const getApi = () => {
             } else {
                 showNotification({ "message": "Что то пошло не так", type: "error" });
             }
-            console.log(err)
             return Promise.reject(err);
         }
     );

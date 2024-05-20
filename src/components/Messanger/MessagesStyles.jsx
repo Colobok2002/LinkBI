@@ -26,7 +26,7 @@ export default function MessagesStyles() {
             display: "flex",
             flexDirection: "row",
             gap: 10,
-            padding: 10,
+            padding: 5,
         },
         userItemS: {
             alignItems: "center",

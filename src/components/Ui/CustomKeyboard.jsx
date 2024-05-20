@@ -44,12 +44,6 @@ const CustomKeyboard = () => {
                         'Повторите попытку',
                         [
                             { text: 'Повторить', onPress: () => { setErrorCode(false); setPinCode(""), setInputValue("") } },
-                            // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
-                            // {
-                            //     text: 'Отмена',
-                            //     onPress: () => console.log('Отменено'),
-                            //     style: 'cancel',
-                            // },
                         ],
                         { cancelable: false },
                     );
@@ -61,12 +55,6 @@ const CustomKeyboard = () => {
                         '',
                         [
                             { text: 'Продолжить', onPress: () => { dispatch(setLoggedIn()) } },
-                            // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
-                            // {
-                            //     text: 'Отмена',
-                            //     onPress: () => console.log('Отменено'),
-                            //     style: 'cancel',
-                            // },
                         ],
                         { cancelable: false },
                     );
