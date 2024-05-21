@@ -35,3 +35,19 @@ export function useDebouncedFunction(func, delay, cleanUp = false) {
         });
     };
 }
+
+
+
+export function formatDateTime(dateTimeString) {
+    const dateTime = new Date(dateTimeString);
+    const now = new Date();
+
+    const isToday = dateTime.toDateString() === now.toDateString();
+    const hours = dateTime.getHours().toString().padStart(2, '0');
+    const minutes = dateTime.getMinutes().toString().padStart(2, '0');
+    const day = dateTime.getDate().toString().padStart(2, '0');
+    const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
+    const formattedDate = `${day}:${month}`;
+    const formattedTime = `${hours}:${minutes}`;
+    return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
+}

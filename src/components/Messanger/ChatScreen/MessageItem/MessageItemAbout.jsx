@@ -6,6 +6,7 @@ import { useRef } from 'react';
 
 import MessageSubMenu from '../../../Ui/MessageSubMenu';
 import ChatScreenStyles from '../ChatScreenStyles';
+import { formatDateTime } from '../../../../../Constains';
 
 const MessageItemAbout = () => {
 
@@ -16,7 +17,7 @@ const MessageItemAbout = () => {
 
     const scrollViewRef = useRef();
 
-    if (message?.text) {
+    if (message?.message_text) {
 
         return (
             <>
@@ -29,11 +30,11 @@ const MessageItemAbout = () => {
                     onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
                 >
                     <View
-                        style={message.itMyMessage ? styles.myMessage : styles.otherMessage}
+                        style={message.is_my_message ? styles.myMessage : styles.otherMessage}
                         onStartShouldSetResponder={() => true}
                     >
-                        <Text style={{ color: 'black' }}>{message.text}</Text>
-                        <Text style={styles.time}>{message.time}</Text>
+                        <Text style={{ color: 'black' }}>{message.message_text}</Text>
+                        <Text style={styles.time}>{formatDateTime(message.created_at)}</Text>
                     </View>
                     <View onStartShouldSetResponder={() => true}>
                         <MessageSubMenu />

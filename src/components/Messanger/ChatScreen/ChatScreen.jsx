@@ -7,8 +7,9 @@ import { BlurView as ExpoBlurView } from 'expo-blur';
 import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-native';
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
 
+
+import * as SecureStore from 'expo-secure-store';
 import MessageItemAbout from './MessageItem/MessageItemAbout';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MessageItem from './MessageItem/MessageItem';
@@ -17,9 +18,9 @@ import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
 import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 
-import { Keyboard } from 'react-native';
-
 import Feather from 'react-native-vector-icons/Feather';
+import axios from 'axios';
+import { ApiUrl } from '../../../../Constains';
 
 export default function ChatScreen() {
 
@@ -28,6 +29,8 @@ export default function ChatScreen() {
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
     const { chatId } = route.params;
+    const token = SecureStore.getItem("userToken");
+    const encodedToken = encodeURIComponent(token);
 
 
     const theme = useSelector(state => state.theme.styles);
@@ -60,26 +63,17 @@ export default function ChatScreen() {
 
     const loadInitialMessages = async () => {
         setLoading(true);
-        const initialMessages = [
-            { id: uuidv4(), text: 'Это последнее сообщение ' + uuidv4(), itMyMessage: false, time: '12:25' },
-        ];
-        setMessages(initialMessages);
+        await axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) =>{
+            console.log(response.data);
+            setMessages(response.data)
+        })
+
+        setLoading(false);
     };
 
     const loadMoreMessages = () => {
         setLoading(true);
 
-        if (messages.length < 100) {
-            const moreMessages = [
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` },
-                { id: uuidv4(), text: `Сообщение ${uuidv4()}`, itMyMessage: messages.length % 2 === 0, time: `12:${30 + messages.length}` }
-            ]
-
-            setMessages(prevMessages => [...moreMessages, ...prevMessages]);
-        }
         setLoading(false);
     };
 
@@ -157,9 +151,8 @@ export default function ChatScreen() {
                             data={messages}
                             ref={flatListRef}
                             inverted
-                            keyExtractor={(item) => item.id.toString()}
+                            keyExtractor={(item) => item.message_id}
                             renderItem={({ item }) => <MessageItem item={item} />}
-                            // renderItem={({ item }) => <Text key={item.id} >{item.text}</Text>}
                             onEndReached={loadMoreMessages}
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}

@@ -12,7 +12,7 @@ import IconUser from '../Ui/IconUser'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
-import { ApiUrl, useDebouncedFunction } from '../../../Constains';
+import { ApiUrl, formatDateTime, useDebouncedFunction } from '../../../Constains';
 
 
 
@@ -161,21 +161,6 @@ export default function Chats() {
         }
         navigation.navigate('ChatScreen', { chatId: chatId })
         setTimeout(() => serchOff(), 1000)
-    }
-
-
-    function formatDateTime(dateTimeString) {
-        const dateTime = new Date(dateTimeString);
-        const now = new Date();
-
-        const isToday = dateTime.toDateString() === now.toDateString();
-        const hours = dateTime.getHours().toString().padStart(2, '0');
-        const minutes = dateTime.getMinutes().toString().padStart(2, '0');
-        const day = dateTime.getDate().toString().padStart(2, '0');
-        const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
-        const formattedDate = `${day}:${month}`;
-        const formattedTime = `${hours}:${minutes}`;
-        return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
     }
 
 

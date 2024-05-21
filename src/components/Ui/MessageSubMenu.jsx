@@ -19,14 +19,14 @@ const MessageSubMenu = () => {
     const { showNotification } = MuToast()
 
     const copyToClipboard = () => {
-        Clipboard.setStringAsync(message.text);
+        Clipboard.setStringAsync(message.message_text);
         dispatch(setOpenModelAbout(false))
         showNotification({ message: "Сообщение успешно скопировано", type: "in" })
     };
 
     const styles = StyleSheet.create({
         MessageSubMenuContaner: {
-            alignItems: message.itMyMessage ? "flex-end" : "flex-start",
+            alignItems: message.is_my_message ? "flex-end" : "flex-start",
             display: "flex",
             minWidth: "100%",
             paddingHorizontal: 5,

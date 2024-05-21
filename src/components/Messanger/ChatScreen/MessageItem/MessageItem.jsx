@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import ChatScreenStyles from '../ChatScreenStyles';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
+import { formatDateTime } from '../../../../../Constains';
 
 const MessageItem = ({ item }) => {
 
@@ -26,17 +27,15 @@ const MessageItem = ({ item }) => {
         }
     };
 
-
     return (
-
         <RightSwipeEvent>
-            < TouchableOpacity
+            <TouchableOpacity
                 onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
                 onPress={handleDoubleTap}
-                style={item.itMyMessage ? styles.myMessage : styles.otherMessage}
+                style={item.is_my_message ? styles.myMessage : styles.otherMessage}
             >
-                <Text style={{ color: 'black' }}>{item.text}</Text>
-                <Text style={styles.time}>{item.time}</Text>
+                <Text style={{ color: 'black' }}>{item.message_text}</Text>
+                <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
             </ TouchableOpacity>
         </RightSwipeEvent>
 
