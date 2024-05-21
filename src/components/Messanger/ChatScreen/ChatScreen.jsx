@@ -52,20 +52,27 @@ export default function ChatScreen() {
 
     const sendMessage = () => {
         if (text) {
-            const newMessage = { id: messages.length + 1, text, itMyMessage: true, time: "12:03" };
-            setMessages([newMessage, ...messages]);
-            setText('');
-            if (!showScrollDownButton) {
-                setTimeout(() => scrollToEnd(), 300)
+            const postData = {
+                "chat_id": chatId,
+                "message_text": text,
+                "user_token": token,
+                "forwarded_from_chat_id": null,
+                "forwarded_from_message_id": null,
+                "reply_to_message_id": null,
             }
+            axios.post(ApiUrl + `/messages/add-message`,postData).then((response) => {
+                if (response.data.status){
+                    setText("")
+                }
+            })
         }
     };
 
     const loadInitialMessages = async () => {
         setLoading(true);
-        await axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) =>{
-            console.log(response.data);
+        axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) => {
             setMessages(response.data)
+            setTimeout(() => scrollToEnd(), 300)
         })
 
         setLoading(false);
@@ -146,7 +153,6 @@ export default function ChatScreen() {
                             </View>
                         </View>
                         <View></View>
-
                         <FlatList
                             data={messages}
                             ref={flatListRef}
@@ -157,7 +163,6 @@ export default function ChatScreen() {
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
                             onContentSizeChange={() => {
-
                             }}
                             onScroll={handleScroll}
                             maintainVisibleContentPosition={{
