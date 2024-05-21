@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, RefreshControl, TouchableOpacity, Button, TextInput, ActivityIndicator } from 'react-native'
+import { ScrollView, Text, View, RefreshControl, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
@@ -9,11 +9,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MessagesStyles from './MessagesStyles';
 import SwiperFlatList from 'react-native-swiper';
 import IconUser from '../Ui/IconUser'
-import { updateSerch } from '../../redux/slices/serchAnimationSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { ApiUrl, useDebouncedFunction } from '../../../Constains';
+
+
 
 
 export default function Chats() {
@@ -37,6 +38,9 @@ export default function Chats() {
     const [chats, setChats] = useState([]);
 
     const [chatsSecured, setChatsSecured] = useState([])
+
+    const inputWidth = useRef(new Animated.Value(1)).current;
+    const buttonPosition = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         getChats()
@@ -87,21 +91,44 @@ export default function Chats() {
     }
 
     const serchOn = () => {
-        setSearchVisible(true)
+        setSearchVisible(true);
+        Animated.timing(inputWidth, {
+            toValue: 0.8,
+            duration: 150,
+            easing: Easing.linear,
+            useNativeDriver: false,
+        }).start();
+        setSearchVisible(!isSearchVisible);
         handleToggleSearch()
     }
 
-    const serchOff = () => {
+    const widthInterpolate = inputWidth.interpolate({
+        inputRange: [0.8, 1],
+        outputRange: ['90%', '100%']
+    });
+
+    const serchOff = (clearSerchInput = true) => {
+        Animated.timing(inputWidth, {
+            toValue: 1,
+            duration: 150,
+            easing: Easing.linear,
+            useNativeDriver: false,
+        }).start();
         setSearchVisible(false)
         serchRef.current?.blur()
         handleToggleSearch()
-        setSerchValue("")
+        if (clearSerchInput) {
+            setSerchValue("")
+        }
     }
+
 
     const handleToggleSearch = () => {
         const newIndex = isSearchVisible ? 1 : 0;
         swiperRef.current?.scrollTo(newIndex);
     };
+
+    console.log(SecureStore.getItem("userToken"))
 
     const selektSerchItem = async (itemId) => {
 
@@ -119,7 +146,7 @@ export default function Chats() {
             chatId = response.data.chat_id
         }
         )
-
+       
         const item = serchResult.find(item => item.user_id === itemId)
         let serchHistory = SecureStore.getItem("serchHistory")
         if (!serchHistory) {
@@ -148,30 +175,38 @@ export default function Chats() {
         const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
         const formattedDate = `${day}:${month}`;
         const formattedTime = `${hours}:${minutes}`;
-
         return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
     }
+
 
     return (
         <>
             <SafeAreaProvider>
                 <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <View style={{ backgroundColor: theme.backgroundColor, flex: 1, }}>
+                        <Animated.View style={{ width: widthInterpolate }}>
                             <View style={[styles.searchField, { backgroundColor: theme.textColor }]}>
                                 <Entypo name={"magnifying-glass"} size={20} />
                                 <TextInput ref={serchRef} style={styles.searchInput} onFocus={serchOn} value={serchValue} onChangeText={text => setSerchValue(text)} placeholder="Поиск..." />
                             </View>
-                        </View>
-                        {isSearchVisible && (
-                            <Button onPress={serchOff} title="Отмена"></Button>
-                        )}
+                        </Animated.View>
+                        <TouchableOpacity onPress={serchOff} style={{ right: -5 }}>
+                            <Ionicons name="close-circle-outline" size={24} color={theme.textColor} />
+                        </TouchableOpacity>
                     </View>
                     <SwiperFlatList
                         ref={swiperRef}
                         loop={false}
                         showsPagination={false}
                         index={1}
+                        onIndexChanged={(value) => {
+                            if (value == 1) {
+                                serchOff(false)
+                            } else {
+                                serchOn()
+                            }
+                        }}
+
                     >
                         <View>
                             {!serchLoadind ? (
@@ -222,8 +257,7 @@ export default function Chats() {
                                         onPress={() => navigation.navigate('ChatScreen', { chatId: chat.chat_id })}
                                         style={styles.userItem}
                                     >
-
-                                        <IconUser />
+                                        <IconUser size={30} />
                                         <View style={styles.userItemSubContent}>
                                             <View style={styles.usetTitleContaner}>
                                                 <Text style={{ color: theme.activeItems }}>{chat.companion_name} {chat.companion_so_name}</Text>
@@ -244,7 +278,6 @@ export default function Chats() {
                                             </View>
                                             <View style={styles.userLastMsgContaner}>
                                                 {chat.lastMsg && (
-
                                                     <View style={styles.userLastMsg}>
                                                         <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{chat.lastMsg}</Text>
                                                     </View>
