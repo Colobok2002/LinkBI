@@ -6,7 +6,8 @@ const userSlice = createSlice({
     initialState: {
         isAuthenticated: false,
         isLoggedIn: false,
-        userData: {}
+        userData: {},
+        activeChatId: null,
     },
     reducers: {
         setAuthenticated: (state) => {
@@ -22,9 +23,12 @@ const userSlice = createSlice({
         delLoggedIn: (state) => {
             state.isLoggedIn = false;
         },
+        setActiveChat: (state, action) => {
+            state.activeChatId = action.payload;
+        },
     },
 });
 
-export const { setAuthenticated, delAuthenticated, setLoggedIn, delLoggedIn } = userSlice.actions;
+export const { setAuthenticated, delAuthenticated, setLoggedIn, delLoggedIn, setActiveChat } = userSlice.actions;
 
 export default userSlice;

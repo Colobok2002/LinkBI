@@ -56,7 +56,7 @@ export default function MessagesStyles() {
             display: "flex",
             flexDirection: "row",
             gap: 5,
-            height: 50,
+            height: 30,
             justifyContent: "space-between",
         },
         usetTitleContaner: {

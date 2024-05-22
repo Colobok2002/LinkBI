@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, RefreshControl, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
+import { ScrollView, Text, View, RefreshControl,FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
@@ -13,6 +13,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Entypo from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { ApiUrl, formatDateTime, useDebouncedFunction } from '../../../Constains';
+import { setActiveChat } from '../../redux/slices/userSlice';
 
 
 
@@ -129,39 +130,83 @@ export default function Chats() {
         swiperRef.current?.scrollTo(newIndex);
     };
 
-    const selektSerchItem = async (itemId) => {
+    const selektSerchItem = async (itemId, name, soName) => {
 
-        const token = SecureStore.getItem("userToken");
+        const createChat = async () => {
 
-        const requestData = {
-            "companion_id": itemId,
-            "user_token": token,
-            "uuid": "string"
-        }
+            const token = SecureStore.getItem("userToken");
 
-        let chatId = null
+            const requestData = {
+                "companion_id": itemId,
+                "user_token": token,
+                "uuid": "string"
+            }
 
-        await axios.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
-            chatId = response.data.chat_id
+            let chatId = null
+
+            await axios.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
+                chatId = response.data.chat_id
+            })
+            const item = serchResult.find(item => item.user_id === itemId)
+            let serchHistory = SecureStore.getItem("serchHistory")
+            if (!serchHistory) {
+                serchHistory = []
+                SecureStore.setItem("serchHistory", JSON.stringify([]))
+            } else {
+                serchHistory = JSON.parse(serchHistory)
+            }
+            if (!serchHistory.find(item => item.user_id === itemId)) {
+                serchHistory.push(item)
+                SecureStore.setItem("serchHistory", JSON.stringify(serchHistory))
+            }
+            dispatch(setActiveChat(chatId))
         }
-        )
-       
-        const item = serchResult.find(item => item.user_id === itemId)
-        let serchHistory = SecureStore.getItem("serchHistory")
-        if (!serchHistory) {
-            serchHistory = []
-            SecureStore.setItem("serchHistory", JSON.stringify([]))
-        } else {
-            serchHistory = JSON.parse(serchHistory)
-        }
-        if (!serchHistory.find(item => item.user_id === itemId)) {
-            serchHistory.push(item)
-            SecureStore.setItem("serchHistory", JSON.stringify(serchHistory))
-        }
-        navigation.navigate('ChatScreen', { chatId: chatId })
-        setTimeout(() => serchOff(), 1000)
+        createChat()
+        navigation.navigate('ChatScreen', { name: name, soName: soName })
     }
 
+
+    const renderItem = ({ item }) => (
+        <TouchableOpacity
+            key={item.chat_id}
+            onPress={() => {
+                dispatch(setActiveChat(item.chat_id));
+                navigation.navigate('ChatScreen', { name: item.companion_name, soName: item.companion_so_name });
+            }}
+            style={styles.userItem}
+        >
+            <IconUser size={30} />
+            <View style={styles.userItemSubContent}>
+                <View style={styles.usetTitleContaner}>
+                    <Text style={{ color: theme.activeItems }}>{item.companion_name} {item.companion_so_name}</Text>
+                    <View style={styles.userCheckAndTimeContaner}>
+                        {item.lastMsgFromMe && (
+                            <>
+                                {item.lastMsgRead ? (
+                                    <Ionicons name="checkmark-done-sharp" size={15} color={theme.activeItems}></Ionicons>
+                                ) : (
+                                    <Ionicons name="checkmark-done" size={15} color={theme.textColor}></Ionicons>
+                                )}
+                            </>
+                        )}
+                        <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
+                    </View>
+                </View>
+                <View style={styles.userLastMsgContaner}>
+                    {item.lastMsg && (
+                        <View style={styles.userLastMsg}>
+                            <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{item.lastMsg}</Text>
+                        </View>
+                    )}
+                    {item.new_msg_count != 0 && (
+                        <View style={styles.userCountMsg}>
+                            <Text style={{ color: theme.activeItems }}>{item.new_msg_count}</Text>
+                        </View>
+                    )}
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
 
     return (
         <>
@@ -190,7 +235,6 @@ export default function Chats() {
                                 serchOn()
                             }
                         }}
-
                     >
                         <View>
                             {!serchLoadind ? (
@@ -207,7 +251,7 @@ export default function Chats() {
                                         {serchResult.map(chat => (
                                             <TouchableOpacity
                                                 key={chat.user_id}
-                                                onPress={() => selektSerchItem(chat.user_id)}
+                                                onPress={() => selektSerchItem(chat.user_id, chat.name, chat.soName)}
                                                 style={styles.userItem}
                                             >
                                                 <IconUser size={25} />
@@ -231,14 +275,21 @@ export default function Chats() {
                         </View>
                         <View>
                             <Button title='Обновить' onPress={getChats}></Button>
-                            <ScrollView
+                            <FlatList
+                                data={chats}
+                                renderItem={renderItem}
+                                keyExtractor={item => item.chat_id.toString()}
+                                contentContainerStyle={styles.contentContainer}
+                                style={styles.container}
+                            />
+                            {/* <ScrollView
                                 scrollEventThrottle={10}
                                 style={styles.container}
                             >
                                 {chats.map(chat => (
                                     <TouchableOpacity
                                         key={chat.chat_id}
-                                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.chat_id })}
+                                        onPress={() => { dispatch(setActiveChat(chat.chat_id)),  navigation.navigate('ChatScreen', { name: chat.companion_name, soName: chat.companion_so_name }) }}
                                         style={styles.userItem}
                                     >
                                         <IconUser size={30} />
@@ -275,7 +326,7 @@ export default function Chats() {
                                         </View>
                                     </TouchableOpacity>
                                 ))}
-                            </ScrollView>
+                            </ScrollView> */}
                         </View>
                     </SwiperFlatList>
                 </SafeAreaView>

@@ -21,6 +21,7 @@ import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
 import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
+import { setActiveChat } from '../../../redux/slices/userSlice';
 
 export default function ChatScreen() {
 
@@ -28,17 +29,19 @@ export default function ChatScreen() {
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
-    const { chatId } = route.params;
     const token = SecureStore.getItem("userToken");
     const encodedToken = encodeURIComponent(token);
 
+    const { name, soName } = route.params;
 
+    const chatId = useSelector(state => state.user.activeChatId);
     const theme = useSelector(state => state.theme.styles);
     const openModelAbout = useSelector(state => state.message.openModelAbout);
     const isDragging = useSelector(state => state.message.isDragging);
 
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingChat, setLoadingChat] = useState(true);
     const [text, setText] = useState('');
     const [showScrollDownButton, setShowScrollDownButton] = useState(false);
     const [countScrollDownButton, setCountScrollDownButton] = useState(0);
@@ -47,43 +50,23 @@ export default function ChatScreen() {
     const inputRef = useRef(null);
     const socketRef = useRef(null);
 
+
+
     useEffect(() => {
-        loadInitialMessages();
-        createWebSocketConnection({ socketUrl: "/messages/events-messages?chatId=" + chatId + '&userToken=' + encodedToken})
-            .then((socket) => {
-                socketRef.current = socket;
-                socket.onmessage = (event) => {
-                    const parsedData = parseJsonString(event.data);
-                    if (parsedData && parsedData.newMessage) {
-                        setMessages(prevMessages => {
-                            const index = prevMessages.findIndex(
-                                message =>
-                                    message.temporary_message_id === parsedData.newMessage.temporary_message_id ||
-                                    message.message_id === parsedData.newMessage.temporary_message_id
-                            );
-                            if (index !== -1) {
-                                const updatedMessages = [...prevMessages];
-                                updatedMessages[index] = parsedData.newMessage;
-                                return updatedMessages;
-                            }
-                            return [parsedData.newMessage,...prevMessages];
-                        });
-                        setTimeout(() => scrollToEnd(), 300);
-                    }
-
-                };
-            })
-            .catch((error) => {
-                console.error("Ошибка при установке WebSocket-соединения:", error);
-                showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
-            });
-
         return () => {
+            console.log(3)
+            dispatch(setActiveChat(null))
             if (socketRef.current) {
                 socketRef.current.close();
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (chatId) {
+            InitialMessages()
+        }
+    }, [chatId]);
 
     const sendMessage = () => {
         if (text) {
@@ -129,16 +112,44 @@ export default function ChatScreen() {
     }
 
 
-    const loadInitialMessages = async () => {
-        setLoading(true);
-        axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) => {
-            if (response.data != null) {
 
+    const InitialMessages = async () => {
+        setLoading(true);
+        await axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) => {
+            if (response.data != null) {
                 setMessages(response.data)
             }
             setTimeout(() => scrollToEnd(), 300)
         })
+        createWebSocketConnection({ socketUrl: "/messages/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
+            .then((socket) => {
+                socketRef.current = socket;
+                socket.onmessage = (event) => {
+                    const parsedData = parseJsonString(event.data);
+                    if (parsedData && parsedData.newMessage) {
+                        setMessages(prevMessages => {
+                            const index = prevMessages.findIndex(
+                                message =>
+                                    message.temporary_message_id === parsedData.newMessage.temporary_message_id ||
+                                    message.message_id === parsedData.newMessage.temporary_message_id
+                            );
+                            if (index !== -1) {
+                                const updatedMessages = [...prevMessages];
+                                updatedMessages[index] = parsedData.newMessage;
+                                return updatedMessages;
+                            }
+                            return [parsedData.newMessage, ...prevMessages];
+                        });
+                        setTimeout(() => scrollToEnd(), 300);
+                    }
+                };
+            })
+            .catch((error) => {
+                console.error("Ошибка при установке WebSocket-соединения:", error);
+                showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
+            });
 
+        setLoadingChat(false)
         setLoading(false);
     };
 
@@ -164,6 +175,30 @@ export default function ChatScreen() {
         setShowScrollDownButton(false);
     };
 
+    if (loadingChat) {
+        return (
+            <SafeAreaProvider>
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.title}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                            <Ionicons name="arrow-back" size={24} color="black" />
+                        </TouchableOpacity>
+                        <View style={styles.titleUserContent}>
+                            <IconUser size={20} />
+                            <View style={styles.titleSubContent}>
+                                <View style={styles.usetTitleContaner}>
+                                    <Text style={{ color: theme.activeItems }}>{name} {soName}</Text>
+                                </View>
+                                <View style={styles.lastVizit}>
+                                    <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </SafeAreaView>
+            </SafeAreaProvider>
+        )
+    }
 
     return (
         <>
@@ -208,7 +243,7 @@ export default function ChatScreen() {
                                 <IconUser size={20} />
                                 <View style={styles.titleSubContent}>
                                     <View style={styles.usetTitleContaner}>
-                                        <Text style={{ color: theme.activeItems }}>John Brown</Text>
+                                        <Text style={{ color: theme.activeItems }}>{name} {soName}</Text>
                                     </View>
                                     <View style={styles.lastVizit}>
                                         <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
@@ -216,7 +251,6 @@ export default function ChatScreen() {
                                 </View>
                             </View>
                         </View>
-                        <View></View>
                         <FlatList
                             data={messages}
                             ref={flatListRef}

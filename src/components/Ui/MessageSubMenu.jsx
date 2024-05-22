@@ -65,10 +65,12 @@ const MessageSubMenu = () => {
                     <Text>Ответить</Text>
                     <FontAwesome5 name={"reply"}></FontAwesome5>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.myMessageAction}>
-                    <Text>Изменить</Text>
-                    <FontAwesome5 name={"edit"}></FontAwesome5>
-                </TouchableOpacity>
+                {message?.is_my_message && (
+                    <TouchableOpacity style={styles.myMessageAction}>
+                        <Text>Изменить</Text>
+                        <FontAwesome5 name={"edit"}></FontAwesome5>
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity onPress={copyToClipboard} style={styles.myMessageAction}>
                     <Text>Скопировать</Text>
                     <Feather name={"copy"} ></Feather>
@@ -77,8 +79,14 @@ const MessageSubMenu = () => {
                     <Text>Переслать</Text>
                     <FontAwesome5 name={"reply"} style={{ transform: [{ scaleX: -1 }] }}></FontAwesome5>
                 </TouchableOpacity>
+                {message?.is_my_message && (
+                    <TouchableOpacity style={styles.myMessageActionDell}>
+                        <Text style={{ color: "red" }}>Удаить у всех</Text>
+                        <Feather name={"delete"} style={{ color: "red" }}></Feather>
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity style={styles.myMessageActionDell}>
-                    <Text style={{ color: "red" }}>Удаить</Text>
+                    <Text style={{ color: "red" }}>Удаить у себя</Text>
                     <Feather name={"delete"} style={{ color: "red" }}></Feather>
                 </TouchableOpacity>
             </View>
