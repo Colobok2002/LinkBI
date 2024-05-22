@@ -129,8 +129,6 @@ export default function Chats() {
         swiperRef.current?.scrollTo(newIndex);
     };
 
-    console.log(SecureStore.getItem("userToken"))
-
     const selektSerchItem = async (itemId) => {
 
         const token = SecureStore.getItem("userToken");

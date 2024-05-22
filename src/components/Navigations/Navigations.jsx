@@ -14,7 +14,7 @@ import CustomKeyboard from '../Ui/CustomKeyboard';
 
 import JSEncrypt from 'jsencrypt';
 import * as SecureStore from 'expo-secure-store';
-import { setAuthenticated } from '../../redux/slices/userSlice';
+import { delAuthenticated, setAuthenticated } from '../../redux/slices/userSlice';
 import { AppState, Text } from 'react-native';
 import getApi from '../../../Api';
 import { ApiUrl } from '../../../Constains';
@@ -155,25 +155,11 @@ export default function Navigations() {
 
                 await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
                     dispatch(setAuthenticated())
-                });
-
-                dispatch(setAuthenticated())
+                }).catch(() => dispatch(delAuthenticated()));
+                setLoading(false);
             }
             setLoading(false);
         })()
-        // const handleAppStateChange = (nextAppState) => {
-        //     if (nextAppState === 'background') {
-        //         console.log('App has gone to the background!');
-        //         // Здесь можно выполнять задачи перед уходом приложения в фон
-        //     }
-        //     console.log(nextAppState)
-        // };
-
-        // AppState.addEventListener('change', handleAppStateChange);
-
-        // return () => {
-        //     AppState.removeEventListener('change', handleAppStateChange);44
-        // };
     }, []);
 
     const isAuthenticated = useSelector(state => state.user.isAuthenticated);

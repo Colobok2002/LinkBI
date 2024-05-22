@@ -47,11 +47,9 @@ export default function ChatScreen() {
     const inputRef = useRef(null);
     const socketRef = useRef(null);
 
-
-
     useEffect(() => {
         loadInitialMessages();
-        createWebSocketConnection({ socketUrl: "/messages/events-messages/" + chatId })
+        createWebSocketConnection({ socketUrl: "/messages/events-messages?chatId=" + chatId + '&userToken=' + encodedToken})
             .then((socket) => {
                 socketRef.current = socket;
                 socket.onmessage = (event) => {
@@ -68,11 +66,9 @@ export default function ChatScreen() {
                                 updatedMessages[index] = parsedData.newMessage;
                                 return updatedMessages;
                             }
-                            return [parsedData.newMessage, ...prevMessages];
+                            return [parsedData.newMessage,...prevMessages];
                         });
-
-                        // Прокрутка к концу (если необходимо)
-                        // setTimeout(() => scrollToEnd(), 300);
+                        setTimeout(() => scrollToEnd(), 300);
                     }
 
                 };
@@ -136,7 +132,10 @@ export default function ChatScreen() {
     const loadInitialMessages = async () => {
         setLoading(true);
         axios.get(ApiUrl + `/messages/get-messages?chat_id=${chatId}&user_token=${encodedToken}`).then((response) => {
-            setMessages(response.data)
+            if (response.data != null) {
+
+                setMessages(response.data)
+            }
             setTimeout(() => scrollToEnd(), 300)
         })
 
