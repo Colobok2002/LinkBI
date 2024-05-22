@@ -22,6 +22,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
 import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
 import { setActiveChat } from '../../../redux/slices/userSlice';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming,Easing } from 'react-native-reanimated';
 
 export default function ChatScreen() {
 
@@ -175,29 +176,72 @@ export default function ChatScreen() {
         setShowScrollDownButton(false);
     };
 
-    if (loadingChat) {
-        return (
-            <SafeAreaProvider>
-                <SafeAreaView style={styles.container}>
-                    <View style={styles.title}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                            <Ionicons name="arrow-back" size={24} color="black" />
-                        </TouchableOpacity>
-                        <View style={styles.titleUserContent}>
-                            <IconUser size={20} />
-                            <View style={styles.titleSubContent}>
-                                <View style={styles.usetTitleContaner}>
-                                    <Text style={{ color: theme.activeItems }}>{name} {soName}</Text>
-                                </View>
-                                <View style={styles.lastVizit}>
-                                    <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
-                                </View>
-                            </View>
+
+
+    const opacity = useSharedValue(0);
+
+    useEffect(() => {
+        if (!loadingChat) {
+            opacity.value = withTiming(1, {
+                duration: 500,
+                easing: Easing.inOut(Easing.ease),
+            });
+        }
+    }, [loadingChat]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            opacity: opacity.value,
+            flex : 1,
+        };
+    });
+
+    
+    const messageItemsRender = () => {
+        if (!loadingChat)
+            return (
+                <Animated.View style={animatedStyle}>
+                    <FlatList
+                        data={messages}
+                        ref={flatListRef}
+                        inverted
+                        keyExtractor={(item) => item.message_id}
+                        renderItem={({ item }) => <MessageItem item={item} />}
+                        onEndReached={loadMoreMessages}
+                        onEndReachedThreshold={0.1}
+                        ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                        onContentSizeChange={() => {
+                        }}
+                        onScroll={handleScroll}
+                        maintainVisibleContentPosition={{
+                            minIndexForVisible: 0,
+                        }}
+                        keyboardShouldPersistTaps='handled'
+                    />
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === "ios" ? "padding" : "height"}
+                        style={{
+                            display: "flex", alignItems: "center", flexDirection: "row"
+                        }}
+                    >
+                        <View style={styles.inputContainer}>
+                            <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
+                            <TextInput
+                                label="Введите сообщение"
+                                value={text}
+                                ref={inputRef}
+                                onChangeText={text => setText(text)}
+                                multiline
+                                style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 5 }}
+                                autoFocus={false}
+                            />
+                            <TouchableOpacity onPress={sendMessage} >
+                                <Feather name='send' size={24} color="#ADD8E6"></Feather>
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                </SafeAreaView>
-            </SafeAreaProvider>
-        )
+                    </KeyboardAvoidingView>
+                </Animated.View>
+            )
     }
 
     return (
@@ -251,49 +295,10 @@ export default function ChatScreen() {
                                 </View>
                             </View>
                         </View>
-                        <FlatList
-                            data={messages}
-                            ref={flatListRef}
-                            inverted
-                            keyExtractor={(item) => item.message_id}
-                            renderItem={({ item }) => <MessageItem item={item} />}
-                            onEndReached={loadMoreMessages}
-                            onEndReachedThreshold={0.1}
-                            ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-                            onContentSizeChange={() => {
-                            }}
-                            onScroll={handleScroll}
-                            maintainVisibleContentPosition={{
-                                minIndexForVisible: 0,
-                            }}
-                            keyboardShouldPersistTaps='handled'
-                        />
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === "ios" ? "padding" : "height"}
-                            style={{
-                                display: "flex", alignItems: "center", flexDirection: "row"
-                            }}
-                        >
-                            <View style={styles.inputContainer}>
-                                <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
-                                <TextInput
-                                    label="Введите сообщение"
-                                    value={text}
-                                    ref={inputRef}
-                                    onChangeText={text => setText(text)}
-                                    multiline
-                                    style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 5 }}
-                                    autoFocus={false}
-                                />
-                                <TouchableOpacity onPress={sendMessage} >
-                                    <Feather name='send' size={24} color="#ADD8E6"></Feather>
-                                </TouchableOpacity>
-                            </View>
-                        </KeyboardAvoidingView>
+                        {messageItemsRender()}
                     </Modalize>
                 </SafeAreaView>
-            </SafeAreaProvider >
-
+            </SafeAreaProvider>
         </>
     );
 }
