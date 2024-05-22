@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Bmessage_mobile",
+    "displayName": "Bmessage_mobile",
     "slug": "Bmessage_mobile",
     "version": "1.0.0",
     "orientation": "portrait",
