@@ -1,11 +1,12 @@
 import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 
 import ChatScreenStyles from '../ChatScreenStyles';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { formatDateTime } from '../../../../../Constains';
+import Feather from 'react-native-vector-icons/Feather'
 
 const MessageItem = ({ item }) => {
 
@@ -28,16 +29,27 @@ const MessageItem = ({ item }) => {
     };
 
     return (
+        <>
         <RightSwipeEvent>
-            <TouchableOpacity
-                onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
-                onPress={handleDoubleTap}
-                style={item.is_my_message ? styles.myMessage : styles.otherMessage}
-            >
-                <Text style={{ color: 'black' }}>{item.message_text}</Text>
-                <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
-            </ TouchableOpacity>
+                {item?.status == "loading" ? (
+                    <View
+                        style={item.is_my_message ? styles.myMessage : styles.otherMessage}
+                    >
+                        <Text style={{ color: 'black' }}>{item.message_text}</Text>
+                        <Feather name="clock" style={[styles.time, { fontSize: 13, marginTop: 3 }]}></Feather>
+                    </ View>
+                ) : (
+                    <TouchableOpacity
+                        onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
+                        onPress={handleDoubleTap}
+                        style={item.is_my_message ? styles.myMessage : styles.otherMessage}
+                    >
+                        <Text style={{ color: 'black' }}>{item.message_text}</Text>
+                        <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
+                    </ TouchableOpacity>
+                )}
         </RightSwipeEvent>
+        </>
 
     );
 };

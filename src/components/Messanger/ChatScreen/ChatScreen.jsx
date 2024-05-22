@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Modal } from 'react-native';
 import 'react-native-get-random-values';
 
-
+import { v4 as uuidv4 } from 'uuid';
 import * as SecureStore from 'expo-secure-store';
 import MessageItemAbout from './MessageItem/MessageItemAbout';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,7 +20,7 @@ import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 
 import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
-import { ApiUrl } from '../../../../Constains';
+import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
 
 export default function ChatScreen() {
 
@@ -45,14 +45,55 @@ export default function ChatScreen() {
 
     const flatListRef = useRef()
     const inputRef = useRef(null);
+    const socketRef = useRef(null);
+
+
 
     useEffect(() => {
         loadInitialMessages();
+        createWebSocketConnection({ socketUrl: "/messages/events-messages/" + chatId })
+            .then((socket) => {
+                socketRef.current = socket;
+                socket.onmessage = (event) => {
+                    const parsedData = parseJsonString(event.data);
+                    if (parsedData && parsedData.newMessage) {
+                        setMessages(prevMessages => {
+                            const index = prevMessages.findIndex(
+                                message =>
+                                    message.temporary_message_id === parsedData.newMessage.temporary_message_id ||
+                                    message.message_id === parsedData.newMessage.temporary_message_id
+                            );
+                            if (index !== -1) {
+                                const updatedMessages = [...prevMessages];
+                                updatedMessages[index] = parsedData.newMessage;
+                                return updatedMessages;
+                            }
+                            return [parsedData.newMessage, ...prevMessages];
+                        });
+
+                        // Прокрутка к концу (если необходимо)
+                        // setTimeout(() => scrollToEnd(), 300);
+                    }
+
+                };
+            })
+            .catch((error) => {
+                console.error("Ошибка при установке WebSocket-соединения:", error);
+                showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
+            });
+
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.close();
+            }
+        };
     }, []);
 
     const sendMessage = () => {
         if (text) {
+            const temporary_message_id = uuidv4()
             const postData = {
+                "temporary_message_id": temporary_message_id,
                 "chat_id": chatId,
                 "message_text": text,
                 "user_token": token,
@@ -60,13 +101,37 @@ export default function ChatScreen() {
                 "forwarded_from_message_id": null,
                 "reply_to_message_id": null,
             }
-            axios.post(ApiUrl + `/messages/add-message`,postData).then((response) => {
-                if (response.data.status){
-                    setText("")
-                }
-            })
+            const new_msg = {
+                "temporary_message_id": temporary_message_id,
+                "message_id": temporary_message_id,
+                "chat_id": chatId,
+                "message_text": text,
+                "created_at": null,
+                "forwarded_from_chat_id": null,
+                "forwarded_from_message_id": null,
+                "is_my_message": true,
+                "reply_to_message_id": null,
+                "sender_id": null,
+                "status": "loading"
+            }
+
+            setMessages(prevMessages => [new_msg, ...prevMessages]);
+            setTimeout(() => scrollToEnd(), 300)
+            setText("")
+
+            axios.post(ApiUrl + `/messages/add-message`, postData).then((response) => {
+            }).catch((error) => { console.log(error.response.data) })
         }
     };
+
+    function parseJsonString(jsonString) {
+        try {
+            return JSON.parse(jsonString);
+        } catch (error) {
+            return null;
+        }
+    }
+
 
     const loadInitialMessages = async () => {
         setLoading(true);

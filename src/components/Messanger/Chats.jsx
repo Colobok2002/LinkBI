@@ -42,6 +42,8 @@ export default function Chats() {
     const inputWidth = useRef(new Animated.Value(1)).current;
     const buttonPosition = useRef(new Animated.Value(0)).current;
 
+    const socketRef = useRef()
+
     useEffect(() => {
         getChats()
         axios.get(ApiUrl + `/chats/get-chats-secured?user_token=${encodedToken}&uuid=1`).then((response) => {
@@ -54,7 +56,6 @@ export default function Chats() {
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
-                // setChats(props => props.concat(response.data.chats))
                 setChats(response.data.chats)
             }
         }).catch((err) => { err.response.data })

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "https://fair-crabs-cheer.loca.lt"
+export const ApiUrl = "https://curly-parts-allow.loca.lt"
 
 
 
@@ -50,4 +50,23 @@ export function formatDateTime(dateTimeString) {
     const formattedDate = `${day}:${month}`;
     const formattedTime = `${hours}:${minutes}`;
     return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
+}
+
+export function createWebSocketConnection({ socketUrl }) {
+
+    return new Promise((resolve, reject) => {
+        const socket = new WebSocket(`${ApiUrl.includes("127.0.0.1") ? "ws" : "wss"}://${ApiUrl.split('//')[1]}${socketUrl}`);
+
+        socket.onopen = () => {
+            resolve(socket);
+        };
+
+        socket.onclose = (event) => {
+            reject(new Error(`WebSocket closed with code ${event.code}`));
+        };
+
+        socket.onerror = (error) => {
+            reject(error);
+        };
+    });
 }
