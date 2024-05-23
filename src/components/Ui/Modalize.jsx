@@ -1,13 +1,12 @@
 
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Platform, View } from 'react-native';
-
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useDispatch, useSelector } from 'react-redux';
 import { setTranslateX } from '../../redux/slices/clouseAndroidSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Platform, View } from 'react-native';
 import { useEffect, useState } from 'react';
 
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const Modalize = ({ children, onRequestClose, chekToIphone = false }) => {
 
@@ -71,18 +70,13 @@ export const RightSwipeEvent = ({ children, eventFunc = null }) => {
     const lastTranslationX = useSharedValue(0);
     const dispatch = useDispatch();
 
-    const [oldStatetranslateX, setOldStatetranslateX] = useState(0)
-
     const theme = useSelector(state => state.theme.styles);
 
     const setValue = (value) => {
         dispatch(setTranslateX(value))
-        // if (value != oldStatetranslateX) {
-        //     setOldStatetranslateX(value)
-        // }
     }
     const panGesture = Gesture.Pan()
-        .activeOffsetX( [-5, 5])
+        .activeOffsetX([-5, 5])
         .failOffsetX(Platform.OS === 'ios' ? 0 : [])
         .failOffsetY([-5, 5])
         .onUpdate((event) => {

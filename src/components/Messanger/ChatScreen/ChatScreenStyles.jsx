@@ -16,22 +16,26 @@ export default function ChatScreenStyles() {
             flexDirection: "column",
             flex: 1,
         },
+        dateInfoText : {
+            color : theme.textColor,
+            fontSize : 10,
+        },
         input: {
             borderColor: 'gray',
             borderWidth: 1,
             width: "70%"
         },
         inputContainer: {
-            backgroundColor : "#fff",
             alignItems: 'flex-end',
+            backgroundColor : "#fff",
             display: "flex",
             flexDirection: 'row',
             flex: 1,
             gap: 10,
             justifyContent: "spase-around",
             padding: 10,
-            position: "relative",
             paddingBottom  : 20,
+            position: "relative",
         },
         modalText: {
             marginBottom: 15,
@@ -70,20 +74,12 @@ export default function ChatScreenStyles() {
             height: 60,
             paddingHorizontal: 10,
         },
+
         titleUserContent: {
             alignItems: "center",
             display: "flex",
             flexDirection: "row",
             gap: 20,
-        },
-        dateInfo : {
-            backgroundColor : theme.activeItems,
-            padding : 5,
-            borderRadius : 30,
-        },
-        dateInfoText : {
-            fontSize : 10,
-            color : theme.textColor,
         }
     });
 

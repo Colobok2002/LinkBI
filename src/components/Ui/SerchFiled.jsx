@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import Entypo from 'react-native-vector-icons/Entypo';

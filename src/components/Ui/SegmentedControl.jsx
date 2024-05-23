@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const SegmentedControl = ({ options, value, setValue }) => {
@@ -33,15 +33,15 @@ const SegmentedControl = ({ options, value, setValue }) => {
 
 const styles = StyleSheet.create({
     container: {
+        borderRadius: 5,
         flexDirection: 'row',
         height: 40,
-        borderRadius: 5,
         overflow: 'hidden',
     },
     option: {
+        alignItems: 'center',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
     },
     text: {
         color: 'white',

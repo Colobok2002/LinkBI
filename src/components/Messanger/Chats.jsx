@@ -1,19 +1,18 @@
-import { ScrollView, Text, View, RefreshControl, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-
-import * as SecureStore from 'expo-secure-store';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MessagesStyles from './MessagesStyles';
-import SwiperFlatList from 'react-native-swiper';
-import IconUser from '../Ui/IconUser'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import Entypo from 'react-native-vector-icons/Entypo';
-import axios from 'axios';
+import { ScrollView, Text, View, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
 import { ApiUrl, formatDateTime, useDebouncedFunction } from '../../../Constains';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { setActiveChat } from '../../redux/slices/userSlice';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import * as SecureStore from 'expo-secure-store';
+import SwiperFlatList from 'react-native-swiper';
+import MessagesStyles from './MessagesStyles';
+import IconUser from '../Ui/IconUser'
+import axios from 'axios';
 
 
 
@@ -27,7 +26,6 @@ export default function Chats() {
     const token = SecureStore.getItem("userToken");
     const encodedToken = encodeURIComponent(token);
 
-    const [isRefreshing, setRefreshing] = useState(false);
     const [isSearchVisible, setSearchVisible] = useState(false);
     const [serchValue, setSerchValue] = useState("");
     const [serchLoadind, setSerchLoading] = useState(false);
@@ -41,15 +39,13 @@ export default function Chats() {
     const [chatsSecured, setChatsSecured] = useState([])
 
     const inputWidth = useRef(new Animated.Value(1)).current;
-    const buttonPosition = useRef(new Animated.Value(0)).current;
 
-    const socketRef = useRef()
+    // const socketRef = useRef()
 
     useEffect(() => {
         getChats()
         axios.get(ApiUrl + `/chats/get-chats-secured?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.data) {
-
                 setChatsSecured(response.data.chatsSecured)
             }
         })
@@ -58,7 +54,6 @@ export default function Chats() {
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
-                console.log(response.data.chats)
                 setChats(response.data.chats)
             }
         })
@@ -191,7 +186,6 @@ export default function Chats() {
                                 )}
                             </>
                         )}
-                        {console.log(item.last_msg_time )}
                         {item.last_msg_time && (
                             <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
                         )}
@@ -280,6 +274,13 @@ export default function Chats() {
                         </View>
                         <View>
                             <Button title='Обновить' onPress={getChats}></Button>
+                            <FlatList
+                                data={chatsSecured}
+                                renderItem={renderItem}
+                                keyExtractor={item => item.chat_id.toString()}
+                                contentContainerStyle={styles.contentContainer}
+                                style={styles.container}
+                            />
                             <FlatList
                                 data={chats}
                                 renderItem={renderItem}

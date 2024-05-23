@@ -1,8 +1,8 @@
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ApiUrl, useDebouncedFunction } from '../../../Constains';
 import { setAuthenticated } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import SegmentedControl from '../Ui/SegmentedControl';
 import * as SecureStore from 'expo-secure-store';
@@ -46,12 +46,12 @@ const RegistrationScreen = () => {
             width: '100%',
         },
         sumbitBtn: {
-            backgroundColor: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? "#acdd9a" : "#808080",
-            opacity: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? 1 : 0.3,
-            display: "flex",
             alignItems: "center",
-            padding: 20,
+            backgroundColor: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? "#acdd9a" : "#808080",
             borderRadius: 10,
+            display: "flex",
+            opacity: chekState && uniqueNik && uniqueLogin && name.length > 0 && soName.length > 0 && nik.length > 1 && login.length > 0 && password.length > 0 ? 1 : 0.3,
+            padding: 20,
 
         }
     });
@@ -177,8 +177,8 @@ const AuthScreen = () => {
         container: {
             alignItems: 'center',
             flex: 1,
-            marginTop: "75%",
             gap: 20,
+            marginTop: "75%",
             padding: 20,
         },
         input: {
@@ -189,37 +189,31 @@ const AuthScreen = () => {
             width: '100%',
         },
         sumbitBtn: {
-            backgroundColor: "#acdd9a",
-            display: "flex",
             alignItems: "center",
-            padding: 20,
+            backgroundColor: "#acdd9a",
             borderRadius: 10,
+            display: "flex",
+            padding: 20,
 
         }
     });
 
     const handleLogin = () => {
-        try {
+        const encryptor = new JSEncrypt();
 
-            const encryptor = new JSEncrypt();
-
-            const requestData = {
-                uuid: uuid,
-                pKey: lokalPublicKey,
-                login: username,
-                password: password
-            }
-
-            api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
-                encryptor.setPrivateKey(lokalPprivatKey);
-                const token = encryptor.decrypt(response.data.token)
-                SecureStore.setItem("userToken", token)
-                dispatch(setAuthenticated())
-            })
-
-        } catch (error) {
-            console.error('Error encrypting data:', error);
+        const requestData = {
+            uuid: uuid,
+            pKey: lokalPublicKey,
+            login: username,
+            password: password
         }
+
+        api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
+            encryptor.setPrivateKey(lokalPprivatKey);
+            const token = encryptor.decrypt(response.data.token)
+            SecureStore.setItem("userToken", token)
+            dispatch(setAuthenticated())
+        })
     };
 
 

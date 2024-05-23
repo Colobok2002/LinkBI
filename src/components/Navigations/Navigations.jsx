@@ -1,25 +1,23 @@
+import { delAuthenticated, setAuthenticated } from '../../redux/slices/userSlice';
+import { setLokalKeys, setSession } from '../../redux/slices/sessionSlice';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useMemo, useState } from 'react';
+import { ApiUrl } from '../../../Constains';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChatScreen from '../Messanger/ChatScreen/ChatScreen';
-import Contacts from '../Contacts/Contacts';
-import Messages from '../Messanger/Chats';
-import Setting from '../Setting/Setting';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import AuthScreen from '../Authorization/AuthScreen';
 import CustomKeyboard from '../Ui/CustomKeyboard';
+import Messages from '../Messanger/Chats';
+import Setting from '../Setting/Setting';
 
-import JSEncrypt from 'jsencrypt';
-import * as SecureStore from 'expo-secure-store';
-import { delAuthenticated, setAuthenticated } from '../../redux/slices/userSlice';
-import { AppState, Text } from 'react-native';
-import getApi from '../../../Api';
-import { ApiUrl } from '../../../Constains';
-import { setLokalKeys, setSession } from '../../redux/slices/sessionSlice';
 import LoadingTextAnimation from '../Ui/LoadingTextAnimation';
+import * as SecureStore from 'expo-secure-store';
+import JSEncrypt from 'jsencrypt';
+import getApi from '../../../Api';
 
 
 const RootStack = createStackNavigator();
@@ -114,7 +112,7 @@ export default function Navigations() {
     const dispatch = useDispatch();
     const [loadind, setLoading] = useState(false)
     const uuid = useSelector(state => state.session.uuid);
-    const publicKey = useSelector(state => state.session.publicKey)
+    // const publicKey = useSelector(state => state.session.publicKey)
     const { api } = getApi()
 
     useEffect(() => {
@@ -122,7 +120,7 @@ export default function Navigations() {
             setLoading(true);
 
             let _uuid = uuid;
-            let _publicKey = publicKey
+            // let _publicKey = publicKey
             if (uuid == null) {
                 const response = await api.get(ApiUrl + "/token/generateToken");
                 dispatch(setSession({
@@ -130,7 +128,7 @@ export default function Navigations() {
                     uuid: response.data.uuid,
                 }));
                 _uuid = response.data.uuid
-                _publicKey = response.data.public_key
+                // _publicKey = response.data.public_key
             }
             const encryptor = new JSEncrypt();
 
@@ -153,7 +151,7 @@ export default function Navigations() {
                     token: token
                 }
 
-                await api.post(ApiUrl + `/user/chek-token`, requestData).then(response => {
+                await api.post(ApiUrl + `/user/chek-token`, requestData).then(() => {
                     dispatch(setAuthenticated())
                 }).catch(() => dispatch(delAuthenticated()));
                 setLoading(false);

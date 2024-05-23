@@ -1,13 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
-import ChatScreenStyles from '../ChatScreenStyles';
-import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { formatDate, formatDateTime } from '../../../../../Constains';
-import Feather from 'react-native-vector-icons/Feather';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { RightSwipeEvent } from '../../../Ui/Modalize';
+import { useState, useCallback, memo } from 'react';
+import { useDispatch } from 'react-redux';
 
-const MessageItem = React.memo(({ item }) => {
+import Feather from 'react-native-vector-icons/Feather';
+import ChatScreenStyles from '../ChatScreenStyles';
+
+const MessageItem = ({ item }) => {
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
 
@@ -33,7 +34,7 @@ const MessageItem = React.memo(({ item }) => {
                         <Text style={styles.dateInfoText}>{formatDate(item.created_at)}</Text>
                     </View>
                 )}
-                {item?.status == "loading" ? (
+                {item?.status === "loading" ? (
                     <View style={item.is_my_message ? styles.myMessage : styles.otherMessage}>
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
                         <Feather name="clock" style={[styles.time, { fontSize: 13, marginTop: 3 }]} />
@@ -51,6 +52,9 @@ const MessageItem = React.memo(({ item }) => {
             </RightSwipeEvent>
         </>
     );
-});
+};
 
-export default MessageItem;
+const MemoizedMessageItem = memo(MessageItem);
+MemoizedMessageItem.displayName = 'MemoizedMessageItem';
+
+export default MemoizedMessageItem;

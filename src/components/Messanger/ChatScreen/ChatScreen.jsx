@@ -1,39 +1,45 @@
 import { View, Text, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeedback, Platform, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { setActiveChat } from '../../../redux/slices/userSlice';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlurView as ExpoBlurView } from 'expo-blur';
-import { useState, useEffect, useRef, useMemo } from 'react';
 import { Modal } from 'react-native';
-import 'react-native-get-random-values';
-
 import { v4 as uuidv4 } from 'uuid';
-import * as SecureStore from 'expo-secure-store';
+
 import MessageItemAbout from './MessageItem/MessageItemAbout';
+import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 import MessageItem from './MessageItem/MessageItem';
 import ChatScreenStyles from './ChatScreenStyles';
+import * as SecureStore from 'expo-secure-store';
 import IconUser from '../../Ui/IconUser';
 import Modalize from '../../Ui/Modalize';
-import ScrollToBottomChat from '../../Ui/ScrollToBottomChat';
-
-import Feather from 'react-native-vector-icons/Feather';
+import MuTosat from '../../Ui/MuToast';
 import axios from 'axios';
-import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
-import { setActiveChat } from '../../../redux/slices/userSlice';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
+
+
+import 'react-native-get-random-values';
+
 
 export default function ChatScreen() {
+
+
+    const { name, soName } = route.params;
 
     const route = useRoute();
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
+    const { showNotification } = MuTosat()
+
     const token = SecureStore.getItem("userToken");
     const encodedToken = encodeURIComponent(token);
-
-    const { name, soName } = route.params;
 
     const chatId = useSelector(state => state.user.activeChatId);
     const theme = useSelector(state => state.theme.styles);
@@ -112,8 +118,8 @@ export default function ChatScreen() {
             setTimeout(() => scrollToEnd(), 300)
             setText("")
 
-            axios.post(ApiUrl + `/messages/add-message`, postData).then((response) => {
-            }).catch((error) => { console.log(error.response.data) })
+            axios.post(ApiUrl + `/messages/add-message`, postData).then(() => {
+            })
         }
     };
 
@@ -158,8 +164,7 @@ export default function ChatScreen() {
                     }
                 };
             })
-            .catch((error) => {
-                console.error("Ошибка при установке WebSocket-соединения:", error);
+            .catch(() => {
                 showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
             });
 
@@ -206,12 +211,6 @@ export default function ChatScreen() {
         return {
             opacity: opacity.value,
             flex: 1,
-        };
-    });
-
-    const animatedStyleBottom = useAnimatedStyle(() => {
-        return {
-            backgroundColor: opacity.value == 0 ? theme.backgroundColor : theme.activeItems,
         };
     });
 

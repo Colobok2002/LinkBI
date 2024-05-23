@@ -42,8 +42,8 @@ export default function MessagesStyles() {
             paddingVertical: 5,
         },
         userLastMsg: {
-            maxWidth : "80%",
             fontSize: 12,
+            maxWidth : "80%",
             paddingHorizontal: 5
         },
         userLastMsgContaner: {
@@ -54,22 +54,12 @@ export default function MessagesStyles() {
             height: 40,
             justifyContent: "space-between",
         },
+        
         usetTitleContaner: {
             display: "flex",
             flexDirection: "row",
             gap: 10,
             justifyContent: "space-between",
-        },
-        searchField: {
-            alignItems: "center",
-            borderRadius: 5,
-            display: "flex",
-            flexDirection: "row",
-            gap: 10,
-            height: 40,
-            justifyContent: "start",
-            margin: 10,
-            paddingHorizontal: 20,
         },
     });
 

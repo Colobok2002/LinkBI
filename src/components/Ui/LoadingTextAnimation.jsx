@@ -1,20 +1,18 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, View } from 'react-native';
 
 const LoadingTextAnimation = () => {
-    // Создаем анимируемую переменную
-    const fadeAnim = useRef(new Animated.Value(0)).current; // Начальное значение прозрачности
+    const fadeAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         Animated.loop(
             Animated.sequence([
-                // Последовательно анимируем значения
-                Animated.timing(fadeAnim, { // Анимация увеличения прозрачности
+                Animated.timing(fadeAnim, {
                     toValue: 1,
                     duration: 1000,
                     useNativeDriver: true
                 }),
-                Animated.timing(fadeAnim, { // Анимация уменьшения прозрачности
+                Animated.timing(fadeAnim, {
                     toValue: 0,
                     duration: 1000,
                     useNativeDriver: true
