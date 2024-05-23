@@ -221,26 +221,25 @@ export default function ChatScreen() {
             return (
                 <>
                     <Animated.View style={animatedStyle}>
-                    <FlatList
-                        data={enhancedMessages}
-                        ref={flatListRef}
-                        inverted
-                        keyExtractor={(item) => item.message_id}
-                        renderItem={({ item }) => <MessageItem item={item} />}
-                        onEndReached={loadMoreMessages}
-                        onEndReachedThreshold={0.1}
-                        ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-                        onContentSizeChange={() => {
-                        }}
-                        onScroll={handleScroll}
-                        maintainVisibleContentPosition={{
-                            minIndexForVisible: 0,
-                        }}
-                        keyboardShouldPersistTaps='handled'
-                        style={{ marginVertical: 10 }}
-                    />
+                        <FlatList
+                            data={enhancedMessages}
+                            ref={flatListRef}
+                            inverted
+                            keyExtractor={(item) => item.message_id}
+                            renderItem={({ item }) => <MessageItem item={item} />}
+                            onEndReached={loadMoreMessages}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                            onContentSizeChange={() => {
+                            }}
+                            onScroll={handleScroll}
+                            maintainVisibleContentPosition={{
+                                minIndexForVisible: 0,
+                            }}
+                            keyboardShouldPersistTaps='handled'
+                            style={{ marginVertical: 10 }}
+                        />
                     </Animated.View>
-
                 </>
             )
     }
@@ -298,10 +297,8 @@ export default function ChatScreen() {
                                 </View>
                             </View>
                             {messageItemsRender()}
-
                         </Modalize>
                     </View>
-
                 </View>
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -328,7 +325,6 @@ export default function ChatScreen() {
                     </View>
                 </KeyboardAvoidingView>
             </SafeAreaProvider>
-
         </>
     );
 }
