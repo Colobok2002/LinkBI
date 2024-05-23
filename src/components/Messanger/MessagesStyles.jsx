@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 export default function MessagesStyles() {
     const theme = useSelector(state => state.theme.styles);
-
     const styles = StyleSheet.create({
         container: {
             backgroundColor: theme.backgroundColor,
@@ -43,20 +42,16 @@ export default function MessagesStyles() {
             paddingVertical: 5,
         },
         userLastMsg: {
-            backgroundColor: "#C0C0C0",
-
-            borderRadius: 5,
-            flexDirection: "row",
+            maxWidth : "80%",
             fontSize: 12,
-            maxWidth: "80%",
-            padding: 5
+            paddingHorizontal: 5
         },
         userLastMsgContaner: {
             alignItems: "flex-start",
             display: "flex",
             flexDirection: "row",
             gap: 5,
-            height: 30,
+            height: 40,
             justifyContent: "space-between",
         },
         usetTitleContaner: {

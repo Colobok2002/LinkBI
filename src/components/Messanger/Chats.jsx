@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, RefreshControl,FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
+import { ScrollView, Text, View, RefreshControl, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
@@ -49,6 +49,7 @@ export default function Chats() {
         getChats()
         axios.get(ApiUrl + `/chats/get-chats-secured?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.data) {
+
                 setChatsSecured(response.data.chatsSecured)
             }
         })
@@ -57,6 +58,7 @@ export default function Chats() {
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
+                console.log(response.data.chats)
                 setChats(response.data.chats)
             }
         })
@@ -167,7 +169,7 @@ export default function Chats() {
 
 
     const renderItem = ({ item }) => (
-        
+
         <TouchableOpacity
             onPress={() => {
                 dispatch(setActiveChat(item.chat_id));
@@ -180,7 +182,7 @@ export default function Chats() {
                 <View style={styles.usetTitleContaner}>
                     <Text style={{ color: theme.activeItems }}>{item.companion_name} {item.companion_so_name}</Text>
                     <View style={styles.userCheckAndTimeContaner}>
-                        {item.lastMsgFromMe && (
+                        {item.IsMyMessage && (
                             <>
                                 {item.lastMsgRead ? (
                                     <Ionicons name="checkmark-done-sharp" size={15} color={theme.activeItems}></Ionicons>
@@ -189,13 +191,16 @@ export default function Chats() {
                                 )}
                             </>
                         )}
-                        <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
+                        {console.log(item.last_msg_time )}
+                        {item.last_msg_time && (
+                            <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
+                        )}
                     </View>
                 </View>
                 <View style={styles.userLastMsgContaner}>
-                    {item.lastMsg && (
+                    {item.last_msg && (
                         <View style={styles.userLastMsg}>
-                            <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{item.lastMsg}</Text>
+                            <Text style={{ color: theme.activeItems }} numberOfLines={5} ellipsizeMode="tail">{item.last_msg}</Text>
                         </View>
                     )}
                     {item.new_msg_count != 0 && (

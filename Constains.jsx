@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "https://dry-webs-build.loca.lt"
+export const ApiUrl = "https://itchy-kids-dig.loca.lt"
 
 
 
@@ -64,7 +64,7 @@ export function formatDate(dateTimeString) {
     ];
     const month = monthNames[dateTime.getMonth()];
     const formattedDate = `${day} ${month}`;
-    
+
     return isToday ? `Сегодня` : `${formattedDate}`;
 }
 
