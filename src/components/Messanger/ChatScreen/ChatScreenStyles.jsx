@@ -12,7 +12,7 @@ export default function ChatScreenStyles() {
             justifyContent: "flex-end",
         },
         container: {
-            backgroundColor: theme.backgroundColor,
+            // backgroundColor: theme.backgroundColor,
             display: "flex",
             flexDirection: "column",
             flex: 1,
@@ -23,11 +23,12 @@ export default function ChatScreenStyles() {
             width: "70%"
         },
         inputContainer: {
-            alignItems: 'center',
+            backgroundColor : "#fff",
+            alignItems: 'flex-end',
             display: "flex",
             flexDirection: 'row',
             flex: 1,
-            gap: 30,
+            gap: 10,
             justifyContent: "spase-around",
             padding: 10,
             position: "relative",

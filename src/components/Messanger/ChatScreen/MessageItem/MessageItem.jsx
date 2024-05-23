@@ -8,7 +8,7 @@ import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { formatDateTime } from '../../../../../Constains';
 import Feather from 'react-native-vector-icons/Feather'
 
-const MessageItem = ({ item }) => {
+const MessageItem = ({ item, chowDate }) => {
 
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
@@ -30,7 +30,10 @@ const MessageItem = ({ item }) => {
 
     return (
         <>
-        <RightSwipeEvent>
+            <RightSwipeEvent>
+                {chowDate && (
+                    <Text>Date</Text>
+                )}
                 {item?.status == "loading" ? (
                     <View
                         style={item.is_my_message ? styles.myMessage : styles.otherMessage}
@@ -46,9 +49,10 @@ const MessageItem = ({ item }) => {
                     >
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
                         <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
+                        {console.log(item.created_at)}
                     </ TouchableOpacity>
                 )}
-        </RightSwipeEvent>
+            </RightSwipeEvent>
         </>
 
     );

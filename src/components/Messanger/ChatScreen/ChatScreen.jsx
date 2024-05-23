@@ -22,7 +22,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
 import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
 import { setActiveChat } from '../../../redux/slices/userSlice';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming,Easing } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 
 export default function ChatScreen() {
 
@@ -55,7 +55,6 @@ export default function ChatScreen() {
 
     useEffect(() => {
         return () => {
-            console.log(3)
             dispatch(setActiveChat(null))
             if (socketRef.current) {
                 socketRef.current.close();
@@ -192,11 +191,18 @@ export default function ChatScreen() {
     const animatedStyle = useAnimatedStyle(() => {
         return {
             opacity: opacity.value,
-            flex : 1,
+            flex: 1,
         };
     });
 
-    
+    const animatedStyleBottom = useAnimatedStyle(() => {
+        return {
+            backgroundColor: opacity.value == 0 ? theme.backgroundColor : theme.activeItems,
+            // opacity: opacity.value,
+        };
+    });
+
+
     const messageItemsRender = () => {
         if (!loadingChat)
             return (
@@ -232,14 +238,19 @@ export default function ChatScreen() {
                                 ref={inputRef}
                                 onChangeText={text => setText(text)}
                                 multiline
-                                style={{ flex: 1, maxHeight: 200, backgroundColor: "white", padding: 5 }}
+                                style={{ flex: 1, minHeight: 50, maxHeight: 200, backgroundColor: theme.activeItems, padding: 15, borderColor: theme.textColor, borderWidth: 1, borderRadius: 20 }}
                                 autoFocus={false}
                             />
-                            <TouchableOpacity onPress={sendMessage} >
-                                <Feather name='send' size={24} color="#ADD8E6"></Feather>
+                            <TouchableOpacity onPress={sendMessage} style={{ marginBottom: 5 }}>
+                                <View style={{ borderRadius: "100%", padding: 7, backgroundColor: "#ADD8E6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <Feather name='send' size={24} color={theme.activeItems} />
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </KeyboardAvoidingView>
+                    <Animated.View style={animatedStyleBottom}>
+                        <SafeAreaView edges={['bottom']} />
+                    </Animated.View>
                 </Animated.View>
             )
     }
@@ -247,58 +258,62 @@ export default function ChatScreen() {
     return (
         <>
             <SafeAreaProvider>
-                <SafeAreaView style={styles.container}>
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={openModelAbout}
-                        onRequestClose={() => {
-                            dispatch(setMessage(null)), dispatch(setOpenModelAbout(false));
-
-                        }}
-                    >
-                        <TouchableWithoutFeedback
-                            onPress={() => {
-                                if (!isDragging) {
-                                    dispatch(setMessage(null)),
-                                        dispatch(setOpenModelAbout(false))
-                                }
-                                dispatch(setIsDragging(false))
+                <View style={{ flex: 1 }}>
+                    <SafeAreaView edges={['top']} style={{ backgroundColor: theme.backgroundColor }} />
+                    <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+                        <Modal
+                            animationType="fade"
+                            transparent={true}
+                            visible={openModelAbout}
+                            onRequestClose={() => {
+                                dispatch(setMessage(null));
+                                dispatch(setOpenModelAbout(false));
                             }}
                         >
-                            {Platform.OS === 'ios' ? (
-                                <ExpoBlurView style={styles.centeredView} intensity={50}>
-                                    <MessageItemAbout></MessageItemAbout>
-                                </ExpoBlurView>
-                            ) : (
-
-                                <View style={[styles.centeredView, { backgroundColor: theme.backgroundColor }]}>
-                                    <MessageItemAbout></MessageItemAbout>
-                                </View>
-                            )}
-                        </TouchableWithoutFeedback>
-                    </Modal >
-                    <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
-                        <View style={styles.title}>
-                            <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                                <Ionicons name="arrow-back" size={24} color="black" />
-                            </TouchableOpacity>
-                            <View style={styles.titleUserContent}>
-                                <IconUser size={20} />
-                                <View style={styles.titleSubContent}>
-                                    <View style={styles.usetTitleContaner}>
-                                        <Text style={{ color: theme.activeItems }}>{name} {soName}</Text>
+                            <TouchableWithoutFeedback
+                                onPress={() => {
+                                    if (!isDragging) {
+                                        dispatch(setMessage(null));
+                                        dispatch(setOpenModelAbout(false));
+                                    }
+                                    dispatch(setIsDragging(false));
+                                }}
+                            >
+                                {Platform.OS === 'ios' ? (
+                                    <ExpoBlurView style={styles.centeredView} intensity={50}>
+                                        <MessageItemAbout />
+                                    </ExpoBlurView>
+                                ) : (
+                                    <View style={[styles.centeredView, { backgroundColor: theme.backgroundColor }]}>
+                                        <MessageItemAbout />
                                     </View>
-                                    <View style={styles.lastVizit}>
-                                        <Text style={{ color: theme.activeItems }}>Был(a) недавно</Text>
+                                )}
+                            </TouchableWithoutFeedback>
+                        </Modal>
+                        <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
+                            <View style={styles.title}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                                    <Ionicons name="arrow-back" size={24} color="black" />
+                                </TouchableOpacity>
+                                <View style={styles.titleUserContent}>
+                                    <IconUser size={20} />
+                                    <View style={styles.titleSubContent}>
+                                        <View style={styles.usetTitleContaner}>
+                                            <Text style={{ color: theme.textColor }}>{name} {soName}</Text>
+                                        </View>
+                                        <View style={styles.lastVizit}>
+                                            <Text style={{ color: theme.textColor }}>Был(a) недавно</Text>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
-                        </View>
-                        {messageItemsRender()}
-                    </Modalize>
-                </SafeAreaView>
+                            {messageItemsRender()}
+                        </Modalize>
+                    </View>
+
+                </View>
             </SafeAreaProvider>
+
         </>
     );
 }
