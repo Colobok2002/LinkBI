@@ -52,6 +52,22 @@ export function formatDateTime(dateTimeString) {
     return isToday ? formattedTime : `${formattedDate} ${formattedTime}`;
 }
 
+export function formatDate(dateTimeString) {
+    const dateTime = new Date(dateTimeString);
+    const now = new Date();
+
+    const isToday = dateTime.toDateString() === now.toDateString();
+    const day = dateTime.getDate().toString().padStart(2, '0');
+    const monthNames = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    ];
+    const month = monthNames[dateTime.getMonth()];
+    const formattedDate = `${day} ${month}`;
+    
+    return isToday ? `Сегодня` : `${formattedDate}`;
+}
+
 export function createWebSocketConnection({ socketUrl }) {
 
     return new Promise((resolve, reject) => {

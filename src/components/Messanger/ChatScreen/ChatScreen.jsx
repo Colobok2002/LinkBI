@@ -4,7 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlurView as ExpoBlurView } from 'expo-blur';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Modal } from 'react-native';
 import 'react-native-get-random-values';
 
@@ -51,6 +51,22 @@ export default function ChatScreen() {
     const inputRef = useRef(null);
     const socketRef = useRef(null);
 
+
+    const enhancedMessages = useMemo(() => {
+        const result = [];
+        let lastDate = null;
+
+
+        for (let i = messages.length - 1; i >= 0; i--) {
+            const item = messages[i];
+
+            const messageDate = item?.status == "loading" ? new Date().toDateString() : new Date(item.created_at).toDateString();
+            const showDate = messageDate !== lastDate;
+            lastDate = messageDate;
+            result.unshift({ ...item, showDate });
+        }
+        return result;
+    }, [messages]);
 
 
     useEffect(() => {
@@ -208,7 +224,7 @@ export default function ChatScreen() {
             return (
                 <Animated.View style={animatedStyle}>
                     <FlatList
-                        data={messages}
+                        data={enhancedMessages}
                         ref={flatListRef}
                         inverted
                         keyExtractor={(item) => item.message_id}

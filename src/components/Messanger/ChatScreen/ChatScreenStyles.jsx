@@ -12,7 +12,6 @@ export default function ChatScreenStyles() {
             justifyContent: "flex-end",
         },
         container: {
-            // backgroundColor: theme.backgroundColor,
             display: "flex",
             flexDirection: "column",
             flex: 1,
@@ -76,6 +75,15 @@ export default function ChatScreenStyles() {
             flexDirection: "row",
             gap: 20,
         },
+        dateInfo : {
+            backgroundColor : theme.activeItems,
+            padding : 5,
+            borderRadius : 30,
+        },
+        dateInfoText : {
+            fontSize : 10,
+            color : theme.textColor,
+        }
     });
 
     return { styles }
