@@ -56,10 +56,8 @@ export default function ChatScreen() {
         const result = [];
         let lastDate = null;
 
-
         for (let i = messages.length - 1; i >= 0; i--) {
             const item = messages[i];
-
             const messageDate = item?.status == "loading" ? new Date().toDateString() : new Date(item.created_at).toDateString();
             const showDate = messageDate !== lastDate;
             lastDate = messageDate;
@@ -214,7 +212,6 @@ export default function ChatScreen() {
     const animatedStyleBottom = useAnimatedStyle(() => {
         return {
             backgroundColor: opacity.value == 0 ? theme.backgroundColor : theme.activeItems,
-            // opacity: opacity.value,
         };
     });
 
@@ -222,24 +219,29 @@ export default function ChatScreen() {
     const messageItemsRender = () => {
         if (!loadingChat)
             return (
-                <Animated.View style={animatedStyle}>
-                    <FlatList
-                        data={enhancedMessages}
-                        ref={flatListRef}
-                        inverted
-                        keyExtractor={(item) => item.message_id}
-                        renderItem={({ item }) => <MessageItem item={item} />}
-                        onEndReached={loadMoreMessages}
-                        onEndReachedThreshold={0.1}
-                        ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-                        onContentSizeChange={() => {
-                        }}
-                        onScroll={handleScroll}
-                        maintainVisibleContentPosition={{
-                            minIndexForVisible: 0,
-                        }}
-                        keyboardShouldPersistTaps='handled'
-                    />
+                <>
+
+                    <Animated.View style={animatedStyle}>
+                        <FlatList
+                            data={enhancedMessages}
+                            ref={flatListRef}
+                            inverted
+                            keyExtractor={(item) => item.message_id}
+                            renderItem={({ item }) => <MessageItem item={item} />}
+                            onEndReached={loadMoreMessages}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                            onContentSizeChange={() => {
+                            }}
+                            onScroll={handleScroll}
+                            maintainVisibleContentPosition={{
+                                minIndexForVisible: 0,
+                            }}
+                            keyboardShouldPersistTaps='handled'
+                            style={{marginVertical : 10}}
+                        />
+                    </Animated.View>
+                    {/* <Animated.View style={animatedStyle}> */}
                     <KeyboardAvoidingView
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         style={{
@@ -258,16 +260,15 @@ export default function ChatScreen() {
                                 autoFocus={false}
                             />
                             <TouchableOpacity onPress={sendMessage} style={{ marginBottom: 5 }}>
-                                <View style={{ borderRadius: "100%", padding: 7, backgroundColor: "#ADD8E6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <View style={{ borderRadius: 200, padding: 7, backgroundColor: "#ADD8E6", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                     <Feather name='send' size={24} color={theme.activeItems} />
                                 </View>
                             </TouchableOpacity>
                         </View>
                     </KeyboardAvoidingView>
-                    <Animated.View style={animatedStyleBottom}>
-                        <SafeAreaView edges={['bottom']} />
-                    </Animated.View>
-                </Animated.View>
+                    {/* </Animated.View> */}
+
+                </>
             )
     }
 

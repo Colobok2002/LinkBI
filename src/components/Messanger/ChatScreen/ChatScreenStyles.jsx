@@ -31,6 +31,7 @@ export default function ChatScreenStyles() {
             justifyContent: "spase-around",
             padding: 10,
             position: "relative",
+            paddingBottom  : 60,
         },
         modalText: {
             marginBottom: 15,

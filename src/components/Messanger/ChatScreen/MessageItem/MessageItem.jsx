@@ -1,32 +1,29 @@
-import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
+import React, { useState, useCallback } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { useState } from 'react';
-
+import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
 import ChatScreenStyles from '../ChatScreenStyles';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { formatDate, formatDateTime } from '../../../../../Constains';
-import Feather from 'react-native-vector-icons/Feather'
+import Feather from 'react-native-vector-icons/Feather';
 
-const MessageItem = ({ item }) => {
-
+const MessageItem = React.memo(({ item }) => {
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
 
     const [lastTap, setLastTap] = useState(null);
 
-    const handleDoubleTap = () => {
+    const handleDoubleTap = useCallback(() => {
         const now = Date.now();
-
         const DOUBLE_PRESS_DELAY = 600;
 
         if (lastTap && (now - lastTap) < DOUBLE_PRESS_DELAY) {
-            dispatch(setMessage(item))
-            dispatch(setOpenModelAbout(true))
+            dispatch(setMessage(item));
+            dispatch(setOpenModelAbout(true));
         } else {
             setLastTap(now);
         }
-    };
+    }, [lastTap, item, dispatch]);
 
     return (
         <>
@@ -37,27 +34,23 @@ const MessageItem = ({ item }) => {
                     </View>
                 )}
                 {item?.status == "loading" ? (
-                    <View
-                        style={item.is_my_message ? styles.myMessage : styles.otherMessage}
-                    >
+                    <View style={item.is_my_message ? styles.myMessage : styles.otherMessage}>
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
-                        <Feather name="clock" style={[styles.time, { fontSize: 13, marginTop: 3 }]}></Feather>
-                    </ View>
+                        <Feather name="clock" style={[styles.time, { fontSize: 13, marginTop: 3 }]} />
+                    </View>
                 ) : (
                     <TouchableOpacity
-                        onLongPress={() => { dispatch(setMessage(item)), dispatch(setOpenModelAbout(true)) }}
+                        onLongPress={() => { dispatch(setMessage(item)); dispatch(setOpenModelAbout(true)); }}
                         onPress={handleDoubleTap}
                         style={item.is_my_message ? styles.myMessage : styles.otherMessage}
                     >
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
                         <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
-                    </ TouchableOpacity>
+                    </TouchableOpacity>
                 )}
             </RightSwipeEvent>
         </>
-
     );
-};
-
+});
 
 export default MessageItem;

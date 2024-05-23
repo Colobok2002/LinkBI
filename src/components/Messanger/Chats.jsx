@@ -51,7 +51,7 @@ export default function Chats() {
             if (response.data.data) {
                 setChatsSecured(response.data.chatsSecured)
             }
-        }).catch((err) => { err.response.data })
+        })
     }, []);
 
     const getChats = () => {
@@ -59,7 +59,7 @@ export default function Chats() {
             if (response.data.chats) {
                 setChats(response.data.chats)
             }
-        }).catch((err) => { err.response.data })
+        })
     }
 
     useEffect(() => {
@@ -167,8 +167,8 @@ export default function Chats() {
 
 
     const renderItem = ({ item }) => (
+        
         <TouchableOpacity
-            key={item.chat_id}
             onPress={() => {
                 dispatch(setActiveChat(item.chat_id));
                 navigation.navigate('ChatScreen', { name: item.companion_name, soName: item.companion_so_name });
@@ -282,51 +282,6 @@ export default function Chats() {
                                 contentContainerStyle={styles.contentContainer}
                                 style={styles.container}
                             />
-                            {/* <ScrollView
-                                scrollEventThrottle={10}
-                                style={styles.container}
-                            >
-                                {chats.map(chat => (
-                                    <TouchableOpacity
-                                        key={chat.chat_id}
-                                        onPress={() => { dispatch(setActiveChat(chat.chat_id)),  navigation.navigate('ChatScreen', { name: chat.companion_name, soName: chat.companion_so_name }) }}
-                                        style={styles.userItem}
-                                    >
-                                        <IconUser size={30} />
-                                        <View style={styles.userItemSubContent}>
-                                            <View style={styles.usetTitleContaner}>
-                                                <Text style={{ color: theme.activeItems }}>{chat.companion_name} {chat.companion_so_name}</Text>
-                                                <View style={styles.userCheckAndTimeContaner}>
-                                                    {
-                                                        chat.lastMsgFromMe && (
-                                                            <>
-                                                                {chat.lastMsgRead ? (
-                                                                    <Ionicons name="checkmark-done-sharp" size={15} color={chat.lastMsgRead ? theme.activeItems : theme.textColor}></Ionicons>
-                                                                ) : (
-                                                                    <Ionicons name="checkmark-done" size={15} color={chat.lastMsgRead ? theme.activeItems : theme.textColor}></Ionicons>
-                                                                )}
-                                                            </>
-                                                        )
-                                                    }
-                                                    <Text style={{ color: theme.activeItems }}>{formatDateTime(chat.last_msg_time)}</Text>
-                                                </View>
-                                            </View>
-                                            <View style={styles.userLastMsgContaner}>
-                                                {chat.lastMsg && (
-                                                    <View style={styles.userLastMsg}>
-                                                        <Text style={{ color: theme.activeItems }} numberOfLines={2} ellipsizeMode="tail">{chat.lastMsg}</Text>
-                                                    </View>
-                                                )}
-                                                {chat.new_msg_count != 0 && (
-                                                    <View style={styles.userCountMsg}>
-                                                        <Text style={{ color: theme.activeItems }}>{chat.new_msg_count}</Text>
-                                                    </View>
-                                                )}
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView> */}
                         </View>
                     </SwiperFlatList>
                 </SafeAreaView>
