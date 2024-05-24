@@ -15,8 +15,6 @@ import IconUser from '../Ui/IconUser'
 import axios from 'axios';
 
 
-
-
 export default function Chats() {
 
     const dispatch = useDispatch();
@@ -213,9 +211,17 @@ export default function Chats() {
                 <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
                     <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <Animated.View style={{ width: widthInterpolate }}>
-                            <View style={[styles.searchField, { backgroundColor: theme.textColor }]}>
-                                <Entypo name={"magnifying-glass"} size={20} />
-                                <TextInput ref={serchRef} style={styles.searchInput} onFocus={serchOn} value={serchValue} onChangeText={text => setSerchValue(text)} placeholder="Поиск..." />
+                            <View style={{ display: "flex", flexDirection: "row", gap: 10, borderRadius: 5, padding: 10 }}>
+                                <Entypo name={"magnifying-glass"} size={20} style={{ position: "absolute", display: "flex", alignItems: "center", justifyContent: "center", left: 20, top: 18, zIndex: 2 }} />
+                                <View style={{ borderRadius: 20, flex: 1, maxWidth: "100%", backgroundColor: theme.textColor, padding: 10, zIndex: 1 }}>
+                                    <TextInput
+                                        ref={serchRef}
+                                        onFocus={serchOn}
+                                        style={{ paddingLeft: 30 }}
+                                        value={serchValue}
+                                        onChangeText={text => setSerchValue(text)}
+                                        placeholder={"Поиск..."} />
+                                </View>
                             </View>
                         </Animated.View>
                         <TouchableOpacity onPress={serchOff} style={{ right: -5 }}>

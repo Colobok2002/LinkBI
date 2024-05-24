@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "https://itchy-kids-dig.loca.lt"
+export const ApiUrl = "http://127.0.0.0:8080"
 
 
 

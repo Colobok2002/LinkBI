@@ -30,9 +30,9 @@ import 'react-native-get-random-values';
 export default function ChatScreen() {
 
 
+    const route = useRoute();
     const { name, soName } = route.params;
 
-    const route = useRoute();
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const { styles } = ChatScreenStyles();
@@ -118,8 +118,7 @@ export default function ChatScreen() {
             setTimeout(() => scrollToEnd(), 300)
             setText("")
 
-            axios.post(ApiUrl + `/messages/add-message`, postData).then(() => {
-            })
+            axios.post(ApiUrl + `/messages/add-message`, postData)
         }
     };
 
@@ -141,7 +140,7 @@ export default function ChatScreen() {
             }
             setTimeout(() => scrollToEnd(), 300)
         })
-        createWebSocketConnection({ socketUrl: "/messages/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
+        createWebSocketConnection({ socketUrl: "/messagesWs/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
             .then((socket) => {
                 socketRef.current = socket;
                 socket.onmessage = (event) => {
@@ -241,6 +240,13 @@ export default function ChatScreen() {
                     </Animated.View>
                 </>
             )
+        else {
+            return (
+                <View style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <ActivityIndicator></ActivityIndicator>
+                </View>
+            )
+        }
     }
 
     return (
