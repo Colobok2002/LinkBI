@@ -1,10 +1,10 @@
 import { ScrollView, Text, View, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
-import { ApiUrl, formatDateTime, useDebouncedFunction } from '../../../Constains';
+import { ApiUrl, createWebSocketConnection, formatDateTime, parseJsonString, useDebouncedFunction } from '../../../Constains';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { setActiveChat } from '../../redux/slices/userSlice';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -13,6 +13,7 @@ import SwiperFlatList from 'react-native-swiper';
 import MessagesStyles from './MessagesStyles';
 import IconUser from '../Ui/IconUser'
 import axios from 'axios';
+import MuTosat from '../Ui/MuToast';
 
 
 export default function Chats() {
@@ -20,6 +21,9 @@ export default function Chats() {
     const dispatch = useDispatch();
     const navigation = useNavigation();
     const { styles } = MessagesStyles()
+    const { showNotification } = MuTosat()
+
+
     const theme = useSelector(state => state.theme.styles);
     const token = SecureStore.getItem("userToken");
     const encodedToken = encodeURIComponent(token);
@@ -38,20 +42,41 @@ export default function Chats() {
 
     const inputWidth = useRef(new Animated.Value(1)).current;
 
-    // const socketRef = useRef()
+    const socketRef = useRef()
 
     useEffect(() => {
         getChats()
-        axios.get(ApiUrl + `/chats/get-chats-secured?user_token=${encodedToken}&uuid=1`).then((response) => {
-            if (response.data.data) {
-                setChatsSecured(response.data.chatsSecured)
-            }
-        })
+
+        // userToken
+        // createWebSocketConnection({ socketUrl: "/chatsWS/events-chats?userToken=" + encodedToken })
+        //     .then((socket) => {
+        //         socketRef.current = socket;
+        //         socket.onmessage = (event) => {
+        //             const parsedData = parseJsonString(event.data);
+        //             if (parsedData && parsedData.chatUpdate) {
+        //                 setChats((prevChats) => {
+        //                     const chatIndex = prevChats.findIndex(chat => chat.chat_id === parsedData.chatUpdate.chat_id);
+        //                     if (chatIndex !== -1) {
+        //                         const updatedChats = [...prevChats];
+        //                         updatedChats[chatIndex] = parsedData.chatUpdate;
+        //                         return updatedChats;
+        //                     } else {
+        //                         return [parsedData.chatUpdate, ...prevChats];
+        //                     }
+        //                 });
+        //             }
+        //         };
+        //     })
+        //     .catch(() => {
+        //         showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
+        //     });
+
     }, []);
 
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
+                console.log(response.data.chats);
                 setChats(response.data.chats)
             }
         })
@@ -205,6 +230,16 @@ export default function Chats() {
         </TouchableOpacity>
     );
 
+
+  const sortedChats = useMemo(() => {
+    return [...chats].sort((a, b) => {
+      if (a.secured === b.secured) {
+        return new Date(b.last_updated) - new Date(a.last_updated);
+      }
+      return a.secured ? -1 : 1;
+    });
+  }, [chats]);
+
     return (
         <>
             <SafeAreaProvider>
@@ -281,14 +316,7 @@ export default function Chats() {
                         <View>
                             <Button title='Обновить' onPress={getChats}></Button>
                             <FlatList
-                                data={chatsSecured}
-                                renderItem={renderItem}
-                                keyExtractor={item => item.chat_id.toString()}
-                                contentContainerStyle={styles.contentContainer}
-                                style={styles.container}
-                            />
-                            <FlatList
-                                data={chats}
+                                data={sortedChats}
                                 renderItem={renderItem}
                                 keyExtractor={item => item.chat_id.toString()}
                                 contentContainerStyle={styles.contentContainer}

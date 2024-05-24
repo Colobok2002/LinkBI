@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "http://0.0.0.0:8080"
+export const ApiUrl = "http://192.168.14.24:8080"
+
 
 
 
@@ -34,6 +35,14 @@ export function useDebouncedFunction(func, delay, cleanUp = false) {
             }, delay);
         });
     };
+}
+
+export function parseJsonString(jsonString) {
+    try {
+        return JSON.parse(jsonString);
+    } catch (error) {
+        return null;
+    }
 }
 
 

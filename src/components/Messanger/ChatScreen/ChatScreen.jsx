@@ -2,7 +2,7 @@ import { View, Text, TextInput, FlatList, TouchableOpacity, TouchableWithoutFeed
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import { setIsDragging, setMessage, setOpenModelAbout } from '../../../redux/slices/messageSlice';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { ApiUrl, createWebSocketConnection } from '../../../../Constains';
+import { ApiUrl, createWebSocketConnection, parseJsonString } from '../../../../Constains';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { setActiveChat } from '../../../redux/slices/userSlice';
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -122,13 +122,7 @@ export default function ChatScreen() {
         }
     };
 
-    function parseJsonString(jsonString) {
-        try {
-            return JSON.parse(jsonString);
-        } catch (error) {
-            return null;
-        }
-    }
+
 
 
 
