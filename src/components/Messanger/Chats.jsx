@@ -198,6 +198,8 @@ export default function Chats() {
     }, [chats]);
 
     const [showChat, setChowChat] = useState(false)
+    const [nameProps, setNameProps] = useState(null)
+    const [soNameProps, setSoNameProps] = useState(null)
     const renderItem = ({ item }) => (
         <Animated.View entering={SlideInRight.duration(500)}>
             <TouchableOpacity
@@ -207,6 +209,8 @@ export default function Chats() {
                 }}
                 onLongPress={() => {
                     dispatch(setActiveChat(item.chat_id));
+                    setNameProps(item.companion_name)
+                    setSoNameProps(item.companion_so_name)
                     setChowChat(true)
 
                 }}
@@ -249,7 +253,6 @@ export default function Chats() {
     );
 
     const closeModal = () => {
-        console.log(111)
         setChowChat(false)
     };
 
@@ -295,33 +298,32 @@ export default function Chats() {
                                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: width, height: width, top: 0, left: 0, }}>
                                         </View>
                                     </TouchableWithoutFeedback>
-                                    <View style={{ flex: 1, height: height * 0.55, width: width * 0.9, zIndex: 1, position: "absolute",borderRadius: 10, overflow: "hidden"  }}>
-                                        <ChatScreen renderForModal={true} />
+                                    <View style={{ flex: 1, height: height * 0.55, width: width * 0.9, zIndex: 1, position: "absolute", borderRadius: 10, overflow: "hidden" }}>
+                                        <ChatScreen renderForModal={true} nameProps={nameProps} soNameProps={soNameProps} />
                                     </View>
                                 </ExpoBlurView>
                             </KeyboardAvoidingView>
                         ) : (
-
-                            <KeyboardAvoidingView
-                                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "relative" }}
-                            >
-                                <LinearGradient
-                                    colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.9)']}
-                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                            <>
+                                <KeyboardAvoidingView oardAvoidingView
+                                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "relative" }}
                                 >
-                                    <TouchableWithoutFeedback onPress={closeModal}>
-                                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: width, height: width, top: 0, left: 0, }}>
-                                        </View>
-                                    </TouchableWithoutFeedback>
-                                    <View style={{ flex: 1, height: height * 0.6, width: width * 0.8, borderRadius: 10, overflow: "hidden", zIndex: 1, position: "absolute" }}>
-                                        <ChatScreen renderForModal={true} />
+                                    <TouchableOpacity onPress={closeModal}>
+                                        <LinearGradient
+                                            colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.9)']}
+                                            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                                        >
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: width, height: width, top: 0, left: 0, zIndex: 2, }}>
+                                            </View>
+                                        </LinearGradient>
+                                    </TouchableOpacity>
+                                    <View style={{ flex: 1, height: height * 0.55, width: width * 0.9, zIndex: 1, position: "absolute", borderRadius: 10, overflow: "hidden" }}>
+                                        <ChatScreen renderForModal={true} nameProps={nameProps} soNameProps={soNameProps} />
                                     </View>
-                                </LinearGradient>
-                            </KeyboardAvoidingView>
-
+                                </KeyboardAvoidingView>
+                            </>
                         )}
-
                     </Modal>
                     <SwiperFlatList
                         ref={swiperRef}

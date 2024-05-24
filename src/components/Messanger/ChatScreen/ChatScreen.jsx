@@ -27,14 +27,14 @@ import axios from 'axios';
 import 'react-native-get-random-values';
 
 
-export default function ChatScreen({ renderForModal = false }) {
+export default function ChatScreen({ renderForModal = false, nameProps = null, soNameProps = null }) {
 
 
     const route = useRoute();
     // const { name, soName } = route.params;
 
-    const name = "123"
-    const soName = "333"
+    const name = nameProps ? nameProps : route.params?.name
+    const soName = soNameProps ? soNameProps : route.params?.soName
 
     const dispatch = useDispatch();
     const navigation = useNavigation();
@@ -92,7 +92,6 @@ export default function ChatScreen({ renderForModal = false }) {
     }, [chatId]);
 
     const sendMessage = (event) => {
-        console.log(123)
         event.stopPropagation && event.stopPropagation();
         if (text) {
             const temporary_message_id = uuidv4()
