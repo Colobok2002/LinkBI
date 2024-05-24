@@ -1,10 +1,11 @@
-import { ScrollView, Text, View, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing } from 'react-native'
+import { ScrollView, Text, View, FlatList, TouchableOpacity, Button, TextInput, ActivityIndicator, Animated, Easing, Modal, Platform, Dimensions, KeyboardAvoidingView } from 'react-native'
 import { ApiUrl, createWebSocketConnection, formatDateTime, parseJsonString, useDebouncedFunction } from '../../../Constains';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { setActiveChat } from '../../redux/slices/userSlice';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -15,6 +16,9 @@ import IconUser from '../Ui/IconUser'
 import axios from 'axios';
 import MuTosat from '../Ui/MuToast';
 import { SlideInRight } from 'react-native-reanimated';
+import ChatScreen from './ChatScreen/ChatScreen';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { BlurView as ExpoBlurView } from 'expo-blur';
 
 
 export default function Chats() {
@@ -193,12 +197,18 @@ export default function Chats() {
         });
     }, [chats]);
 
+    const [showChat, setChowChat] = useState(false)
     const renderItem = ({ item }) => (
         <Animated.View entering={SlideInRight.duration(500)}>
             <TouchableOpacity
                 onPress={() => {
                     dispatch(setActiveChat(item.chat_id));
                     navigation.navigate('ChatScreen', { name: item.companion_name, soName: item.companion_so_name });
+                }}
+                onLongPress={() => {
+                    dispatch(setActiveChat(item.chat_id));
+                    setChowChat(true)
+
                 }}
                 style={styles.userItem}
             >
@@ -238,6 +248,14 @@ export default function Chats() {
         </Animated.View>
     );
 
+    const closeModal = () => {
+        console.log(111)
+        setChowChat(false)
+    };
+
+    const { width, height } = Dimensions.get('window');
+
+
     return (
         <>
             <SafeAreaProvider>
@@ -261,6 +279,50 @@ export default function Chats() {
                             <Ionicons name="close-circle-outline" size={24} color={theme.textColor} />
                         </TouchableOpacity>
                     </View>
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={showChat}
+                        onRequestClose={closeModal}
+                    >
+                        {Platform.OS === 'ios' ? (
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "relative" }}
+                            >
+                                <ExpoBlurView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "relative" }} intensity={50}>
+                                    <TouchableWithoutFeedback onPress={closeModal}>
+                                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: width, height: width, top: 0, left: 0, }}>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                    <View style={{ flex: 1, height: height * 0.55, width: width * 0.9, zIndex: 1, position: "absolute",borderRadius: 10, overflow: "hidden"  }}>
+                                        <ChatScreen renderForModal={true} />
+                                    </View>
+                                </ExpoBlurView>
+                            </KeyboardAvoidingView>
+                        ) : (
+
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                style={{ flex: 1, justifyContent: 'center', alignItems: 'center', position: "relative" }}
+                            >
+                                <LinearGradient
+                                    colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.9)']}
+                                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                                >
+                                    <TouchableWithoutFeedback onPress={closeModal}>
+                                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: width, height: width, top: 0, left: 0, }}>
+                                        </View>
+                                    </TouchableWithoutFeedback>
+                                    <View style={{ flex: 1, height: height * 0.6, width: width * 0.8, borderRadius: 10, overflow: "hidden", zIndex: 1, position: "absolute" }}>
+                                        <ChatScreen renderForModal={true} />
+                                    </View>
+                                </LinearGradient>
+                            </KeyboardAvoidingView>
+
+                        )}
+
+                    </Modal>
                     <SwiperFlatList
                         ref={swiperRef}
                         loop={false}
@@ -323,7 +385,7 @@ export default function Chats() {
                         </View>
                     </SwiperFlatList>
                 </SafeAreaView>
-            </SafeAreaProvider>
+            </SafeAreaProvider >
         </>
     )
 }

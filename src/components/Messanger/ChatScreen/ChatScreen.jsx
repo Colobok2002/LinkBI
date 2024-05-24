@@ -27,11 +27,14 @@ import axios from 'axios';
 import 'react-native-get-random-values';
 
 
-export default function ChatScreen() {
+export default function ChatScreen({ renderForModal = false }) {
 
 
     const route = useRoute();
-    const { name, soName } = route.params;
+    // const { name, soName } = route.params;
+
+    const name = "123"
+    const soName = "333"
 
     const dispatch = useDispatch();
     const navigation = useNavigation();
@@ -88,7 +91,9 @@ export default function ChatScreen() {
         }
     }, [chatId]);
 
-    const sendMessage = () => {
+    const sendMessage = (event) => {
+        console.log(123)
+        event.stopPropagation && event.stopPropagation();
         if (text) {
             const temporary_message_id = uuidv4()
             const postData = {
@@ -247,7 +252,11 @@ export default function ChatScreen() {
         <>
             <SafeAreaProvider>
                 <View style={{ flex: 1 }}>
-                    <SafeAreaView edges={['top']} style={{ backgroundColor: theme.backgroundColor }} />
+                    {renderForModal ? (
+                        <SafeAreaView edges={['top']} />
+                    ) : (
+                        <SafeAreaView edges={['top']} style={{ backgroundColor: theme.backgroundColor }} />
+                    )}
                     <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
                         <Modal
                             animationType="fade"
@@ -280,9 +289,11 @@ export default function ChatScreen() {
                         </Modal>
                         <Modalize onRequestClose={() => navigation.navigate('Main')} chekToIphone={true}>
                             <View style={styles.title}>
-                                <TouchableOpacity onPress={() => navigation.navigate('Main')}>
-                                    <Ionicons name="arrow-back" size={24} color="black" />
-                                </TouchableOpacity>
+                                {!renderForModal && (
+                                    <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+                                        <Ionicons name="arrow-back" size={24} color="black" />
+                                    </TouchableOpacity>
+                                )}
                                 <View style={styles.titleUserContent}>
                                     <IconUser size={20} />
                                     <View style={styles.titleSubContent}>
@@ -316,8 +327,9 @@ export default function ChatScreen() {
                             style={{ flex: 1, minHeight: 50, maxHeight: 200, backgroundColor: theme.activeItems, padding: 15, borderColor: theme.textColor, borderWidth: 1, borderRadius: 20 }}
                             autoFocus={false}
                         />
+
                         <TouchableOpacity onPress={sendMessage} style={{ marginBottom: 5 }}>
-                            <View style={{ borderRadius: 200, padding: 7, backgroundColor: "#ADD8E6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <View style={{ borderRadius: 200, padding: 7, backgroundColor: "#ADD8E6", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99999 }}>
                                 <Feather name='send' size={24} color={theme.activeItems} />
                             </View>
                         </TouchableOpacity>
