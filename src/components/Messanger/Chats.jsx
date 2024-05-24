@@ -14,6 +14,7 @@ import MessagesStyles from './MessagesStyles';
 import IconUser from '../Ui/IconUser'
 import axios from 'axios';
 import MuTosat from '../Ui/MuToast';
+import { SlideInRight } from 'react-native-reanimated';
 
 
 export default function Chats() {
@@ -46,37 +47,34 @@ export default function Chats() {
 
     useEffect(() => {
         getChats()
-
-        // userToken
-        // createWebSocketConnection({ socketUrl: "/chatsWS/events-chats?userToken=" + encodedToken })
-        //     .then((socket) => {
-        //         socketRef.current = socket;
-        //         socket.onmessage = (event) => {
-        //             const parsedData = parseJsonString(event.data);
-        //             if (parsedData && parsedData.chatUpdate) {
-        //                 setChats((prevChats) => {
-        //                     const chatIndex = prevChats.findIndex(chat => chat.chat_id === parsedData.chatUpdate.chat_id);
-        //                     if (chatIndex !== -1) {
-        //                         const updatedChats = [...prevChats];
-        //                         updatedChats[chatIndex] = parsedData.chatUpdate;
-        //                         return updatedChats;
-        //                     } else {
-        //                         return [parsedData.chatUpdate, ...prevChats];
-        //                     }
-        //                 });
-        //             }
-        //         };
-        //     })
-        //     .catch(() => {
-        //         showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
-        //     });
+        createWebSocketConnection({ socketUrl: "/chatsWS/events-chats?userToken=" + encodedToken })
+            .then((socket) => {
+                socketRef.current = socket;
+                socket.onmessage = (event) => {
+                    const parsedData = parseJsonString(event.data);
+                    if (parsedData && parsedData.chatUpdate) {
+                        setChats((prevChats) => {
+                            const chatIndex = prevChats.findIndex(chat => chat.chat_id === parsedData.chatUpdate.chat_id);
+                            if (chatIndex !== -1) {
+                                const updatedChats = [...prevChats];
+                                updatedChats[chatIndex] = parsedData.chatUpdate;
+                                return updatedChats;
+                            } else {
+                                return [parsedData.chatUpdate, ...prevChats];
+                            }
+                        });
+                    }
+                };
+            })
+            .catch(() => {
+                showNotification({ "message": "Ошибка соеденения, перезагрузите страницу", "type": "er" })
+            });
 
     }, []);
 
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
-                console.log(response.data.chats);
                 setChats(response.data.chats)
             }
         })
@@ -186,59 +184,59 @@ export default function Chats() {
     }
 
 
-    const renderItem = ({ item }) => (
+    const sortedChats = useMemo(() => {
+        return [...chats].sort((a, b) => {
+            if (a.secured === b.secured) {
+                return new Date(b.last_updated) - new Date(a.last_updated);
+            }
+            return a.secured ? -1 : 1;
+        });
+    }, [chats]);
 
-        <TouchableOpacity
-            onPress={() => {
-                dispatch(setActiveChat(item.chat_id));
-                navigation.navigate('ChatScreen', { name: item.companion_name, soName: item.companion_so_name });
-            }}
-            style={styles.userItem}
-        >
-            <IconUser size={30} />
-            <View style={styles.userItemSubContent}>
-                <View style={styles.usetTitleContaner}>
-                    <Text style={{ color: theme.activeItems }}>{item.companion_name} {item.companion_so_name}</Text>
-                    <View style={styles.userCheckAndTimeContaner}>
-                        {item.IsMyMessage && (
-                            <>
-                                {item.lastMsgRead ? (
-                                    <Ionicons name="checkmark-done-sharp" size={15} color={theme.activeItems}></Ionicons>
-                                ) : (
-                                    <Ionicons name="checkmark-done" size={15} color={theme.textColor}></Ionicons>
-                                )}
-                            </>
+    const renderItem = ({ item }) => (
+        <Animated.View entering={SlideInRight.duration(500)}>
+            <TouchableOpacity
+                onPress={() => {
+                    dispatch(setActiveChat(item.chat_id));
+                    navigation.navigate('ChatScreen', { name: item.companion_name, soName: item.companion_so_name });
+                }}
+                style={styles.userItem}
+            >
+                <IconUser size={30} />
+                <View style={styles.userItemSubContent}>
+                    <View style={styles.usetTitleContaner}>
+                        <Text style={{ color: theme.activeItems }}>{item.companion_name} {item.companion_so_name}</Text>
+                        <View style={styles.userCheckAndTimeContaner}>
+                            {item.IsMyMessage && (
+                                <>
+                                    {item.lastMsgRead ? (
+                                        <Ionicons name="checkmark-done-sharp" size={15} color={theme.activeItems}></Ionicons>
+                                    ) : (
+                                        <Ionicons name="checkmark-done" size={15} color={theme.textColor}></Ionicons>
+                                    )}
+                                </>
+                            )}
+                            {item.last_msg_time && (
+                                <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
+                            )}
+                        </View>
+                    </View>
+                    <View style={styles.userLastMsgContaner}>
+                        {item.last_msg && (
+                            <View style={styles.userLastMsg}>
+                                <Text style={{ color: theme.activeItems }} numberOfLines={5} ellipsizeMode="tail">{item.last_msg}</Text>
+                            </View>
                         )}
-                        {item.last_msg_time && (
-                            <Text style={{ color: theme.activeItems }}>{formatDateTime(item.last_msg_time)}</Text>
+                        {item.new_msg_count != 0 && (
+                            <View style={styles.userCountMsg}>
+                                <Text style={{ color: theme.activeItems }}>{item.new_msg_count}</Text>
+                            </View>
                         )}
                     </View>
                 </View>
-                <View style={styles.userLastMsgContaner}>
-                    {item.last_msg && (
-                        <View style={styles.userLastMsg}>
-                            <Text style={{ color: theme.activeItems }} numberOfLines={5} ellipsizeMode="tail">{item.last_msg}</Text>
-                        </View>
-                    )}
-                    {item.new_msg_count != 0 && (
-                        <View style={styles.userCountMsg}>
-                            <Text style={{ color: theme.activeItems }}>{item.new_msg_count}</Text>
-                        </View>
-                    )}
-                </View>
-            </View>
-        </TouchableOpacity>
+            </TouchableOpacity>
+        </Animated.View>
     );
-
-
-  const sortedChats = useMemo(() => {
-    return [...chats].sort((a, b) => {
-      if (a.secured === b.secured) {
-        return new Date(b.last_updated) - new Date(a.last_updated);
-      }
-      return a.secured ? -1 : 1;
-    });
-  }, [chats]);
 
     return (
         <>
