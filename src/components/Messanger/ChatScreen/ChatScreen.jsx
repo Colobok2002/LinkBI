@@ -140,7 +140,7 @@ export default function ChatScreen() {
             }
             setTimeout(() => scrollToEnd(), 300)
         })
-        createWebSocketConnection({ socketUrl: "/messagesWs/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
+        createWebSocketConnection({ socketUrl: "/messagesWS/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
             .then((socket) => {
                 socketRef.current = socket;
                 socket.onmessage = (event) => {

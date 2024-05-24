@@ -48,7 +48,7 @@ const BiometricAuth = () => {
             {biometricType === 'face' && (
                 <TouchableOpacity onPress={handleBiometricAuth}>
                     <Image
-                        source={require('../../../assets/icons/faseId.png')} // Путь к изображению в папке assets
+                        source={require('../../../assets/icons/faseId.png')}
                         style={{ width: 60, height: 60 }}
                     />
                 </TouchableOpacity>
@@ -56,9 +56,9 @@ const BiometricAuth = () => {
             {biometricType === 'fingerprint' && (
                 <MaterialIcons name="fingerprint" size={40} onPress={handleBiometricAuth} />
             )}
-            {!biometricType && (
+            {/* {!biometricType && (
                 <Button title="Authenticate" onPress={handleBiometricAuth} />
-            )}
+            )} */}
         </View>
     );
 };

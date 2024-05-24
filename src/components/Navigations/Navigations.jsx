@@ -15,8 +15,8 @@ import Messages from '../Messanger/Chats';
 import Setting from '../Setting/Setting';
 
 import LoadingTextAnimation from '../Ui/LoadingTextAnimation';
-import * as SecureStore from 'expo-secure-store';
 import JSEncrypt from 'jsencrypt';
+import * as SecureStore from 'expo-secure-store';
 import getApi from '../../../Api';
 
 

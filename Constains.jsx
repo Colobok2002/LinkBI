@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "http://127.0.0.0:8080"
+export const ApiUrl = "http://0.0.0.0:8080"
 
 
 
@@ -71,7 +71,7 @@ export function formatDate(dateTimeString) {
 export function createWebSocketConnection({ socketUrl }) {
 
     return new Promise((resolve, reject) => {
-        const socket = new WebSocket(`${ApiUrl.includes("127.0.0.1") ? "ws" : "wss"}://${ApiUrl.split('//')[1]}${socketUrl}`);
+        const socket = new WebSocket(`${ApiUrl.includes(":8080") ? "ws" : "wss"}://${ApiUrl.split('//')[1]}${socketUrl}`);
 
         socket.onopen = () => {
             resolve(socket);

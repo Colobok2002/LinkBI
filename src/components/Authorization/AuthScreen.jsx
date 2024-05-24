@@ -212,10 +212,10 @@ const AuthScreen = () => {
             encryptor.setPrivateKey(lokalPprivatKey);
             const token = encryptor.decrypt(response.data.token)
             SecureStore.setItem("userToken", token)
+            SecureStore.deleteItemAsync("access_code")
             dispatch(setAuthenticated())
         })
     };
-
 
     return (
         <View style={styles.container}>

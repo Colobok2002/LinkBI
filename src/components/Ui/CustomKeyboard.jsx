@@ -94,7 +94,6 @@ const CustomKeyboard = () => {
                     text: 'Отмена',
                     style: 'cancel',
                 },
-                // { text: 'Кнопка 2', onPress: () => console.log('Нажата Кнопка 2') },
             ],
             { cancelable: false },
         );
