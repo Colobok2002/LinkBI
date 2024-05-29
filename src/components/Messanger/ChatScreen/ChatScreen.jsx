@@ -144,20 +144,36 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                 socket.onmessage = (event) => {
                     const parsedData = parseJsonString(event.data);
                     if (parsedData && parsedData.newMessage) {
-                        setMessages(prevMessages => {
-                            const index = prevMessages.findIndex(
-                                message =>
-                                    message.temporary_message_id === parsedData.newMessage.temporary_message_id ||
-                                    message.message_id === parsedData.newMessage.temporary_message_id
-                            );
-                            if (index !== -1) {
-                                const updatedMessages = [...prevMessages];
-                                updatedMessages[index] = parsedData.newMessage;
-                                return updatedMessages;
-                            }
-                            return [parsedData.newMessage, ...prevMessages];
-                        });
-                        setTimeout(() => scrollToEnd(), 300);
+                        if (parsedData.newMessage?.type == "new") {
+                            setMessages(prevMessages => {
+                                const index = prevMessages.findIndex(
+                                    message =>
+                                        message.temporary_message_id === parsedData.newMessage.temporary_message_id ||
+                                        message.message_id === parsedData.newMessage.temporary_message_id
+                                );
+                                if (index !== -1) {
+                                    const updatedMessages = [...prevMessages];
+                                    updatedMessages[index] = parsedData.newMessage;
+                                    return updatedMessages;
+                                }
+                                return [parsedData.newMessage, ...prevMessages];
+                            });
+                            setTimeout(() => scrollToEnd(), 300);
+                        } else if (parsedData.newMessage?.type == "read") {
+                            setMessages(prevMessages => {
+                                const index = prevMessages.findIndex(
+                                    message =>
+                                        message.message_id === parsedData.newMessage.message_id
+                                );
+                                if (index !== -1) {
+                                    const updatedMessages = [...prevMessages];
+                                    updatedMessages[index].read = true;
+                                    return updatedMessages;
+                                }
+                                return prevMessages;
+                            });
+                            setTimeout(() => scrollToEnd(), 300);
+                        }
                     }
                 };
             })
@@ -212,6 +228,20 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
     });
 
 
+    const ReadHeandler = ({ item, children }) => {
+        if (item.read == false && item.message_id && !item.is_my_message) {
+            const postData = {
+                "chat_id": chatId,
+                "user_token": token,
+                "message_id": item.message_id,
+                "created_at": item.created_at
+            }
+            axios.post(ApiUrl + "/messages/read-message", postData).catch(err => console.log(err.response.data))
+
+        }
+        return children;
+    }
+
     const messageItemsRender = () => {
         if (!loadingChat)
             return (
@@ -222,7 +252,8 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                             ref={flatListRef}
                             inverted
                             keyExtractor={(item) => item.message_id}
-                            renderItem={({ item }) => <MessageItem item={item} />}
+                            renderItem={({ item }) => (
+                                <ReadHeandler item={item}><MessageItem item={item} /></ReadHeandler>)}
                             onEndReached={loadMoreMessages}
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}

@@ -3,7 +3,8 @@ import { formatDate, formatDateTime } from '../../../../../Constains';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { useState, useCallback, memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Feather from 'react-native-vector-icons/Feather';
 import ChatScreenStyles from '../ChatScreenStyles';
@@ -11,6 +12,7 @@ import ChatScreenStyles from '../ChatScreenStyles';
 const MessageItem = ({ item }) => {
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
+    const theme = useSelector(state => state.theme.styles);
 
     const [lastTap, setLastTap] = useState(null);
 
@@ -46,7 +48,20 @@ const MessageItem = ({ item }) => {
                         style={item.is_my_message ? styles.myMessage : styles.otherMessage}
                     >
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
-                        <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
+                        <View style={{ display: "flex", flexDirection: "row", gap: 5, alignItems: "center" }}>
+                            <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
+                            {item.is_my_message && (
+                                <>
+                                    {item.read ? (
+
+                                        <Ionicons name="checkmark-done-sharp" size={10} color={theme.activeItems}></Ionicons>
+
+                                    ) : (
+                                        <Ionicons name="checkmark-done" size={10} color={theme.textColor}></Ionicons>
+                                    )}
+                                </>
+                            )}
+                        </View>
                     </TouchableOpacity>
                 )}
             </RightSwipeEvent>

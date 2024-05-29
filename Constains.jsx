@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // export const ApiUrl = "http://localhost:8080"
-export const ApiUrl = "http://192.168.14.24:8080"
+export const ApiUrl = "https://tiny-poems-mix.loca.lt"
 
 
 
