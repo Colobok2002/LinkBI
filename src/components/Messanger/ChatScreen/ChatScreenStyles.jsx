@@ -16,9 +16,9 @@ export default function ChatScreenStyles() {
             flexDirection: "column",
             flex: 1,
         },
-        dateInfoText : {
-            color : theme.textColor,
-            fontSize : 10,
+        dateInfoText: {
+            color: theme.textColor,
+            fontSize: 10,
         },
         input: {
             borderColor: 'gray',
@@ -27,14 +27,14 @@ export default function ChatScreenStyles() {
         },
         inputContainer: {
             alignItems: 'flex-end',
-            backgroundColor : "#fff",
+            backgroundColor: "#fff",
             display: "flex",
             flexDirection: 'row',
             flex: 1,
             gap: 10,
             justifyContent: "spase-around",
             padding: 10,
-            paddingBottom  : 20,
+            paddingBottom: 20,
             position: "relative",
         },
         modalText: {

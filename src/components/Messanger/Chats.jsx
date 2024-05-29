@@ -79,7 +79,6 @@ export default function Chats() {
     const getChats = () => {
         axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
             if (response.data.chats) {
-                console.log(response.data.chats)
                 setChats(response.data.chats)
             }
         })

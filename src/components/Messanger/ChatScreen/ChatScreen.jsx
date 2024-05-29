@@ -27,11 +27,26 @@ import axios from 'axios';
 import 'react-native-get-random-values';
 
 
+const ReadHeandler = ({ item, children, chatId, token }) => {
+    useMemo(() => {
+        if (item.read === false && item.message_id && !item.is_my_message) {
+            const postData = {
+                chat_id: chatId,
+                user_token: token,
+                message_id: item.message_id,
+                created_at: item.created_at
+            };
+            axios.post(ApiUrl + "/messages/read-message", postData);
+        }
+    }, [item.read, item.message_id, item.is_my_message, chatId, token, item.created_at]);
+
+    return children;
+};
+
 export default function ChatScreen({ renderForModal = false, nameProps = null, soNameProps = null }) {
 
 
     const route = useRoute();
-    // const { name, soName } = route.params;
 
     const name = nameProps ? nameProps : route.params?.name
     const soName = soNameProps ? soNameProps : route.params?.soName
@@ -60,19 +75,29 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
     const inputRef = useRef(null);
     const socketRef = useRef(null);
 
+    const [unreadMessagesCount, setuUreadMessagesCount] = useState(0);
+
 
     const enhancedMessages = useMemo(() => {
+        
         const result = [];
         let lastDate = null;
+        let unreadMessagesCount = 0;
 
         for (let i = messages.length - 1; i >= 0; i--) {
             const item = messages[i];
-            const messageDate = item?.status == "loading" ? new Date().toDateString() : new Date(item.created_at).toDateString();
+            const messageDate = item?.status === "loading" ? new Date().toDateString() : new Date(item.created_at).toDateString();
             const showDate = messageDate !== lastDate;
             lastDate = messageDate;
             result.unshift({ ...item, showDate });
+
+            if (!item.is_my_message && !item.read && item?.status !== "loading") {
+                unreadMessagesCount++;
+            }
         }
-        return result;
+        setuUreadMessagesCount(unreadMessagesCount)
+        return result
+
     }, [messages]);
 
 
@@ -136,7 +161,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
             if (response.data != null) {
                 setMessages(response.data)
             }
-            setTimeout(() => scrollToEnd(), 300)
+            // setTimeout(() => scrollToEnd(), 300)
         })
         createWebSocketConnection({ socketUrl: "/messagesWS/events-messages?chatId=" + chatId + '&userToken=' + encodedToken })
             .then((socket) => {
@@ -158,7 +183,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                                 }
                                 return [parsedData.newMessage, ...prevMessages];
                             });
-                            setTimeout(() => scrollToEnd(), 300);
+                            // setTimeout(() => scrollToEnd(), 300);
                         } else if (parsedData.newMessage?.type == "read") {
                             setMessages(prevMessages => {
                                 const index = prevMessages.findIndex(
@@ -172,7 +197,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                                 }
                                 return prevMessages;
                             });
-                            setTimeout(() => scrollToEnd(), 300);
+                            // setTimeout(() => scrollToEnd(), 300);
                         }
                     }
                 };
@@ -228,19 +253,20 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
     });
 
 
-    const ReadHeandler = ({ item, children }) => {
-        if (item.read == false && item.message_id && !item.is_my_message) {
-            const postData = {
-                "chat_id": chatId,
-                "user_token": token,
-                "message_id": item.message_id,
-                "created_at": item.created_at
+    const onViewableItemsChanged = useRef(({ viewableItems }) => {
+        viewableItems.forEach(({ item }) => {
+            if (item.read === false && item.message_id && !item.is_my_message) {
+                const postData = {
+                    chat_id: chatId,
+                    user_token: token,
+                    message_id: item.message_id,
+                    created_at: item.created_at
+                };
+                axios.post(ApiUrl + "/messages/read-message", postData);
             }
-            axios.post(ApiUrl + "/messages/read-message", postData).catch(err => console.log(err.response.data))
+        });
+    }).current;
 
-        }
-        return children;
-    }
 
     const messageItemsRender = () => {
         if (!loadingChat)
@@ -252,8 +278,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                             ref={flatListRef}
                             inverted
                             keyExtractor={(item) => item.message_id}
-                            renderItem={({ item }) => (
-                                <ReadHeandler item={item}><MessageItem item={item} /></ReadHeandler>)}
+                            renderItem={({ item }) => (<MessageItem item={item} />)}
                             onEndReached={loadMoreMessages}
                             onEndReachedThreshold={0.1}
                             ListFooterComponent={() => loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
@@ -263,6 +288,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                             maintainVisibleContentPosition={{
                                 minIndexForVisible: 0,
                             }}
+                            onViewableItemsChanged={onViewableItemsChanged}
                             keyboardShouldPersistTaps='handled'
                             style={{ marginVertical: 10 }}
                         />
@@ -347,7 +373,7 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                     }}
                 >
                     <View style={styles.inputContainer}>
-                        <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={3}></ScrollToBottomChat>
+                        <ScrollToBottomChat show={showScrollDownButton} countSctoll={countScrollDownButton} scrollToEnd={scrollToEnd} countEvents={unreadMessagesCount}></ScrollToBottomChat>
                         <TextInput
                             label="Введите сообщение"
                             value={text}

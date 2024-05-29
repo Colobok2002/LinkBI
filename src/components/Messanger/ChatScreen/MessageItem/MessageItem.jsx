@@ -1,6 +1,6 @@
 import { setMessage, setOpenModelAbout } from '../../../../redux/slices/messageSlice';
 import { formatDate, formatDateTime } from '../../../../../Constains';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { RightSwipeEvent } from '../../../Ui/Modalize';
 import { useState, useCallback, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,9 @@ const MessageItem = ({ item }) => {
     const dispatch = useDispatch();
     const { styles } = ChatScreenStyles();
     const theme = useSelector(state => state.theme.styles);
+    const windowWidth = useWindowDimensions().width;
+    const maxWidth = windowWidth * 0.7;
+
 
     const [lastTap, setLastTap] = useState(null);
 
@@ -37,7 +40,7 @@ const MessageItem = ({ item }) => {
                     </View>
                 )}
                 {item?.status === "loading" ? (
-                    <View style={item.is_my_message ? styles.myMessage : styles.otherMessage}>
+                    <View style={[item.is_my_message ? styles.myMessage : styles.otherMessage, item.message_text.length <= 40 ? { flexDirection: "row", gap: 10, maxWidth: maxWidth } : { maxWidth: maxWidth }]}>
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
                         <Feather name="clock" style={[styles.time, { fontSize: 13, marginTop: 3 }]} />
                     </View>
@@ -45,26 +48,25 @@ const MessageItem = ({ item }) => {
                     <TouchableOpacity
                         onLongPress={() => { dispatch(setMessage(item)); dispatch(setOpenModelAbout(true)); }}
                         onPress={handleDoubleTap}
-                        style={item.is_my_message ? styles.myMessage : styles.otherMessage}
+                        style={[item.is_my_message ? styles.myMessage : styles.otherMessage, item.message_text.length <= 40 ? { flexDirection: "row", gap: 10, maxWidth: maxWidth } : { maxWidth: maxWidth }]}
                     >
                         <Text style={{ color: 'black' }}>{item.message_text}</Text>
-                        <View style={{ display: "flex", flexDirection: "row", gap: 5, alignItems: "center" }}>
+                        <View style={{ display: "flex", flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "flex-end" }}>
                             <Text style={styles.time}>{formatDateTime(item.created_at)}</Text>
                             {item.is_my_message && (
                                 <>
                                     {item.read ? (
-
-                                        <Ionicons name="checkmark-done-sharp" size={10} color={theme.activeItems}></Ionicons>
+                                        <Ionicons name="checkmark-done-sharp" size={12} color={theme.activeItems}></Ionicons>
 
                                     ) : (
-                                        <Ionicons name="checkmark-done" size={10} color={theme.textColor}></Ionicons>
+                                        <Ionicons name="checkmark-done" size={12} color={theme.textColor}></Ionicons>
                                     )}
                                 </>
                             )}
                         </View>
                     </TouchableOpacity>
                 )}
-            </RightSwipeEvent>
+            </RightSwipeEvent >
         </>
     );
 };
