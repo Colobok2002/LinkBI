@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import SegmentedControl from '../Ui/SegmentedControl';
 import * as SecureStore from 'expo-secure-store';
 import MuTosat from '../Ui/MuToast';
-import getApi from '../../../api/Api';
+import getApi from '../../../api/getApi';
 import JSEncrypt from 'jsencrypt';
 
 

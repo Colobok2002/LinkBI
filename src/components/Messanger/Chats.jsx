@@ -18,7 +18,7 @@ import MessagesStyles from './MessagesStyles';
 import IconUser from '../Ui/IconUser'
 import MuTosat from '../Ui/MuToast';
 import ChatScreen from './ChatScreen/ChatScreen';
-import getApi from '../../../api/Api';
+import getApi from '../../../api/getApi';
 import JSEncrypt from 'jsencrypt';
 
 
@@ -34,6 +34,7 @@ export default function Chats() {
 
     const localPrivateKey = useSelector(state => state.session.localPrivateKey)
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
+    const publicKey = useSelector(state => state.session.publicKey)
     const theme = useSelector(state => state.theme.styles);
     const uuid = useSelector(state => state.session.uuid)
 
@@ -98,10 +99,9 @@ export default function Chats() {
     const getSerchResultD = useDebouncedFunction((value) => getSerchResult(value), 500)
 
     const getChats = () => {
-        encryptor.setPrivateKey(localPrivateKey)
-        const cruptToken = encryptor.encrypt(encryptedField)
-        console.log(cruptToken)
-        api.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&publicKey=${encodeURIComponent(lokalPublicKey)}`).then((response) => {
+        encryptor.setPublicKey(publicKey);
+        const cruptToken = encryptor.encrypt(token)
+        api.get(ApiUrl + `/chats/get-chats?user_token=${encodeURIComponent(cruptToken)}&publicKey=${encodeURIComponent(lokalPublicKey)}&uuid=${uuid}`).then((response) => {
             if (response.data.chats) {
                 setChats(decryptChats(response.data.chats))
             }
@@ -110,7 +110,10 @@ export default function Chats() {
 
     const getSerchResult = (serchStr) => {
         if (serchStr.length > 0) {
-            api.get(ApiUrl + `/chats/find-chats?search_term=${serchStr}&user_token=${encodedToken}`).then((response) => {
+            encryptor.setPublicKey(publicKey);
+            const cruptToken = encryptor.encrypt(token)
+            const cruptSerchStr = encryptor.encrypt(serchStr)
+            api.get(ApiUrl + `/chats/find-chats?search_term=${encodeURIComponent(cruptSerchStr)}&user_token=${encodeURIComponent(cruptToken)}&uuid=${uuid}`).then((response) => {
                 if (response.data.data) {
                     setSerchResult(response.data.data)
                 } else {
@@ -163,36 +166,49 @@ export default function Chats() {
         swiperRef.current?.scrollTo(newIndex);
     };
 
+    async function updateSearchHistory(item) {
+        try {
+            let serchHistoryString = SecureStore.getItem("serchHistory");
+            let serchHistory = serchHistoryString ? JSON.parse(serchHistoryString) : [];
+            const existingItem = serchHistory.find(existingItem => existingItem.user_id === item.user_id);
+            if (existingItem) {
+                if (existingItem.name !== item.name || existingItem.soName !== item.soName) {
+                    existingItem.name = item.name;
+                    existingItem.soName = item.soName;
+                }
+            } else {
+                serchHistory.push(item);
+            }
+            SecureStore.setItemAsync("serchHistory", JSON.stringify(serchHistory));
+        } catch {
+            None
+        }
+    }
+    const clearSerchItem = () => {
+        SecureStore.setItemAsync("serchHistory", JSON.stringify([]));
+        setSerchResult([])
+    }
+
     const selektSerchItem = async (itemId, name, soName) => {
-
         const createChat = async () => {
-
             const token = SecureStore.getItem("userToken");
-
             const requestData = {
-                "companion_id": itemId,
+                "companion_id": itemId.toString(),
                 "user_token": token,
-                "uuid": uuid
+                "uuid": uuid,
+                "pKey": lokalPublicKey,
             }
 
             let chatId = null
 
             await api.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
-                chatId = response.data.chat_id
+                encryptor.setPrivateKey(localPrivateKey)
+                chatId = encryptor.decrypt(response.data.chat_id);
             })
 
             const item = serchResult.find(item => item.user_id === itemId)
-            let serchHistory = SecureStore.getItem("serchHistory")
-            if (!serchHistory) {
-                serchHistory = []
-                SecureStore.setItem("serchHistory", JSON.stringify([]))
-            } else {
-                serchHistory = JSON.parse(serchHistory)
-            }
-            if (!serchHistory.find(item => item.user_id === itemId)) {
-                serchHistory.push(item)
-                SecureStore.setItem("serchHistory", JSON.stringify(serchHistory))
-            }
+
+            updateSearchHistory(item)
             dispatch(setActiveChat(chatId))
         }
         createChat()
@@ -381,9 +397,12 @@ export default function Chats() {
                         <View>
                             {!serchLoadind ? (
                                 <>
-                                    {serchValue.length == 0 && (
+                                    {serchValue.length == 0 && serchResult.length != 0 && (
                                         <View style={styles.userItem}>
                                             <Text style={{ color: theme.activeItems }}>Недавние</Text>
+                                            <TouchableOpacity style={{ backgroundColor: "red", padding: 5, borderRadius: 10 }} onPress={clearSerchItem}>
+                                                <Text style={{ color: theme.activeItems }}>Очистить</Text>
+                                            </TouchableOpacity>
                                         </View>
                                     )}
                                     <ScrollView

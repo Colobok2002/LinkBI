@@ -23,6 +23,7 @@ export default function MessagesStyles() {
         userItem: {
             alignItems: "center",
             display: "flex",
+            justifyContent:"space-between",
             flexDirection: "row",
             gap: 10,
             padding: 5,

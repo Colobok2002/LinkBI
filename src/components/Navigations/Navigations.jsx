@@ -17,7 +17,7 @@ import Setting from '../Setting/Setting';
 import LoadingTextAnimation from '../Ui/LoadingTextAnimation';
 import JSEncrypt from 'jsencrypt';
 import * as SecureStore from 'expo-secure-store';
-import getApi from '../../../api/Api';
+import getApi from '../../../api/getApi';
 
 
 const RootStack = createStackNavigator();
@@ -112,7 +112,7 @@ export default function Navigations() {
     const dispatch = useDispatch();
     const [loadind, setLoading] = useState(false)
     const uuid = useSelector(state => state.session.uuid);
-    const publicKey = useSelector(state => state.session.publicKey)
+    // const publicKey = useSelector(state => state.session.publicKey)
     const { api } = getApi()
 
     useEffect(() => {
