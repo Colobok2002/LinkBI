@@ -7,7 +7,7 @@ const sessionSlice = createSlice({
         uuid: null,
         publicKey: null,
         lokalPublicKey: null,
-        lokalPprivatKey: null,
+        localPrivateKey: null,
     },
 
     reducers: {
@@ -17,7 +17,7 @@ const sessionSlice = createSlice({
         },
         setLokalKeys: (state, action) => {
             state.lokalPublicKey = action.payload.lokalPublicKey
-            state.lokalPprivatKey = action.payload.lokalPprivatKey
+            state.localPrivateKey = action.payload.localPrivateKey
         },
     },
 });

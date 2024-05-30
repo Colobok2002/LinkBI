@@ -6,6 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView as ExpoBlurView } from 'expo-blur';
+import { SlideInRight } from 'react-native-reanimated';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -13,58 +16,68 @@ import * as SecureStore from 'expo-secure-store';
 import SwiperFlatList from 'react-native-swiper';
 import MessagesStyles from './MessagesStyles';
 import IconUser from '../Ui/IconUser'
-import axios from 'axios';
 import MuTosat from '../Ui/MuToast';
-import { SlideInRight } from 'react-native-reanimated';
 import ChatScreen from './ChatScreen/ChatScreen';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { BlurView as ExpoBlurView } from 'expo-blur';
+import getApi from '../../../api/Api';
+import JSEncrypt from 'jsencrypt';
 
 
 export default function Chats() {
 
-    const dispatch = useDispatch();
     const navigation = useNavigation();
-    const { styles } = MessagesStyles()
+    const dispatch = useDispatch();
+
     const { showNotification } = MuTosat()
+    const { styles } = MessagesStyles()
+    const { api } = getApi()
+    const encryptor = new JSEncrypt()
 
-
+    const localPrivateKey = useSelector(state => state.session.localPrivateKey)
+    const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
     const theme = useSelector(state => state.theme.styles);
+    const uuid = useSelector(state => state.session.uuid)
+
     const token = SecureStore.getItem("userToken");
     const encodedToken = encodeURIComponent(token);
 
     const [isSearchVisible, setSearchVisible] = useState(false);
-    const [serchValue, setSerchValue] = useState("");
     const [serchLoadind, setSerchLoading] = useState(false);
     const [serchResult, setSerchResult] = useState([])
+    const [serchValue, setSerchValue] = useState("");
 
-    const serchRef = useRef(null)
-    const swiperRef = useRef(null);
-
+    const [soNameProps, setSoNameProps] = useState(null)
+    const [nameProps, setNameProps] = useState(null)
+    const [showChat, setChowChat] = useState(false)
     const [chats, setChats] = useState([]);
 
-    const [chatsSecured, setChatsSecured] = useState([])
+    const swiperRef = useRef(null);
+    const serchRef = useRef(null)
+    const socketRef = useRef()
 
     const inputWidth = useRef(new Animated.Value(1)).current;
+    const widthInterpolate = inputWidth.interpolate({
+        inputRange: [0.8, 1],
+        outputRange: ['90%', '100%']
+    });
 
-    const socketRef = useRef()
 
     useEffect(() => {
         getChats()
-        createWebSocketConnection({ socketUrl: "/chatsWS/events-chats?userToken=" + encodedToken })
+        createWebSocketConnection({ socketUrl: "/chatsWS/events-chats?userToken=" + encodedToken + "&publicKey=" + encodeURIComponent(lokalPublicKey) })
             .then((socket) => {
                 socketRef.current = socket;
                 socket.onmessage = (event) => {
                     const parsedData = parseJsonString(event.data);
                     if (parsedData && parsedData.chatUpdate) {
+                        const newChat = decryptChats(parsedData.chatUpdate, localPrivateKey)
                         setChats((prevChats) => {
-                            const chatIndex = prevChats.findIndex(chat => chat.chat_id === parsedData.chatUpdate.chat_id);
+                            const chatIndex = prevChats.findIndex(chat => chat.chat_id === newChat.chat_id);
                             if (chatIndex !== -1) {
                                 const updatedChats = [...prevChats];
-                                updatedChats[chatIndex] = parsedData.chatUpdate;
+                                updatedChats[chatIndex] = newChat;
                                 return updatedChats;
                             } else {
-                                return [parsedData.chatUpdate, ...prevChats];
+                                return [newChat, ...prevChats];
                             }
                         });
                     }
@@ -76,14 +89,6 @@ export default function Chats() {
 
     }, []);
 
-    const getChats = () => {
-        axios.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&uuid=1`).then((response) => {
-            if (response.data.chats) {
-                setChats(response.data.chats)
-            }
-        })
-    }
-
     useEffect(() => {
         setSerchLoading(true)
         getSerchResultD(serchValue)
@@ -92,9 +97,20 @@ export default function Chats() {
 
     const getSerchResultD = useDebouncedFunction((value) => getSerchResult(value), 500)
 
+    const getChats = () => {
+        encryptor.setPrivateKey(localPrivateKey)
+        const cruptToken = encryptor.encrypt(encryptedField)
+        console.log(cruptToken)
+        api.get(ApiUrl + `/chats/get-chats?user_token=${encodedToken}&publicKey=${encodeURIComponent(lokalPublicKey)}`).then((response) => {
+            if (response.data.chats) {
+                setChats(decryptChats(response.data.chats))
+            }
+        })
+    }
+
     const getSerchResult = (serchStr) => {
         if (serchStr.length > 0) {
-            axios.get(ApiUrl + `/chats/find-chats?search_term=${serchStr}&uuid=2`).then((response) => {
+            api.get(ApiUrl + `/chats/find-chats?search_term=${serchStr}&user_token=${encodedToken}`).then((response) => {
                 if (response.data.data) {
                     setSerchResult(response.data.data)
                 } else {
@@ -126,10 +142,6 @@ export default function Chats() {
         handleToggleSearch()
     }
 
-    const widthInterpolate = inputWidth.interpolate({
-        inputRange: [0.8, 1],
-        outputRange: ['90%', '100%']
-    });
 
     const serchOff = (clearSerchInput = true) => {
         Animated.timing(inputWidth, {
@@ -146,7 +158,6 @@ export default function Chats() {
         }
     }
 
-
     const handleToggleSearch = () => {
         const newIndex = isSearchVisible ? 1 : 0;
         swiperRef.current?.scrollTo(newIndex);
@@ -161,14 +172,15 @@ export default function Chats() {
             const requestData = {
                 "companion_id": itemId,
                 "user_token": token,
-                "uuid": "string"
+                "uuid": uuid
             }
 
             let chatId = null
 
-            await axios.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
+            await api.post(ApiUrl + "/chats/create-chat", requestData).then(response => {
                 chatId = response.data.chat_id
             })
+
             const item = serchResult.find(item => item.user_id === itemId)
             let serchHistory = SecureStore.getItem("serchHistory")
             if (!serchHistory) {
@@ -188,6 +200,37 @@ export default function Chats() {
     }
 
 
+    const decryptChatField = (encryptedField) => {
+        if (!encryptedField) return "";
+        encryptor.setPrivateKey(localPrivateKey)
+        return encryptor.decrypt(encryptedField);
+    };
+
+    const decryptChat = (chat) => {
+        return {
+            chat_id: decryptChatField(chat.chat_id),
+            companion_id: decryptChatField(chat.companion_id),
+            companion_name: decryptChatField(chat.companion_name),
+            companion_so_name: decryptChatField(chat.companion_so_name),
+            companion_nik: decryptChatField(chat.companion_nik),
+            last_msg: decryptChatField(chat.last_msg),
+            chat_type: chat.chat_type,
+            last_msg_time: chat.last_msg_time,
+            last_updated: chat.last_updated,
+            new_msg_count: chat.new_msg_count,
+            secured: chat.secured,
+            is_my_message: chat.is_my_message
+        };
+    };
+
+    const decryptChats = (chats) => {
+        if (Array.isArray(chats)) {
+            return chats.map(chat => decryptChat(chat));
+        } else {
+            return decryptChat(chats);
+        }
+    };
+
     const sortedChats = useMemo(() => {
         return [...chats].sort((a, b) => {
             if (a.secured === b.secured) {
@@ -197,9 +240,6 @@ export default function Chats() {
         });
     }, [chats]);
 
-    const [showChat, setChowChat] = useState(false)
-    const [nameProps, setNameProps] = useState(null)
-    const [soNameProps, setSoNameProps] = useState(null)
     const renderItem = ({ item }) => (
         <Animated.View entering={SlideInRight.duration(500)}>
             <TouchableOpacity

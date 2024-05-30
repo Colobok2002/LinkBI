@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import SegmentedControl from '../Ui/SegmentedControl';
 import * as SecureStore from 'expo-secure-store';
 import MuTosat from '../Ui/MuToast';
-import getApi from '../../../Api';
+import getApi from '../../../api/Api';
 import JSEncrypt from 'jsencrypt';
 
 
@@ -18,7 +18,7 @@ const RegistrationScreen = () => {
     const dispatch = useDispatch();
     const uuid = useSelector(state => state.session.uuid)
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
-    const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
+    const localPrivateKey = useSelector(state => state.session.localPrivateKey)
 
 
     const [name, setName] = useState('');
@@ -98,7 +98,7 @@ const RegistrationScreen = () => {
             };
 
             api.post(ApiUrl + "/user/registration", requestData).then(response => {
-                encryptor.setPrivateKey(lokalPprivatKey);
+                encryptor.setPrivateKey(localPrivateKey);
                 const token = encryptor.decrypt(response.data.token)
                 SecureStore.setItem("userToken", token)
                 dispatch(setAuthenticated())
@@ -166,7 +166,7 @@ const AuthScreen = () => {
     const dispatch = useDispatch();
     const uuid = useSelector(state => state.session.uuid)
     const lokalPublicKey = useSelector(state => state.session.lokalPublicKey)
-    const lokalPprivatKey = useSelector(state => state.session.lokalPprivatKey)
+    const localPrivateKey = useSelector(state => state.session.localPrivateKey)
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -209,7 +209,7 @@ const AuthScreen = () => {
         }
 
         api.post(ApiUrl + "/user/log-in-with-credentials", requestData).then(response => {
-            encryptor.setPrivateKey(lokalPprivatKey);
+            encryptor.setPrivateKey(localPrivateKey);
             const token = encryptor.decrypt(response.data.token)
             SecureStore.setItem("userToken", token)
             SecureStore.deleteItemAsync("access_code")

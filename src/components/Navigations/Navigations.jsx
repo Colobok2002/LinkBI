@@ -17,7 +17,7 @@ import Setting from '../Setting/Setting';
 import LoadingTextAnimation from '../Ui/LoadingTextAnimation';
 import JSEncrypt from 'jsencrypt';
 import * as SecureStore from 'expo-secure-store';
-import getApi from '../../../Api';
+import getApi from '../../../api/Api';
 
 
 const RootStack = createStackNavigator();
@@ -112,7 +112,7 @@ export default function Navigations() {
     const dispatch = useDispatch();
     const [loadind, setLoading] = useState(false)
     const uuid = useSelector(state => state.session.uuid);
-    // const publicKey = useSelector(state => state.session.publicKey)
+    const publicKey = useSelector(state => state.session.publicKey)
     const { api } = getApi()
 
     useEffect(() => {
@@ -120,7 +120,6 @@ export default function Navigations() {
             setLoading(true);
 
             let _uuid = uuid;
-            // let _publicKey = publicKey
             if (uuid == null) {
                 const response = await api.get(ApiUrl + "/token/generateToken");
                 dispatch(setSession({
@@ -128,7 +127,6 @@ export default function Navigations() {
                     uuid: response.data.uuid,
                 }));
                 _uuid = response.data.uuid
-                // _publicKey = response.data.public_key
             }
             const encryptor = new JSEncrypt();
 
@@ -138,7 +136,7 @@ export default function Navigations() {
 
             dispatch(setLokalKeys({
                 lokalPublicKey: lokalPublicKey,
-                lokalPprivatKey: encryptor.getPrivateKey()
+                localPrivateKey: encryptor.getPrivateKey()
             }));
 
             const token = SecureStore.getItem("userToken");
@@ -154,6 +152,7 @@ export default function Navigations() {
                 await api.post(ApiUrl + `/user/chek-token`, requestData).then(() => {
                     dispatch(setAuthenticated())
                 }).catch(() => dispatch(delAuthenticated()));
+                
                 setLoading(false);
             }
             setLoading(false);

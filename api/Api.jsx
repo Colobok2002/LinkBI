@@ -1,7 +1,7 @@
 import axios from "axios";
-import MuTosat from "./src/components/Ui/MuToast";
+import MuTosat from "../src/components/Ui/MuToast";
 import JSEncrypt from 'jsencrypt';
-import store from "./src/redux/store";
+import store from "../src/redux/store";
 
 const getApi = () => {
 
@@ -28,7 +28,6 @@ const getApi = () => {
     );
 
     function modifyRequestData(data) {
-
         if (data) {
             const encryptor = new JSEncrypt();
             encryptor.setPublicKey(publicKey);
