@@ -27,22 +27,6 @@ import axios from 'axios';
 import 'react-native-get-random-values';
 
 
-const ReadHeandler = ({ item, children, chatId, token }) => {
-    useMemo(() => {
-        if (item.read === false && item.message_id && !item.is_my_message) {
-            const postData = {
-                chat_id: chatId,
-                user_token: token,
-                message_id: item.message_id,
-                created_at: item.created_at
-            };
-            axios.post(ApiUrl + "/messages/read-message", postData);
-        }
-    }, [item.read, item.message_id, item.is_my_message, chatId, token, item.created_at]);
-
-    return children;
-};
-
 export default function ChatScreen({ renderForModal = false, nameProps = null, soNameProps = null }) {
 
 
@@ -197,7 +181,6 @@ export default function ChatScreen({ renderForModal = false, nameProps = null, s
                                 }
                                 return prevMessages;
                             });
-                            // setTimeout(() => scrollToEnd(), 300);
                         }
                     }
                 };

@@ -46,6 +46,8 @@ export default function Chats() {
     const [serchResult, setSerchResult] = useState([])
     const [serchValue, setSerchValue] = useState("");
 
+    const [ferstLoadindChats, setFerstLoadindChats] = useState(true);
+
     const [soNameProps, setSoNameProps] = useState(null)
     const [nameProps, setNameProps] = useState(null)
     const [showChat, setChowChat] = useState(false)
@@ -105,7 +107,7 @@ export default function Chats() {
             if (response.data.chats) {
                 setChats(decryptChats(response.data.chats))
             }
-        })
+        }).finally(() => setFerstLoadindChats(false))
     }
 
     const getSerchResult = (serchStr) => {
@@ -314,7 +316,6 @@ export default function Chats() {
 
     const { width, height } = Dimensions.get('window');
 
-
     return (
         <>
             <SafeAreaProvider>
@@ -381,70 +382,79 @@ export default function Chats() {
                             </>
                         )}
                     </Modal>
-                    <SwiperFlatList
-                        ref={swiperRef}
-                        loop={false}
-                        showsPagination={false}
-                        index={1}
-                        onIndexChanged={(value) => {
-                            if (value == 1) {
-                                serchOff(false)
-                            } else {
-                                serchOn()
-                            }
-                        }}
-                    >
-                        <View>
-                            {!serchLoadind ? (
-                                <>
-                                    {serchValue.length == 0 && serchResult.length != 0 && (
-                                        <View style={styles.userItem}>
-                                            <Text style={{ color: theme.activeItems }}>Недавние</Text>
-                                            <TouchableOpacity style={{ backgroundColor: "red", padding: 5, borderRadius: 10 }} onPress={clearSerchItem}>
-                                                <Text style={{ color: theme.activeItems }}>Очистить</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    )}
-                                    <ScrollView
-                                        scrollEventThrottle={10}
-                                        style={styles.container}
-                                    >
-                                        {serchResult.map(chat => (
-                                            <TouchableOpacity
-                                                key={chat.user_id}
-                                                onPress={() => selektSerchItem(chat.user_id, chat.name, chat.soName)}
-                                                style={styles.userItem}
-                                            >
-                                                <IconUser size={25} />
-                                                <View style={styles.userItemSubContent}>
-                                                    <View style={styles.usetTitleContaner}>
-                                                        <Text style={{ color: theme.activeItems }}>{chat.name} {chat.soName}</Text>
-                                                    </View>
-                                                    <View style={styles.usetTitleContaner}>
-                                                        <Text style={{ color: theme.activeItems }}>{chat.nik}</Text>
-                                                    </View>
-                                                </View>
-                                            </TouchableOpacity>
-                                        ))}
-                                    </ScrollView>
-                                </>
-                            ) : (
-                                <View style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <ActivityIndicator></ActivityIndicator>
-                                </View>
-                            )}
+                    {ferstLoadindChats ? (
+                        <View style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <ActivityIndicator></ActivityIndicator>
                         </View>
-                        <View>
-                            <Button title='Обновить' onPress={getChats}></Button>
-                            <FlatList
-                                data={sortedChats}
-                                renderItem={renderItem}
-                                keyExtractor={item => item.chat_id.toString()}
-                                contentContainerStyle={styles.contentContainer}
-                                style={styles.container}
-                            />
-                        </View>
-                    </SwiperFlatList>
+                    ) : (
+
+                        <SwiperFlatList
+                            ref={swiperRef}
+                            loop={false}
+                            showsPagination={false}
+                            index={1}
+                            onIndexChanged={(value) => {
+                                if (value == 1) {
+                                    serchOff(false)
+                                } else {
+                                    serchOn()
+                                }
+                            }}
+                        >
+                            <View>
+                                {!serchLoadind ? (
+                                    <>
+                                        {serchValue.length == 0 && serchResult.length != 0 && (
+                                            <View style={styles.userItem}>
+                                                <Text style={{ color: theme.activeItems }}>Недавние</Text>
+                                                <TouchableOpacity style={{ backgroundColor: "red", padding: 5, borderRadius: 10 }} onPress={clearSerchItem}>
+                                                    <Text style={{ color: theme.activeItems }}>Очистить</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
+                                        <ScrollView
+                                            scrollEventThrottle={10}
+                                            style={styles.container}
+                                        >
+                                            {serchResult.map(chat => (
+                                                <TouchableOpacity
+                                                    key={chat.user_id}
+                                                    onPress={() => selektSerchItem(chat.user_id, chat.name, chat.soName)}
+                                                    style={styles.userItem}
+                                                >
+                                                    <IconUser size={25} />
+                                                    <View style={styles.userItemSubContent}>
+                                                        <View style={styles.usetTitleContaner}>
+                                                            <Text style={{ color: theme.activeItems }}>{chat.name} {chat.soName}</Text>
+                                                        </View>
+                                                        <View style={styles.usetTitleContaner}>
+                                                            <Text style={{ color: theme.activeItems }}>{chat.nik}</Text>
+                                                        </View>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </ScrollView>
+                                    </>
+                                ) : (
+                                    <View style={{ height: "100%", width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <ActivityIndicator></ActivityIndicator>
+                                    </View>
+                                )}
+                            </View>
+                            <View>
+                                {/* <Button title='Обновить' onPress={getChats}></Button> */}
+                                <FlatList
+                                    data={sortedChats}
+                                    renderItem={renderItem}
+                                    keyExtractor={item => item.chat_id.toString()}
+                                    contentContainerStyle={styles.contentContainer}
+                                    style={styles.container}
+                                />
+                            </View>
+                        </SwiperFlatList>
+
+                    )}
+
                 </SafeAreaView>
             </SafeAreaProvider >
         </>
